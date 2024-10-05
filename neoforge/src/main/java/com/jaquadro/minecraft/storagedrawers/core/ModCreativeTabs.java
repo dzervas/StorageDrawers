@@ -23,6 +23,11 @@ public class ModCreativeTabs
                             return;
                         if (ModItems.EXCLUDE_ITEMS_CREATIVE_TAB.contains(reg))
                             return;
+                        if (reg.get() instanceof BlockItem blockItem) {
+                            if (blockItem.getBlock() instanceof IFramedBlock)
+                                return;
+                        }
+
                         output.accept(reg.get().getDefaultInstance());
                     });
                 })

@@ -1,12 +1,14 @@
 package com.jaquadro.minecraft.storagedrawers.block;
 
 import com.jaquadro.minecraft.storagedrawers.ModConstants;
+import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedSourceBlock;
 import com.jaquadro.minecraft.storagedrawers.api.storage.INetworked;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockTrim extends Block implements INetworked
+public class BlockTrim extends Block implements INetworked, IFramedSourceBlock
 {
     private String matKey = null;
     private String matNamespace = ModConstants.MOD_ID;
@@ -36,5 +38,10 @@ public class BlockTrim extends Block implements INetworked
 
     public String getNameTypeKey() {
         return "block." + ModConstants.MOD_ID + ".type.trim";
+    }
+
+    @Override
+    public ItemStack makeFramedItem (ItemStack source, ItemStack matSide, ItemStack matTrim, ItemStack matFront) {
+        return FrameHelper.makeFramedItem(ModBlocks.FRAMED_TRIM.get(), source, matSide, matTrim, matFront);
     }
 }

@@ -2,6 +2,7 @@ package com.jaquadro.minecraft.storagedrawers.block.tile;
 
 import com.jaquadro.minecraft.storagedrawers.ModServices;
 import com.jaquadro.minecraft.storagedrawers.api.capabilities.IItemRepository;
+import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlockEntity;
 import com.jaquadro.minecraft.storagedrawers.api.security.ISecurityProvider;
 import com.jaquadro.minecraft.storagedrawers.api.storage.*;
 import com.jaquadro.minecraft.storagedrawers.api.storage.attribute.IProtectable;
@@ -34,7 +35,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class BlockEntityController extends BaseBlockEntity implements IDrawerGroup, IControlGroup
+public class BlockEntityController extends BaseBlockEntity implements IDrawerGroup, IControlGroup, IFramedBlockEntity
 {
     private static final int PRI_LOCKED = 0;
     private static final int PRI_NORMAL = 1;
@@ -45,6 +46,12 @@ public class BlockEntityController extends BaseBlockEntity implements IDrawerGro
     private static final int PRI_DISABLED = 6;
 
     private final ControllerHostData controllerHostData = new ControllerHostData();
+    private final MaterialData materialData = new MaterialData();
+
+    @Override
+    public MaterialData material () {
+        return materialData;
+    }
 
     private static class StorageRecord
     {
@@ -171,6 +178,7 @@ public class BlockEntityController extends BaseBlockEntity implements IDrawerGro
         range = ModCommonConfig.INSTANCE.GENERAL.controllerRange.get();
 
         injectPortableData(controllerHostData);
+        injectPortableData(materialData);
     }
 
     public BlockEntityController(BlockPos pos, BlockState state) {
@@ -226,8 +234,8 @@ public class BlockEntityController extends BaseBlockEntity implements IDrawerGro
         if (getLevel() == null)
             return;
 
-        if (!getLevel().getBlockTicks().hasScheduledTick(getBlockPos(), ModBlocks.CONTROLLER.get()))
-            getLevel().scheduleTick(getBlockPos(), ModBlocks.CONTROLLER.get(), 1);
+        if (!getLevel().getBlockTicks().hasScheduledTick(getBlockPos(), getBlockState().getBlock()))
+            getLevel().scheduleTick(getBlockPos(), getBlockState().getBlock(), 1);
     }
 
     @Override
@@ -776,6 +784,12 @@ public class BlockEntityController extends BaseBlockEntity implements IDrawerGro
         if (capability == null || level == null)
             return null;
         return capability.getCapability(level, getBlockPos());
+    }
+
+    @NotNull
+    @Override
+    public ModelData getModelData () {
+        return FramedModelProperties.getModelData(this);
     }
 
     /*

@@ -1,5 +1,6 @@
 package com.jaquadro.minecraft.storagedrawers.block;
 
+import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedSourceBlock;
 import com.jaquadro.minecraft.storagedrawers.api.security.ISecurityProvider;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerAttributesGroupControl;
 import com.jaquadro.minecraft.storagedrawers.api.storage.INetworked;
@@ -34,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 
-public class BlockController extends HorizontalDirectionalBlock implements INetworked, EntityBlock
+public class BlockController extends HorizontalDirectionalBlock implements INetworked, EntityBlock, IFramedSourceBlock
 {
     public static final MapCodec<BlockController> CODEC = simpleCodec(BlockController::new);
 
@@ -158,5 +159,10 @@ public class BlockController extends HorizontalDirectionalBlock implements INetw
     @Override
     public BlockEntityController newBlockEntity (@NotNull BlockPos pos, @NotNull BlockState state) {
         return new BlockEntityController(pos, state);
+    }
+
+    @Override
+    public ItemStack makeFramedItem (ItemStack source, ItemStack matSide, ItemStack matTrim, ItemStack matFront) {
+        return FrameHelper.makeFramedItem(ModBlocks.FRAMED_CONTROLLER.get(), source, matSide, matTrim, matFront);
     }
 }

@@ -36,6 +36,9 @@ public final class ModBlockEntities {
     public static final RegistryEntry<BlockEntityType<BlockEntityControllerIO>> CONTROLLER_IO = BLOCK_ENTITIES.register("controller_io", () ->
         BlockEntityType.Builder.of(ModServices.RESOURCE_FACTORY.createBlockEntityControllerIO(), ModBlocks.CONTROLLER_IO.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<BlockEntityFramingTable>> FRAMING_TABLE = registerBlockEntityType("framing_table", BlockEntityFramingTable::new, ModBlocks.FRAMING_TABLE);
+    public static final RegistryObject<BlockEntityType<BlockEntityTrim>> TRIM = registerTrimBlockEntityType("trim", BlockEntityTrim::new);
+
     private ModBlockEntities() {}
 
     private static <BE extends BlockEntityDrawers, B extends BlockDrawers> RegistryEntry<BlockEntityType<BE>> registerDrawerBlockEntityType(String name, BlockEntityType.BlockEntitySupplier<BE> blockEntitySupplier, Class<B> drawerBlockClass, int size) {
@@ -45,9 +48,17 @@ public final class ModBlockEntities {
         return ro;
     }
 
+    private static <BE extends BlockEntityTrim> RegistryObject<BlockEntityType<BE>> registerTrimBlockEntityType(String name, BlockEntitySupplier<BE> blockEntitySupplier) {
+        return registerBlockEntityType(name, blockEntitySupplier, ModBlocks.getFramedTrim());
+    }
+
     private static <BE extends BaseBlockEntity, B extends BlockDrawers> RegistryEntry<BlockEntityType<BE>> registerBlockEntityType(String name, BlockEntityType.BlockEntitySupplier<BE> blockEntitySupplier, Class<B> drawerBlockClass, int size) {
         return BLOCK_ENTITIES.register(name, () ->
             BlockEntityType.Builder.of(blockEntitySupplier, ModBlocks.getDrawersOfTypeAndSize(drawerBlockClass, size).toArray(Block[]::new)).build(null));
+    }
+
+    private static <BE extends BaseBlockEntity, B extends Block> RegistryObject<BlockEntityType<BE>> registerBlockEntityType(String name, BlockEntitySupplier<BE> blockEntitySupplier, RegistryObject<B> block) {
+        return BLOCK_ENTITY_REGISTER.register(name, () -> BlockEntityType.Builder.of(blockEntitySupplier, block.get()).build(null));
     }
 
     public static void init() {

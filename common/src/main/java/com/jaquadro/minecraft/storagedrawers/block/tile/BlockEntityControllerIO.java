@@ -1,6 +1,7 @@
 package com.jaquadro.minecraft.storagedrawers.block.tile;
 
 import com.jaquadro.minecraft.storagedrawers.api.capabilities.IItemRepository;
+import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlockEntity;
 import com.jaquadro.minecraft.storagedrawers.api.storage.*;
 import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.ControllerData;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlockEntities;
@@ -17,16 +18,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class BlockEntityControllerIO extends BaseBlockEntity implements IDrawerGroup, IControlGroup
+public class BlockEntityControllerIO extends BaseBlockEntity implements IDrawerGroup, IControlGroup, IFramedBlockEntity
 {
     private static final int[] drawerSlots = new int[]{0};
 
     public final ControllerData controllerData = new ControllerData();
+    public final MaterialData materialData = new MaterialData();
 
     public BlockEntityControllerIO (BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
         super(blockEntityType, pos, state);
 
         injectData(controllerData);
+        injectPortableData(materialData);
     }
 
     public BlockEntityControllerIO (BlockPos pos, BlockState state) {
@@ -147,6 +150,17 @@ public class BlockEntityControllerIO extends BaseBlockEntity implements IDrawerG
             return null;
         return level.getCapability(capability, getBlockPos(), getBlockState(), this, null);
     }*/
+
+    @Override
+    public MaterialData material () {
+        return materialData;
+    }
+
+    @NotNull
+    @Override
+    public ModelData getModelData () {
+        return FramedModelProperties.getModelData(this);
+    }
 
     private final ItemRepositoryProxy itemRepository = new ItemRepositoryProxy();
 

@@ -1,5 +1,6 @@
 package com.jaquadro.minecraft.storagedrawers.block.tile;
 
+import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlockEntity;
 import com.jaquadro.minecraft.storagedrawers.api.security.ISecurityProvider;
 import com.jaquadro.minecraft.storagedrawers.api.storage.*;
 import com.jaquadro.minecraft.storagedrawers.api.storage.attribute.IProtectable;
@@ -44,15 +45,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.EnumSet;
 import java.util.UUID;
 
-public abstract class BlockEntityDrawers extends BaseBlockEntity implements IDrawerGroup, IProtectable, INetworked /*, INameable */
+public abstract class BlockEntityDrawers extends BaseBlockEntity implements IDrawerGroup, IProtectable, INetworked, IFramedBlockEntity /*, INameable */
 {
-    //public static final ModelProperty<IDrawerAttributes> ATTRIBUTES = new ModelProperty<>();
-    //public static final ModelProperty<Boolean> ITEM_LOCKED = new ModelProperty<>();
-    //public static final ModelProperty<Boolean> SHROUDED = new ModelProperty<>();
-    //public static final ModelProperty<Boolean> VOIDING = new ModelProperty<>();
-
     //private CustomNameData customNameData = new CustomNameData("storagedrawers.container.drawers");
-    //private MaterialData materialData = new MaterialData();
+    private MaterialData materialData = new MaterialData();
     private final UpgradeData upgradeData = new DrawerUpgradeData();
     private final ControllerData controllerData = new ControllerData();
 
@@ -202,8 +198,9 @@ public abstract class BlockEntityDrawers extends BaseBlockEntity implements IDra
 
         //injectPortableData(customNameData);
         injectPortableData(upgradeData);
-        //injectPortableData(materialData);
         injectPortableData(controllerData);
+
+        injectData(materialData);
     }
 
     private void checkBoundController () {
@@ -271,10 +268,10 @@ public abstract class BlockEntityDrawers extends BaseBlockEntity implements IDra
         return upgradeData;
     }
 
-    //public MaterialData material () {
-    //    return materialData;
-    //}
-
+    @Override
+    public MaterialData material () {
+        return materialData;
+    }
 
     @Override
     public boolean isGroupValid () {
