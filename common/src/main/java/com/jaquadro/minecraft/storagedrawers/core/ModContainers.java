@@ -23,12 +23,8 @@ public class ModContainers
         CONTAINERS.register("drawer_container_comp_2", ChameleonServices.CONTAINER.getContainerSupplier(ContainerDrawersComp3::new, PositionContent.SERIALIZER));
     public static final RegistryEntry<MenuType<ContainerDrawersComp3>> DRAWER_CONTAINER_COMP_3 =
         CONTAINERS.register("drawer_container_comp_3", ChameleonServices.CONTAINER.getContainerSupplier(ContainerDrawersComp3::new, PositionContent.SERIALIZER));
-
-    public static final RegistryObject<MenuType<ContainerFramingTable>> FRAMING_TABLE = registerFramingContainer("framing_table_container", ContainerFramingTable::new);
-
-    private static <C extends ContainerFramingTable> RegistryObject<MenuType<C>> registerFramingContainer(String name, IContainerFactory<C> containerFactory) {
-        return CONTAINERS_REGISTER.register(name, () -> IForgeMenuType.create(containerFactory));
-    }
+    public static final RegistryEntry<MenuType<ContainerFramingTable>> FRAMING_TABLE =
+        CONTAINERS.register("framing_table", ChameleonServices.CONTAINER.getContainerSupplier(ContainerFramingTable::new, PositionContent.SERIALIZER));
 
     public static void init() {
         CONTAINERS.init();

@@ -1,9 +1,10 @@
 package com.jaquadro.minecraft.storagedrawers.core;
 
 import com.jaquadro.minecraft.storagedrawers.ModConstants;
+import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlock;
 import com.jaquadro.minecraft.storagedrawers.block.*;
-import com.jaquadro.minecraft.storagedrawers.block.meta.BlockMeta;
-import com.jaquadro.minecraft.storagedrawers.block.meta.BlockMetaSized;
+import com.jaquadro.minecraft.storagedrawers.block.framed.*;
+import com.jaquadro.minecraft.storagedrawers.block.meta.*;
 import com.texelsaurus.minecraft.chameleon.ChameleonServices;
 import com.texelsaurus.minecraft.chameleon.registry.ChameleonRegistry;
 import com.texelsaurus.minecraft.chameleon.registry.RegistryEntry;
@@ -94,7 +95,7 @@ public final class ModBlocks
         WARPED_HALF_DRAWERS_2 = registerWoodenDrawerBlock(modLoc("warped"), 2, true),
         WARPED_HALF_DRAWERS_4 = registerWoodenDrawerBlock(modLoc("warped"), 4, true);
 
-    public static final RegistryObject<BlockFramedStandardDrawers>
+    public static final RegistryEntry<BlockFramedStandardDrawers>
         FRAMED_FULL_DRAWERS_1 = registerFramedDrawerBlock("framed_full_drawers_1", 1, false),
         FRAMED_FULL_DRAWERS_2 = registerFramedDrawerBlock("framed_full_drawers_2", 2, false),
         FRAMED_FULL_DRAWERS_4 = registerFramedDrawerBlock("framed_full_drawers_4", 4, false),
@@ -107,10 +108,10 @@ public final class ModBlocks
     public static final RegistryEntry<BlockCompDrawers> COMPACTING_HALF_DRAWERS_2 = registerCompactingDrawerBlock("compacting_half_drawers_2", 2, true);
     public static final RegistryEntry<BlockCompDrawers> COMPACTING_HALF_DRAWERS_3 = registerCompactingDrawerBlock("compacting_half_drawers_3", 3, true);
 
-    public static final RegistryObject<BlockFramedCompDrawers> FRAMED_COMPACTING_DRAWERS_2 = registerFramedCompactingDrawerBlock("framed_compacting_drawers_2", 2, false);
-    public static final RegistryObject<BlockFramedCompDrawers> FRAMED_COMPACTING_DRAWERS_3 = registerFramedCompactingDrawerBlock("framed_compacting_drawers_3", 3, false);
-    public static final RegistryObject<BlockFramedCompDrawers> FRAMED_COMPACTING_HALF_DRAWERS_2 = registerFramedCompactingDrawerBlock("framed_compacting_half_drawers_2", 2, true);
-    public static final RegistryObject<BlockFramedCompDrawers> FRAMED_COMPACTING_HALF_DRAWERS_3 = registerFramedCompactingDrawerBlock("framed_compacting_half_drawers_3", 3, true);
+    public static final RegistryEntry<BlockFramedCompDrawers> FRAMED_COMPACTING_DRAWERS_2 = registerFramedCompactingDrawerBlock("framed_compacting_drawers_2", 2, false);
+    public static final RegistryEntry<BlockFramedCompDrawers> FRAMED_COMPACTING_DRAWERS_3 = registerFramedCompactingDrawerBlock("framed_compacting_drawers_3", 3, false);
+    public static final RegistryEntry<BlockFramedCompDrawers> FRAMED_COMPACTING_HALF_DRAWERS_2 = registerFramedCompactingDrawerBlock("framed_compacting_half_drawers_2", 2, true);
+    public static final RegistryEntry<BlockFramedCompDrawers> FRAMED_COMPACTING_HALF_DRAWERS_3 = registerFramedCompactingDrawerBlock("framed_compacting_half_drawers_3", 3, true);
 
     public static final RegistryEntry<BlockTrim>
         OAK_TRIM = registerTrimBlock(modLoc("oak")),
@@ -125,7 +126,7 @@ public final class ModBlocks
         CRIMSON_TRIM = registerTrimBlock(modLoc("crimson")),
         WARPED_TRIM = registerTrimBlock(modLoc("warped"));
 
-    public static final RegistryObject<BlockFramedTrim> FRAMED_TRIM = registerFramedTrimBlock("framed_trim");
+    public static final RegistryEntry<BlockFramedTrim> FRAMED_TRIM = registerFramedTrimBlock("framed_trim");
 
     public static final RegistryEntry<BlockController>
         CONTROLLER = registerControllerBlock("controller");
@@ -133,12 +134,12 @@ public final class ModBlocks
     public static final RegistryEntry<BlockControllerIO>
         CONTROLLER_IO = registerControllerIOBlock("controller_io");
 
-    public static final RegistryObject<BlockFramedController> FRAMED_CONTROLLER = BLOCK_REGISTER.register("framed_controller",
+    public static final RegistryEntry<BlockFramedController> FRAMED_CONTROLLER = BLOCKS.register("framed_controller",
         () -> new BlockFramedController(getStoneBlockProperties()));
-    public static final RegistryObject<BlockFramedControllerIO> FRAMED_CONTROLLER_IO = BLOCK_REGISTER.register("framed_controller_io",
+    public static final RegistryEntry<BlockFramedControllerIO> FRAMED_CONTROLLER_IO = BLOCKS.register("framed_controller_io",
         () -> new BlockFramedControllerIO(getStoneBlockProperties()));
 
-    public static final RegistryObject<BlockFramingTable> FRAMING_TABLE = registerFramingTableBlock("framing_table");
+    public static final RegistryEntry<BlockFramingTable> FRAMING_TABLE = registerFramingTableBlock("framing_table");
 
 
     public static final RegistryEntry<BlockMeta>
@@ -209,16 +210,16 @@ public final class ModBlocks
         return register.register(name, () -> new BlockStandardDrawers(drawerCount, halfDepth, getWoodenDrawerBlockProperties()).setMatKey(material));
     }
 
-    static RegistryObject<BlockFramedStandardDrawers> registerFramedDrawerBlock(String name, int drawerCount, boolean halfDepth) {
-        return BLOCK_REGISTER.register(name, () -> (BlockFramedStandardDrawers)new BlockFramedStandardDrawers(drawerCount, halfDepth, getWoodenDrawerBlockProperties()).setMatKey("framed"));
+    static RegistryEntry<BlockFramedStandardDrawers> registerFramedDrawerBlock(String name, int drawerCount, boolean halfDepth) {
+        return BLOCKS.register(name, () -> (BlockFramedStandardDrawers)new BlockFramedStandardDrawers(drawerCount, halfDepth, getWoodenDrawerBlockProperties()).setMatKey("framed"));
     }
 
     static RegistryEntry<BlockCompDrawers> registerCompactingDrawerBlock(String name, int drawerCount, boolean halfDepth) {
         return BLOCKS.register(name, () -> new BlockCompDrawers(drawerCount, halfDepth, getStoneDrawerBlockProperties()));
     }
 
-    static RegistryObject<BlockFramedCompDrawers> registerFramedCompactingDrawerBlock(String name, int drawerCount, boolean halfDepth) {
-        return BLOCK_REGISTER.register(name, () -> new BlockFramedCompDrawers(drawerCount, halfDepth, getStoneDrawerBlockProperties()));
+    static RegistryEntry<BlockFramedCompDrawers> registerFramedCompactingDrawerBlock(String name, int drawerCount, boolean halfDepth) {
+        return BLOCKS.register(name, () -> new BlockFramedCompDrawers(drawerCount, halfDepth, getStoneDrawerBlockProperties()));
     }
 
     static RegistryEntry<BlockTrim> registerTrimBlock(ResourceLocation name) {
@@ -234,8 +235,8 @@ public final class ModBlocks
         return register.register(name, () -> new BlockTrim(getWoodenBlockProperties()).setMatKey(material));
     }
 
-    static RegistryObject<BlockFramedTrim> registerFramedTrimBlock(String name) {
-        return BLOCK_REGISTER.register(name, () -> (BlockFramedTrim)new BlockFramedTrim(getWoodenDrawerBlockProperties()).setMatKey("framed"));
+    static RegistryEntry<BlockFramedTrim> registerFramedTrimBlock(String name) {
+        return BLOCKS.register(name, () -> (BlockFramedTrim)new BlockFramedTrim(getWoodenDrawerBlockProperties()).setMatKey("framed"));
     }
 
     static RegistryEntry<BlockController> registerControllerBlock(String name) {
@@ -246,33 +247,33 @@ public final class ModBlocks
         return BLOCKS.register(name, () -> new BlockControllerIO(getStoneBlockProperties()));
     }
 
-    static RegistryObject<BlockFramingTable> registerFramingTableBlock(String name) {
-        return BLOCK_REGISTER.register(name, () -> new BlockFramingTable(getWoodenBlockProperties()));
+    static RegistryEntry<BlockFramingTable> registerFramingTableBlock(String name) {
+        return BLOCKS.register(name, () -> new BlockFramingTable(getWoodenBlockProperties()));
     }
 
-    static RegistryObject<BlockMeta> registerMetaBlock (String name) {
+    static RegistryEntry<BlockMeta> registerMetaBlock (String name) {
         EXCLUDE_ITEMS.add(name);
-        return BLOCK_REGISTER.register(name, () -> new BlockMeta(Properties.of().air()));
+        return BLOCKS.register(name, () -> new BlockMeta(Properties.of().air()));
     }
 
-    static RegistryObject<BlockMeta> registerMetaFacingBlock (String name) {
+    static RegistryEntry<BlockMeta> registerMetaFacingBlock (String name) {
         EXCLUDE_ITEMS.add(name);
-        return BLOCK_REGISTER.register(name, () -> new BlockMetaFacing(Properties.of().air()));
+        return BLOCKS.register(name, () -> new BlockMetaFacing(Properties.of().air()));
     }
 
-    static RegistryObject<BlockMeta> registerMetaFacingSizedBlock (String name) {
+    static RegistryEntry<BlockMeta> registerMetaFacingSizedBlock (String name) {
         EXCLUDE_ITEMS.add(name);
-        return BLOCK_REGISTER.register(name, () -> new BlockMetaFacingSized(Properties.of().air()));
+        return BLOCKS.register(name, () -> new BlockMetaFacingSized(Properties.of().air()));
     }
 
-    static RegistryObject<BlockMeta> registerMetaFacingSizedSlottedBlock (String name) {
+    static RegistryEntry<BlockMeta> registerMetaFacingSizedSlottedBlock (String name) {
         EXCLUDE_ITEMS.add(name);
-        return BLOCK_REGISTER.register(name, () -> new BlockMetaFacingSizedSlotted(Properties.of().air()));
+        return BLOCKS.register(name, () -> new BlockMetaFacingSizedSlotted(Properties.of().air()));
     }
 
-    static RegistryObject<BlockMeta> registerMetaFacingSizedOpenBlock (String name) {
+    static RegistryEntry<BlockMeta> registerMetaFacingSizedOpenBlock (String name) {
         EXCLUDE_ITEMS.add(name);
-        return BLOCK_REGISTER.register(name, () -> new BlockMetaFacingSizedOpen(Properties.of().air()));
+        return BLOCKS.register(name, () -> new BlockMetaFacingSizedOpen(Properties.of().air()));
     }
 
     static Properties getWoodenBlockProperties() {
@@ -337,7 +338,7 @@ public final class ModBlocks
     }
 
     public static Stream<IFramedBlock> getFramedBlocks() {
-        return ForgeRegistries.BLOCKS.getValues().stream().filter(IFramedBlock.class::isInstance).map(IFramedBlock.class::cast);
+        return BLOCKS.stream().filter(IFramedBlock.class::isInstance).map(IFramedBlock.class::cast);
     }
 
     private static boolean predFalse (BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {

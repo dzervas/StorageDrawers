@@ -1,21 +1,18 @@
 package com.jaquadro.minecraft.storagedrawers.inventory;
 
-import com.jaquadro.minecraft.storagedrawers.StorageDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityFramingTable;
 import com.jaquadro.minecraft.storagedrawers.core.ModContainers;
-import com.jaquadro.minecraft.storagedrawers.util.WorldUtils;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import com.texelsaurus.minecraft.chameleon.inventory.content.PositionContent;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ContainerFramingTable extends AbstractContainerMenu
 {
@@ -47,23 +44,8 @@ public class ContainerFramingTable extends AbstractContainerMenu
     private List<Slot> playerSlots;
     private List<Slot> hotbarSlots;
 
-    public ContainerFramingTable (@Nullable MenuType<?> type, int windowId, Inventory playerInv, FriendlyByteBuf data) {
-        this(type, windowId, playerInv, getBlockEntity(playerInv, data.readBlockPos()));
-    }
-
-    public ContainerFramingTable (int windowId, Inventory playerInventory, FriendlyByteBuf packet) {
-        this(ModContainers.FRAMING_TABLE.get(), windowId, playerInventory, packet);
-    }
-
-    protected static BlockEntityFramingTable getBlockEntity(Inventory playerInv, BlockPos pos) {
-        Level level = playerInv.player.getCommandSenderWorld();
-        BlockEntityFramingTable blockEntity = WorldUtils.getBlockEntity(level, pos, BlockEntityFramingTable.class);
-        if (blockEntity == null)
-            StorageDrawers.log.error("Expected a framing table tile entity at " + pos);
-        else
-            return blockEntity;
-
-        return null;
+    public ContainerFramingTable (int windowId, Inventory playerInv, Optional<PositionContent> content) {
+        this(ModContainers.FRAMING_TABLE.get(), windowId, playerInv, PositionContent.getOrNull(content, playerInv.player.level(), BlockEntityFramingTable.class));
     }
 
     public ContainerFramingTable (@Nullable MenuType<?> type, int windowId, Inventory playerInventory, BlockEntityFramingTable blockEntity) {

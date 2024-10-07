@@ -49,8 +49,8 @@ public class ClientModBusSubscriber {
 
     @SubscribeEvent
     public static void registerEntityRenderers(RegisterRenderers event) {
-        ModBlockEntities.getBlockEntityTypesWithRenderers().forEach(ro -> event.registerBlockEntityRenderer(ro.get(), BlockEntityDrawersRenderer::new));
-    }
+        ModBlockEntities.DRAWER_RENDERERS.forEach(ro -> event.registerBlockEntityRenderer(ro.blockEntityType().get(), ro.renderProvider()));
+        ModBlockEntities.FRAMING_TABLE_RENDERERS.forEach(ro -> event.registerBlockEntityRenderer(ro.blockEntityType().get(), ro.renderProvider()));}
 
     @SubscribeEvent
     public static void registerClientTooltips(RegisterClientTooltipComponentFactoriesEvent event) {
