@@ -8,6 +8,7 @@ import com.jaquadro.minecraft.storagedrawers.block.framed.BlockFramedTrim;
 import com.jaquadro.minecraft.storagedrawers.block.meta.BlockMeta;
 import com.jaquadro.minecraft.storagedrawers.item.*;
 import com.texelsaurus.minecraft.chameleon.ChameleonServices;
+import com.texelsaurus.minecraft.chameleon.api.ChameleonInit;
 import com.texelsaurus.minecraft.chameleon.registry.ChameleonRegistry;
 import com.texelsaurus.minecraft.chameleon.registry.RegistryEntry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -80,7 +81,7 @@ public final class ModItems
 
     private ModItems () { }
 
-    public static void init () {
+    public static void init (ChameleonInit.InitContext context) {
         EXCLUDE_ITEMS_CREATIVE_TAB.add(PRIORITY_KEY_N1);
         EXCLUDE_ITEMS_CREATIVE_TAB.add(PRIORITY_KEY_N2);
         EXCLUDE_ITEMS_CREATIVE_TAB.add(PRIORITY_KEY_P1);
@@ -106,7 +107,8 @@ public final class ModItems
 
             registerBlock(ITEMS, ro);
         }
-        ITEMS.init();
+
+        ITEMS.init(context);
     }
 
     static void registerBlock (ChameleonRegistry<Item> register, RegistryEntry<? extends Block> blockHolder) {

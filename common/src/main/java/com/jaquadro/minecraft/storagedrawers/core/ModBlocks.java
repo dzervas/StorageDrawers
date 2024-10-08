@@ -6,6 +6,7 @@ import com.jaquadro.minecraft.storagedrawers.block.*;
 import com.jaquadro.minecraft.storagedrawers.block.framed.*;
 import com.jaquadro.minecraft.storagedrawers.block.meta.*;
 import com.texelsaurus.minecraft.chameleon.ChameleonServices;
+import com.texelsaurus.minecraft.chameleon.api.ChameleonInit;
 import com.texelsaurus.minecraft.chameleon.registry.ChameleonRegistry;
 import com.texelsaurus.minecraft.chameleon.registry.RegistryEntry;
 import net.minecraft.core.BlockPos;
@@ -292,8 +293,8 @@ public final class ModBlocks
         return getStoneBlockProperties().isSuffocating(ModBlocks::predFalse).isRedstoneConductor(ModBlocks::predFalse);
     }
 
-    public static void init() {
-        BLOCKS.init();
+    public static void init (ChameleonInit.InitContext context) {
+        BLOCKS.init(context);
     }
 
     private static <B extends Block> Stream<B> getBlocksOfType(Class<B> blockClass) {

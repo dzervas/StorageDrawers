@@ -9,6 +9,7 @@ import com.jaquadro.minecraft.storagedrawers.block.tile.*;
 import com.jaquadro.minecraft.storagedrawers.client.renderer.BlockEntityDrawersRenderer;
 import com.jaquadro.minecraft.storagedrawers.client.renderer.BlockEntityFramingRenderer;
 import com.texelsaurus.minecraft.chameleon.ChameleonServices;
+import com.texelsaurus.minecraft.chameleon.api.ChameleonInit;
 import com.texelsaurus.minecraft.chameleon.registry.ChameleonRegistry;
 import com.texelsaurus.minecraft.chameleon.registry.RegistryEntry;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -72,10 +73,10 @@ public final class ModBlockEntities {
             BlockEntityType.Builder.of(blockEntitySupplier, ModBlocks.getControllerIOs().toArray(Block[]::new)).build(null));
     }
 
-    public static void init() {
+    public static void init(ChameleonInit.InitContext context) {
         FRAMING_TABLE_RENDERERS.add(new RenderRecord<BlockEntityFramingTable>(FRAMING_TABLE, BlockEntityFramingRenderer::new));
 
-        BLOCK_ENTITIES.init();
+        BLOCK_ENTITIES.init(context);
     }
 
     //public static Set<RegistryEntry<? extends BlockEntityType<? extends BlockEntityDrawers>>> getBlockEntityTypesWithRenderers() {
