@@ -4,6 +4,7 @@ import com.jaquadro.minecraft.storagedrawers.api.capabilities.IItemRepository;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlockEntity;
 import com.jaquadro.minecraft.storagedrawers.api.storage.*;
 import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.ControllerData;
+import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.MaterialData;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlockEntities;
 import com.mojang.authlib.GameProfile;
 import com.texelsaurus.minecraft.chameleon.capabilities.ChameleonCapability;
@@ -154,12 +155,6 @@ public class BlockEntityControllerIO extends BaseBlockEntity implements IDrawerG
     @Override
     public MaterialData material () {
         return materialData;
-    }
-
-    @NotNull
-    @Override
-    public ModelData getModelData () {
-        return FramedModelProperties.getModelData(this);
     }
 
     private final ItemRepositoryProxy itemRepository = new ItemRepositoryProxy();

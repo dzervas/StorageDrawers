@@ -6,6 +6,7 @@ import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlockEntity;
 import com.jaquadro.minecraft.storagedrawers.api.storage.BlockType;
 import com.jaquadro.minecraft.storagedrawers.block.BlockStandardDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawers;
+import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import com.jaquadro.minecraft.storagedrawers.util.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -39,8 +40,7 @@ public class BlockFramedStandardDrawers extends BlockStandardDrawers implements 
         if (blockEntity == null)
             return;
 
-        CompoundTag tag = stack.getOrCreateTag();
-        blockEntity.material().read(tag);
+        blockEntity.material().read(stack);
         blockEntity.setChanged();
     }
 
@@ -48,11 +48,8 @@ public class BlockFramedStandardDrawers extends BlockStandardDrawers implements 
     protected ItemStack getMainDrop (BlockState state, BlockEntityDrawers tile) {
         ItemStack drop = super.getMainDrop(state, tile);
 
-        if (!tile.material().isEmpty()) {
-            CompoundTag tag = drop.getOrCreateTag();
-            tile.material().write(tag);
-            drop.setTag(tag);
-        }
+        if (!tile.material().isEmpty())
+            drop.set(ModDataComponents.MATERIAL_DATA.get(), tile.material());
 
         return drop;
     }

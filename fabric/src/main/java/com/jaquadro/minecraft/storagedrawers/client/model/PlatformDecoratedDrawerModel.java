@@ -1,5 +1,6 @@
 package com.jaquadro.minecraft.storagedrawers.client.model;
 
+import com.jaquadro.minecraft.storagedrawers.client.model.context.DrawerModelContext;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockview.v2.FabricBlockView;

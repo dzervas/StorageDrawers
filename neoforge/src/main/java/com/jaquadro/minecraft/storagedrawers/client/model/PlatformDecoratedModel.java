@@ -1,7 +1,6 @@
 package com.jaquadro.minecraft.storagedrawers.client.model;
 
 import com.jaquadro.minecraft.storagedrawers.client.model.context.ModelContext;
-import com.jaquadro.minecraft.storagedrawers.client.model.context.ModelContextSupplier;
 import com.jaquadro.minecraft.storagedrawers.client.model.decorator.ModelDecorator;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -11,9 +10,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.ChunkRenderTypeSet;
-import net.minecraftforge.client.model.IDynamicBakedModel;
-import net.minecraftforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.ChunkRenderTypeSet;
+import net.neoforged.neoforge.client.model.IDynamicBakedModel;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -21,12 +20,12 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class ForgeDecoratedModel<C extends ModelContext> extends ParentModel implements IDynamicBakedModel
+public class PlatformDecoratedModel<C extends ModelContext> extends ParentModel implements IDynamicBakedModel
 {
     private final ModelDecorator<C> decorator;
     private final ModelContextSupplier<C> contextSupplier;
 
-    public ForgeDecoratedModel (BakedModel parent, ModelDecorator<C> decorator, ModelContextSupplier<C> contextSupplier) {
+    public PlatformDecoratedModel (BakedModel parent, ModelDecorator<C> decorator, ModelContextSupplier<C> contextSupplier) {
         super(parent);
         this.decorator = decorator;
         this.contextSupplier = contextSupplier;
@@ -90,7 +89,7 @@ public class ForgeDecoratedModel<C extends ModelContext> extends ParentModel imp
         private ItemStack stack;
 
         public ItemRender (ItemStack stack) {
-            super(ForgeDecoratedModel.this.parent);
+            super(PlatformDecoratedModel.this.parent);
             this.stack = stack;
         }
 
@@ -98,10 +97,10 @@ public class ForgeDecoratedModel<C extends ModelContext> extends ParentModel imp
         public List<BakedQuad> getQuads (@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
             List<BakedQuad> quads = new ArrayList<>();
 
-            Supplier<C> supplier = () -> ForgeDecoratedModel.this.contextSupplier.makeContext(stack);
-            ModelDecorator<C> decorator = ForgeDecoratedModel.this.decorator;
+            Supplier<C> supplier = () -> PlatformDecoratedModel.this.contextSupplier.makeContext(stack);
+            ModelDecorator<C> decorator = PlatformDecoratedModel.this.decorator;
             if (decorator.shouldRenderBase(supplier, stack))
-                quads.addAll(ForgeDecoratedModel.this.parent.getQuads(state, side, rand));
+                quads.addAll(PlatformDecoratedModel.this.parent.getQuads(state, side, rand));
 
             Consumer<BakedModel> emitModel = model -> {
                 if (model != null)
@@ -119,22 +118,22 @@ public class ForgeDecoratedModel<C extends ModelContext> extends ParentModel imp
 
         @Override
         public List<BakedModel> getRenderPasses (ItemStack itemStack, boolean fabulous) {
-            return ForgeDecoratedModel.this.parent.getRenderPasses(itemStack, fabulous);
+            return PlatformDecoratedModel.this.parent.getRenderPasses(itemStack, fabulous);
         }
 
         @Override
         public TextureAtlasSprite getParticleIcon (ModelData data) {
-            return ForgeDecoratedModel.this.parent.getParticleIcon(data);
+            return PlatformDecoratedModel.this.parent.getParticleIcon(data);
         }
 
         @Override
         public ChunkRenderTypeSet getRenderTypes (BlockState state, RandomSource rand, ModelData data) {
-            return ForgeDecoratedModel.this.getRenderTypes(state, rand, data);
+            return PlatformDecoratedModel.this.getRenderTypes(state, rand, data);
         }
 
         @Override
         public List<RenderType> getRenderTypes (ItemStack itemStack, boolean fabulous) {
-            return ForgeDecoratedModel.this.getRenderTypes(itemStack, fabulous);
+            return PlatformDecoratedModel.this.getRenderTypes(itemStack, fabulous);
         }
     }
 }

@@ -4,7 +4,7 @@ import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerAttributes;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 import com.jaquadro.minecraft.storagedrawers.api.storage.attribute.IProtectable;
 import com.jaquadro.minecraft.storagedrawers.block.tile.DrawerModelProperties;
-import com.jaquadro.minecraft.storagedrawers.block.tile.PlatformBlockEntityDrawersStandard;
+import com.jaquadro.minecraft.storagedrawers.client.model.context.DrawerModelContext;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -69,7 +69,8 @@ public class PlatformDecoratedDrawerModel extends DecoratedDrawerModel implement
                     quads.addAll(model.getQuads(state, side, rand, extraData, type));
             };
 
-            DrawerModelContext context = new DrawerModelContext(state, attr, group, protectable);
+            DrawerModelContext context = new DrawerModelContext(state, side, rand, type)
+                .attr(attr).group(group).protectable(protectable);
             emitDecoratedQuads(context, emitModel);
         }
 

@@ -2,12 +2,42 @@ package com.jaquadro.minecraft.storagedrawers.block.tile.tiledata;
 
 import com.jaquadro.minecraft.storagedrawers.api.framing.FrameMaterial;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedMaterials;
+import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class MaterialData extends BlockEntityDataShim implements IFramedMaterials
 {
+    public static final MaterialData EMPTY = new MaterialData();
+
+    public static final Codec<MaterialData> CODEC = RecordCodecBuilder.create(instance ->
+        instance.group(
+            ItemStack.CODEC.fieldOf("frameBase").forGetter(MaterialData::getFrameBase),
+            ItemStack.CODEC.fieldOf("materialSide").forGetter(MaterialData::getSide),
+            ItemStack.CODEC.fieldOf("materialFront").forGetter(MaterialData::getFront),
+            ItemStack.CODEC.fieldOf("materialTrim").forGetter(MaterialData::getTrim)
+        ).apply(instance, MaterialData::new)
+    );
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, MaterialData> STREAM_CODEC = StreamCodec.composite(
+        ItemStack.OPTIONAL_STREAM_CODEC,
+        MaterialData::getFrameBase,
+        ItemStack.OPTIONAL_STREAM_CODEC,
+        MaterialData::getSide,
+        ItemStack.OPTIONAL_STREAM_CODEC,
+        MaterialData::getFront,
+        ItemStack.OPTIONAL_STREAM_CODEC,
+        MaterialData::getTrim,
+        MaterialData::new
+    );
+
     @NotNull
     private ItemStack frameBase;
     @NotNull
@@ -100,53 +130,54 @@ public class MaterialData extends BlockEntityDataShim implements IFramedMaterial
         return materialFront.isEmpty() && materialSide.isEmpty() && materialTrim.isEmpty();
     }
 
-    @Override
-    public void read (CompoundTag tag) {
-        frameBase = ItemStack.EMPTY;
-        if (tag.contains("MatB"))
-            frameBase = ItemStack.of(tag.getCompound("MatB"));
+    public void read (ItemStack stack) {
+        MaterialData data = stack.getOrDefault(ModDataComponents.MATERIAL_DATA.get(), MaterialData.EMPTY);
 
-        materialSide = ItemStack.EMPTY;
-        if (tag.contains("MatS"))
-            materialSide = ItemStack.of(tag.getCompound("MatS"));
-
-        materialFront = ItemStack.EMPTY;
-        if (tag.contains("MatF"))
-            materialFront = ItemStack.of(tag.getCompound("MatF"));
-
-        materialTrim = ItemStack.EMPTY;
-        if (tag.contains("MatT"))
-            materialTrim = ItemStack.of(tag.getCompound("MatT"));
+        frameBase = data.getFrameBase();
+        materialSide = data.getSide();
+        materialFront = data.getFront();
+        materialTrim = data.getTrim();
     }
 
     @Override
-    public CompoundTag write (CompoundTag tag) {
-        if (!frameBase.isEmpty()) {
-            CompoundTag itag = new CompoundTag();
-            frameBase.save(itag);
-            tag.put("MatB", itag);
-        } else if (tag.contains("MatB"))
+    public void read (HolderLookup.Provider provider, CompoundTag tag) {
+        frameBase = ItemStack.EMPTY;
+        if (tag.contains("MatB"))
+            frameBase = ItemStack.parseOptional(provider, tag.getCompound("MatB"));
+
+        materialSide = ItemStack.EMPTY;
+        if (tag.contains("MatS"))
+            materialSide = ItemStack.parseOptional(provider, tag.getCompound("MatS"));
+
+        materialFront = ItemStack.EMPTY;
+        if (tag.contains("MatF"))
+            materialFront = ItemStack.parseOptional(provider, tag.getCompound("MatF"));
+
+        materialTrim = ItemStack.EMPTY;
+        if (tag.contains("MatT"))
+            materialTrim = ItemStack.parseOptional(provider, tag.getCompound("MatT"));
+    }
+
+    @Override
+    public CompoundTag write (HolderLookup.Provider provider, CompoundTag tag) {
+        if (!frameBase.isEmpty())
+            tag.put("MatB", frameBase.saveOptional(provider));
+        else if (tag.contains("MatB"))
             tag.remove("MatB");
 
-        if (!materialSide.isEmpty()) {
-            CompoundTag itag = new CompoundTag();
-            materialSide.save(itag);
-            tag.put("MatS", itag);
-        } else if (tag.contains("MatS"))
+        if (!materialSide.isEmpty())
+            tag.put("MatS", materialSide.saveOptional(provider));
+        else if (tag.contains("MatS"))
             tag.remove("MatS");
 
-        if (!materialFront.isEmpty()) {
-            CompoundTag itag = new CompoundTag();
-            materialFront.save(itag);
-            tag.put("MatF", itag);
-        } else if (tag.contains("MatF"))
+        if (!materialFront.isEmpty())
+            tag.put("MatF", materialFront.saveOptional(provider));
+        else if (tag.contains("MatF"))
             tag.remove("MatF");
 
-        if (!materialTrim.isEmpty()) {
-            CompoundTag itag = new CompoundTag();
-            materialTrim.save(itag);
-            tag.put("MatT", itag);
-        } else if (tag.contains("MatT"))
+        if (!materialTrim.isEmpty())
+            tag.put("MatT", materialTrim.saveOptional(provider));
+        else if (tag.contains("MatT"))
             tag.remove("MatT");
 
         return tag;

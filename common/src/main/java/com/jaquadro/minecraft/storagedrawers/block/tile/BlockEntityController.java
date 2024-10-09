@@ -9,6 +9,7 @@ import com.jaquadro.minecraft.storagedrawers.api.storage.attribute.IProtectable;
 import com.jaquadro.minecraft.storagedrawers.api.storage.attribute.LockAttribute;
 import com.jaquadro.minecraft.storagedrawers.block.BlockControllerIO;
 import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.ControllerHostData;
+import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.MaterialData;
 import com.jaquadro.minecraft.storagedrawers.capabilities.Capabilities;
 import com.jaquadro.minecraft.storagedrawers.capabilities.DrawerItemRepository;
 import com.jaquadro.minecraft.storagedrawers.config.ModCommonConfig;
@@ -784,12 +785,6 @@ public class BlockEntityController extends BaseBlockEntity implements IDrawerGro
         if (capability == null || level == null)
             return null;
         return capability.getCapability(level, getBlockPos());
-    }
-
-    @NotNull
-    @Override
-    public ModelData getModelData () {
-        return FramedModelProperties.getModelData(this);
     }
 
     /*

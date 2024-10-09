@@ -13,6 +13,6 @@ public class RestrictedSlot extends Slot
 
     @Override
     public boolean mayPlace (@NotNull ItemStack stack) {
-        return container.canPlaceItem(getSlotIndex(), stack);
+        return container.canPlaceItem(getContainerSlot(), stack);
     }
 }

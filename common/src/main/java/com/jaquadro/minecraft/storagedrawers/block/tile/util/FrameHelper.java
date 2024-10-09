@@ -4,7 +4,7 @@ import com.jaquadro.minecraft.storagedrawers.api.framing.FrameMaterial;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlock;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedSourceBlock;
 import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.MaterialData;
-import net.minecraft.nbt.CompoundTag;
+import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -34,11 +34,8 @@ public class FrameHelper
         if (resultBlock.supportsFrameMaterial(FrameMaterial.FRONT))
             data.setFront(matFront);
 
-        CompoundTag tag = source.getOrCreateTag().copy();
-        tag = data.write(tag);
-
         ItemStack stack = new ItemStack((Block)resultBlock, source.getCount());
-        stack.setTag(tag);
+        stack.set(ModDataComponents.MATERIAL_DATA.get(), data);
 
         return stack;
     }

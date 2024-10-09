@@ -73,7 +73,7 @@ public class SpriteReplacementModel extends ParentModel
         TextureAtlasSprite sprite;
 
         public ReplacementBakedQuad (BakedQuad quad, @NotNull TextureAtlasSprite sprite) {
-            super(quad.getVertices().clone(), quad.getTintIndex(), quad.getDirection(), quad.getSprite(), quad.isShade(), quad.hasAmbientOcclusion());
+            super(quad.getVertices().clone(), quad.getTintIndex(), quad.getDirection(), quad.getSprite(), quad.isShade());
             this.sprite = sprite;
             remapQuad();
         }
@@ -87,7 +87,7 @@ public class SpriteReplacementModel extends ParentModel
             int uvIndex = 4;
 
             for(int i = 0; i < 4; ++i) {
-                int blk = DefaultVertexFormat.BLOCK.getIntegerSize() * i;
+                int blk = DefaultVertexFormat.BLOCK.getVertexSize() * i;
                 this.vertices[blk + uvIndex] = Float.floatToRawIntBits(this.sprite.getU(getUnInterpolatedU(super.sprite, Float.intBitsToFloat(this.vertices[blk + uvIndex]))));
                 this.vertices[blk + uvIndex + 1] = Float.floatToRawIntBits(this.sprite.getV(getUnInterpolatedV(super.sprite, Float.intBitsToFloat(this.vertices[blk + uvIndex + 1]))));
             }

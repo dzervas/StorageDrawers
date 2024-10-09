@@ -19,12 +19,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
-@OnlyIn(Dist.CLIENT)
 public class BlockEntityFramingRenderer implements BlockEntityRenderer<BlockEntityFramingTable>
 {
     private final BlockEntityRendererProvider.Context context;
@@ -84,10 +81,10 @@ public class BlockEntityFramingRenderer implements BlockEntityRenderer<BlockEnti
         matrix.pushPose();
 
         switch (facing) {
-            case NORTH -> matrix.mulPoseMatrix((new Matrix4f()).rotateY((float)Math.toRadians(180)));
-            case EAST -> matrix.mulPoseMatrix((new Matrix4f()).rotateY((float)Math.toRadians(90)));
-            case WEST -> matrix.mulPoseMatrix((new Matrix4f()).rotateY((float)Math.toRadians(270)));
-            case SOUTH -> matrix.mulPoseMatrix((new Matrix4f()).rotateY((float)Math.toRadians(0)));
+            case NORTH -> matrix.mulPose((new Matrix4f()).rotateY((float)Math.toRadians(180)));
+            case EAST -> matrix.mulPose((new Matrix4f()).rotateY((float)Math.toRadians(90)));
+            case WEST -> matrix.mulPose((new Matrix4f()).rotateY((float)Math.toRadians(270)));
+            case SOUTH -> matrix.mulPose((new Matrix4f()).rotateY((float)Math.toRadians(0)));
         }
 
         switch (facing) {
@@ -99,7 +96,7 @@ public class BlockEntityFramingRenderer implements BlockEntityRenderer<BlockEnti
 
         matrix.translate(tx, ty, tz);
 
-        matrix.mulPoseMatrix((new Matrix4f()).scale(scale, scale, scale));
+        matrix.mulPose((new Matrix4f()).scale(scale, scale, scale));
 
         ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
         BakedModel model = renderer.getModel(item, null, null, 0);

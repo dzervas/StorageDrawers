@@ -1,23 +1,31 @@
 package com.jaquadro.minecraft.storagedrawers.client;
 
 import com.jaquadro.minecraft.storagedrawers.StorageDrawers;
-import com.jaquadro.minecraft.storagedrawers.block.BlockDrawers;
+import com.jaquadro.minecraft.storagedrawers.block.tile.modelprops.DrawerModelProperties;
+import com.jaquadro.minecraft.storagedrawers.block.tile.modelprops.FramedModelProperties;
 import com.jaquadro.minecraft.storagedrawers.client.gui.ClientDetachedDrawerTooltip;
 import com.jaquadro.minecraft.storagedrawers.client.gui.ClientKeyringTooltip;
 import com.jaquadro.minecraft.storagedrawers.client.model.DrawerModelGeometry;
 import com.jaquadro.minecraft.storagedrawers.client.model.DrawerModelStore;
-import com.jaquadro.minecraft.storagedrawers.client.model.PlatformDecoratedDrawerModel;
-import com.jaquadro.minecraft.storagedrawers.client.renderer.BlockEntityDrawersRenderer;
+import com.jaquadro.minecraft.storagedrawers.client.model.PlatformDecoratedModel;
+import com.jaquadro.minecraft.storagedrawers.client.model.context.DrawerModelContext;
+import com.jaquadro.minecraft.storagedrawers.client.model.context.FramedModelContext;
+import com.jaquadro.minecraft.storagedrawers.client.model.decorator.CombinedModelDecorator;
+import com.jaquadro.minecraft.storagedrawers.client.model.decorator.DrawerModelDecorator;
+import com.jaquadro.minecraft.storagedrawers.client.model.decorator.MaterialModelDecorator;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlockEntities;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlocks;
 import com.jaquadro.minecraft.storagedrawers.core.ModContainers;
 import com.jaquadro.minecraft.storagedrawers.inventory.DrawerScreen;
+import com.jaquadro.minecraft.storagedrawers.inventory.FramingTableScreen;
 import com.jaquadro.minecraft.storagedrawers.inventory.tooltip.DetachedDrawerTooltip;
 import com.jaquadro.minecraft.storagedrawers.inventory.tooltip.KeyringTooltip;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -33,6 +41,9 @@ import net.neoforged.neoforge.client.event.TextureAtlasStitchedEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
+import java.util.List;
+import java.util.function.Function;
+
 @EventBusSubscriber(modid = StorageDrawers.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientModBusSubscriber
 {
@@ -43,15 +54,13 @@ public class ClientModBusSubscriber
         event.register(ModContainers.DRAWER_CONTAINER_4.get(), DrawerScreen.Slot4::new);
         event.register(ModContainers.DRAWER_CONTAINER_COMP_2.get(), DrawerScreen.Compacting2::new);
         event.register(ModContainers.DRAWER_CONTAINER_COMP_3.get(), DrawerScreen.Compacting3::new);
-
-        MenuScreens.register(ModContainers.FRAMING_TABLE.get(), FramingTableScreen::new);
+        event.register(ModContainers.FRAMING_TABLE.get(), FramingTableScreen::new);
     }
 
     @SubscribeEvent
     public static void registerEntityRenderers(RegisterRenderers event) {
-        ModBlockEntities.getBlockEntityTypesWithRenderers().forEach(ro -> event.registerBlockEntityRenderer(ro.get(), BlockEntityDrawersRenderer::new));
-
-        event.registerBlockEntityRenderer(ModBlockEntities.FRAMING_TABLE.get(), BlockEntityFramingRenderer::new);
+        ModBlockEntities.DRAWER_RENDERERS.forEach(ro -> event.registerBlockEntityRenderer(ro.blockEntityType().get(), ro.renderProvider()));
+        ModBlockEntities.FRAMING_TABLE_RENDERERS.forEach(ro -> event.registerBlockEntityRenderer(ro.blockEntityType().get(), ro.renderProvider()));
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -100,42 +109,42 @@ public class ClientModBusSubscriber
 
         List.of("framed_full_drawers_4", "framed_full_drawers_2", "framed_full_drawers_1", "framed_half_drawers_4",
             "framed_half_drawers_2", "framed_half_drawers_1").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(new ResourceLocation("storagedrawers", d), "inventory");
+            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
             BakedModel test = event.getModels().get(testResource);
             if (test != null)
                 event.getModels().put(testResource, makeFramedStandardDrawerModel(test));
         });
 
         List.of("framed_compacting_drawers_2", "framed_compacting_half_drawers_2").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(new ResourceLocation("storagedrawers", d), "inventory");
+            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
             BakedModel test = event.getModels().get(testResource);
             if (test != null)
                 event.getModels().put(testResource, makeFramedComp2DrawerModel(test));
         });
 
         List.of("framed_compacting_drawers_3", "framed_compacting_half_drawers_3").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(new ResourceLocation("storagedrawers", d), "inventory");
+            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
             BakedModel test = event.getModels().get(testResource);
             if (test != null)
                 event.getModels().put(testResource, makeFramedComp3DrawerModel(test));
         });
 
         List.of("framed_trim").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(new ResourceLocation("storagedrawers", d), "inventory");
+            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
             BakedModel test = event.getModels().get(testResource);
             if (test != null)
                 event.getModels().put(testResource, makeFramedTrimModel(test));
         });
 
         List.of("framed_controller").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(new ResourceLocation("storagedrawers", d), "inventory");
+            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
             BakedModel test = event.getModels().get(testResource);
             if (test != null)
                 event.getModels().put(testResource, makeFramedControllerModel(test));
         });
 
         List.of("framed_controller_io").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(new ResourceLocation("storagedrawers", d), "inventory");
+            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
             BakedModel test = event.getModels().get(testResource);
             if (test != null)
                 event.getModels().put(testResource, makeFramedControllerIOModel(test));
@@ -161,7 +170,7 @@ public class ClientModBusSubscriber
 
     static BakedModel makeStandardDrawerModel(BakedModel parentModel) {
         DrawerModelDecorator decorator = new DrawerModelDecorator(DrawerModelStore.INSTANCE);
-        return new ForgeDecoratedModel<>(parentModel, decorator, DrawerModelProperties.INSTANCE);
+        return new PlatformDecoratedModel<>(parentModel, decorator, DrawerModelProperties.INSTANCE);
     }
 
     static BakedModel makeFramedDrawerModel (BakedModel parentModel, DrawerModelStore.FrameMatSet matSet) {
@@ -169,7 +178,7 @@ public class ClientModBusSubscriber
         decorator.add(new DrawerModelDecorator(DrawerModelStore.INSTANCE));
         decorator.add(new MaterialModelDecorator.FacingSizedSlotted<>(matSet, true));
 
-        return new ForgeDecoratedModel<>(parentModel, decorator, DrawerModelProperties.INSTANCE);
+        return new PlatformDecoratedModel<>(parentModel, decorator, DrawerModelProperties.INSTANCE);
     }
 
     static BakedModel makeFramedStandardDrawerModel(BakedModel parentModel) {
@@ -181,7 +190,7 @@ public class ClientModBusSubscriber
         decorator.add(new DrawerModelDecorator(DrawerModelStore.INSTANCE));
         decorator.add(new MaterialModelDecorator.FacingSizedOpen<>(matSet, true));
 
-        return new ForgeDecoratedModel<>(parentModel, decorator, DrawerModelProperties.INSTANCE);
+        return new PlatformDecoratedModel<>(parentModel, decorator, DrawerModelProperties.INSTANCE);
     }
 
     static BakedModel makeFramedComp2DrawerModel(BakedModel parentModel) {
@@ -195,18 +204,18 @@ public class ClientModBusSubscriber
     static BakedModel makeFramedTrimModel(BakedModel parentModel) {
         MaterialModelDecorator<FramedModelContext> decorator =
             new MaterialModelDecorator.Single<>(DrawerModelStore.FramedTrimMaterials, true);
-        return new ForgeDecoratedModel<>(parentModel, decorator, FramedModelProperties.INSTANCE);
+        return new PlatformDecoratedModel<>(parentModel, decorator, FramedModelProperties.INSTANCE);
     }
 
     static BakedModel makeFramedControllerModel(BakedModel parentModel) {
         MaterialModelDecorator<FramedModelContext> decorator =
             new MaterialModelDecorator.Facing<>(DrawerModelStore.FramedControllerMaterials, true);
-        return new ForgeDecoratedModel<>(parentModel, decorator, FramedModelProperties.INSTANCE);
+        return new PlatformDecoratedModel<>(parentModel, decorator, FramedModelProperties.INSTANCE);
     }
 
     static BakedModel makeFramedControllerIOModel(BakedModel parentModel) {
         MaterialModelDecorator<FramedModelContext> decorator =
             new MaterialModelDecorator.Single<>(DrawerModelStore.FramedControllerIOMaterials, true);
-        return new ForgeDecoratedModel<>(parentModel, decorator, FramedModelProperties.INSTANCE);
+        return new PlatformDecoratedModel<>(parentModel, decorator, FramedModelProperties.INSTANCE);
     }
 }

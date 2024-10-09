@@ -6,7 +6,8 @@ import com.jaquadro.minecraft.storagedrawers.api.storage.attribute.IProtectable;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.MaterialData;
 import com.jaquadro.minecraft.storagedrawers.client.model.context.DrawerModelContext;
-import com.jaquadro.minecraft.storagedrawers.client.model.context.ModelContextSupplier;
+import com.jaquadro.minecraft.storagedrawers.client.model.ModelContextSupplier;
+import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -15,8 +16,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.client.model.data.ModelData;
-import net.minecraftforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
 import org.jetbrains.annotations.Nullable;
 
 public class DrawerModelProperties implements ModelContextSupplier<DrawerModelContext>
@@ -47,8 +48,7 @@ public class DrawerModelProperties implements ModelContextSupplier<DrawerModelCo
 
     @Override
     public DrawerModelContext makeContext (ItemStack stack) {
-        MaterialData data = new MaterialData();
-        data.read(stack.getOrCreateTag());
+        MaterialData data = stack.getOrDefault(ModDataComponents.MATERIAL_DATA.get(), MaterialData.EMPTY);
 
         Block block = Blocks.AIR;
         if (stack.getItem() instanceof BlockItem blockItem)

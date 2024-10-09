@@ -1,6 +1,6 @@
 package com.jaquadro.minecraft.storagedrawers.inventory;
 
-import com.jaquadro.minecraft.storagedrawers.StorageDrawers;
+import com.jaquadro.minecraft.storagedrawers.ModConstants;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class FramingTableScreen extends AbstractContainerScreen<ContainerFramingTable>
 {
-    private static final ResourceLocation guiTextires = StorageDrawers.rl("textures/gui/framing.png");
+    private static final ResourceLocation guiTextires = ModConstants.loc("textures/gui/framing.png");
 
     private final ResourceLocation background;
     private final Inventory inventory;

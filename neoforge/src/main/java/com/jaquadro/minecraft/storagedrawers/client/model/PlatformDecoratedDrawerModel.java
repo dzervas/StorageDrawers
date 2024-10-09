@@ -1,5 +1,6 @@
 package com.jaquadro.minecraft.storagedrawers.client.model;
 
+/*
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerAttributes;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
 import com.jaquadro.minecraft.storagedrawers.api.storage.attribute.IProtectable;
@@ -95,3 +96,4 @@ public class PlatformDecoratedDrawerModel extends DecoratedDrawerModel implement
         return mainModel.getRenderPasses(itemStack, fabulous);
     }
 }
+*/

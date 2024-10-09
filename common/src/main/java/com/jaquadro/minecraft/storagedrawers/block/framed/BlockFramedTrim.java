@@ -7,6 +7,7 @@ import com.jaquadro.minecraft.storagedrawers.block.BlockTrim;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityTrim;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlockEntity;
+import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import com.jaquadro.minecraft.storagedrawers.util.WorldUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -37,8 +38,7 @@ public class BlockFramedTrim extends BlockTrim implements EntityBlock, IFramedBl
         if (blockEntity == null)
             return;
 
-        CompoundTag tag = stack.getOrCreateTag();
-        blockEntity.material().read(tag);
+        blockEntity.material().read(stack);
         blockEntity.setChanged();
     }
 
@@ -55,9 +55,8 @@ public class BlockFramedTrim extends BlockTrim implements EntityBlock, IFramedBl
         if (tile == null)
             return drop;
 
-        CompoundTag data = drop.getOrCreateTag();
-        tile.material().write(data);
-        drop.setTag(data);
+        if (!tile.material().isEmpty())
+            drop.set(ModDataComponents.MATERIAL_DATA.get(), tile.material());
 
         return drop;
     }

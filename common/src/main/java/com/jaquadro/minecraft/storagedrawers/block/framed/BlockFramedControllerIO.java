@@ -5,10 +5,9 @@ import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlock;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlockEntity;
 import com.jaquadro.minecraft.storagedrawers.block.BlockControllerIO;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityControllerIO;
-import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityTrim;
+import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import com.jaquadro.minecraft.storagedrawers.util.WorldUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -34,8 +33,7 @@ public class BlockFramedControllerIO extends BlockControllerIO implements IFrame
         if (blockEntity == null)
             return;
 
-        CompoundTag tag = stack.getOrCreateTag();
-        blockEntity.material().read(tag);
+        blockEntity.material().read(stack);
         blockEntity.setChanged();
     }
 
@@ -52,9 +50,8 @@ public class BlockFramedControllerIO extends BlockControllerIO implements IFrame
         if (tile == null)
             return drop;
 
-        CompoundTag data = drop.getOrCreateTag();
-        tile.material().write(data);
-        drop.setTag(data);
+        if (!tile.material().isEmpty())
+            drop.set(ModDataComponents.MATERIAL_DATA.get(), tile.material());
 
         return drop;
     }

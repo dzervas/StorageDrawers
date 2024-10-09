@@ -1,13 +1,17 @@
 package com.jaquadro.minecraft.storagedrawers.block;
 
+import com.jaquadro.minecraft.storagedrawers.ModServices;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityFramingTable;
+import com.jaquadro.minecraft.storagedrawers.config.ModCommonConfig;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlockEntities;
 import com.jaquadro.minecraft.storagedrawers.inventory.ContainerDrawers1;
 import com.jaquadro.minecraft.storagedrawers.inventory.ContainerDrawers2;
 import com.jaquadro.minecraft.storagedrawers.inventory.ContainerDrawers4;
 import com.jaquadro.minecraft.storagedrawers.inventory.ContainerDrawersComp3;
 import com.jaquadro.minecraft.storagedrawers.util.WorldUtils;
+import com.mojang.serialization.MapCodec;
+import com.texelsaurus.minecraft.chameleon.inventory.ContentMenuProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -41,6 +45,8 @@ public class BlockFramingTable extends HorizontalDirectionalBlock implements Ent
 {
     public static final EnumProperty<EnumFramingTablePart> PART = EnumProperty.create("part", EnumFramingTablePart.class);
 
+    public static final MapCodec<BlockFramingTable> CODEC = simpleCodec(BlockFramingTable::new);
+
     protected static final VoxelShape TABLE_TOP = Block.box(0.0D, 14.0D, 0.0D, 16.0D, 16.0D, 16.0D);
     protected static final VoxelShape TABLE_BOTTOM = Block.box(1.0D, 0.0D, 1.0D, 14.0D, 16.0D, 14.0D);
     protected static final VoxelShape TABLE_SHAPE = Shapes.or(TABLE_TOP, TABLE_BOTTOM);
@@ -49,6 +55,11 @@ public class BlockFramingTable extends HorizontalDirectionalBlock implements Ent
         super(properties);
 
         this.registerDefaultState(getStateDefinition().any().setValue(PART, EnumFramingTablePart.RIGHT));
+    }
+
+    @Override
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec () {
+        return CODEC;
     }
 
     public static Direction getTableDirection (BlockGetter getter, BlockPos pos) {
@@ -66,7 +77,7 @@ public class BlockFramingTable extends HorizontalDirectionalBlock implements Ent
     }
 
     @Override
-    public void playerWillDestroy (Level level, BlockPos pos, BlockState state, Player player) {
+    public BlockState playerWillDestroy (Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide && player.isCreative()) {
             EnumFramingTablePart part = state.getValue(PART);
             if (part == EnumFramingTablePart.RIGHT) {
@@ -78,7 +89,7 @@ public class BlockFramingTable extends HorizontalDirectionalBlock implements Ent
             }
         }
 
-        super.playerWillDestroy(level, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Nullable
@@ -128,7 +139,7 @@ public class BlockFramingTable extends HorizontalDirectionalBlock implements Ent
     }
 
     @Override
-    public InteractionResult use (@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+    public InteractionResult useWithoutItem (@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hit) {
         if (level.isClientSide)
             return InteractionResult.SUCCESS;
 
@@ -139,8 +150,22 @@ public class BlockFramingTable extends HorizontalDirectionalBlock implements Ent
         return InteractionResult.CONSUME;
     }
 
+    @Nullable
+    @Override
+    protected MenuProvider getMenuProvider (BlockState blockState, Level level, BlockPos blockPos) {
+        BlockEntityFramingTable blockEntity = WorldUtils.getBlockEntity(level, blockPos, BlockEntityFramingTable.class);
+        if (blockEntity == null)
+            return null;
+
+        return new BlockEntityFramingTable.ContentProvider(blockEntity);
+    }
+
     private void openUI(Level level, BlockPos pos, Player player) {
-        BlockEntityFramingTable blockEntity = WorldUtils.getBlockEntity(level, pos, BlockEntityFramingTable.class);
-        NetworkHooks.openScreen((ServerPlayer) player, blockEntity, extraData -> extraData.writeBlockPos(pos));
+        MenuProvider provider = level.getBlockState(pos).getMenuProvider(level, pos);
+        if (ModCommonConfig.INSTANCE.GENERAL.debugTrace.get())
+            ModServices.log.info("Open BlockDrawers UI " + pos);
+
+        if (provider instanceof ContentMenuProvider<?> menu)
+            menu.openMenu((ServerPlayer) player);
     }
 }

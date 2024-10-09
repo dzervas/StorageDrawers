@@ -6,10 +6,15 @@ import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlock;
 import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.MaterialData;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlockEntities;
 import com.jaquadro.minecraft.storagedrawers.core.ModContainers;
-import com.jaquadro.minecraft.storagedrawers.inventory.ContainerFramingTable;
+import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
+import com.jaquadro.minecraft.storagedrawers.inventory.*;
+import com.texelsaurus.minecraft.chameleon.inventory.ContentMenuProvider;
+import com.texelsaurus.minecraft.chameleon.inventory.content.PositionContent;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,7 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockEntityFramingTable extends BaseBlockEntity implements Container, MenuProvider
+public class BlockEntityFramingTable extends BaseBlockEntity implements Container
 {
     public static final int SLOT_INPUT = 0;
     public static final int SLOT_SIDE = 1;
@@ -120,8 +125,7 @@ public class BlockEntityFramingTable extends BaseBlockEntity implements Containe
         if (level != null && !stack.isEmpty() && stack.getItem() instanceof BlockItem blockItem) {
             Block block = blockItem.getBlock();
             if (block instanceof IFramedBlock fb) {
-                MaterialData data = new MaterialData();
-                data.read(stack.getOrCreateTag());
+                MaterialData data = stack.getOrDefault(ModDataComponents.MATERIAL_DATA.get(), MaterialData.EMPTY);
 
                 if (fb.supportsFrameMaterial(FrameMaterial.SIDE)) {
                     if (!materialData.getSide().isEmpty() && !data.getSide().isEmpty()) {
@@ -146,9 +150,7 @@ public class BlockEntityFramingTable extends BaseBlockEntity implements Containe
 
                 ItemStack source = data.getFrameBase();
                 if (!source.isEmpty()) {
-                    source.setTag(stack.getOrCreateTag().copy());
-                    MaterialData empty = new MaterialData();
-                    empty.write(source.getTag());
+                    source.remove(ModDataComponents.MATERIAL_DATA.get());
 
                     inputStack = source;
 
@@ -199,33 +201,27 @@ public class BlockEntityFramingTable extends BaseBlockEntity implements Containe
     }
 
     @Override
-    protected void readFixed (CompoundTag tag) {
-        super.readFixed(tag);
+    protected void readFixed (HolderLookup.Provider provider, CompoundTag tag) {
+        super.readFixed(provider, tag);
 
         inputStack = ItemStack.EMPTY;
         if (tag.contains("Input"))
-            inputStack = ItemStack.of(tag.getCompound("Input"));
+            inputStack = ItemStack.parseOptional(provider, tag.getCompound("Input"));
 
         resultStack = ItemStack.EMPTY;
         if (tag.contains("Result"))
-            resultStack = ItemStack.of(tag.getCompound("Result"));
+            resultStack = ItemStack.parseOptional(provider, tag.getCompound("Result"));
     }
 
     @Override
-    protected CompoundTag writeFixed (CompoundTag tag) {
-        tag = super.writeFixed(tag);
+    protected CompoundTag writeFixed (HolderLookup.Provider provider, CompoundTag tag) {
+        tag = super.writeFixed(provider, tag);
 
-        if (!inputStack.isEmpty()) {
-            CompoundTag itag = new CompoundTag();
-            inputStack.save(itag);
-            tag.put("Input", itag);
-        }
+        if (!inputStack.isEmpty())
+            tag.put("Input", inputStack.saveOptional(provider));
 
-        if (!resultStack.isEmpty()) {
-            CompoundTag itag = new CompoundTag();
-            resultStack.save(itag);
-            tag.put("Result", itag);
-        }
+        if (!resultStack.isEmpty())
+            tag.put("Result", resultStack.saveOptional(provider));
 
         return tag;
     }
@@ -252,14 +248,28 @@ public class BlockEntityFramingTable extends BaseBlockEntity implements Containe
         return state.isSolid();
     }
 
-    @Override
-    public @NotNull Component getDisplayName () {
-        return Component.translatable("container.storagedrawers.framing_table");
-    }
+    public static class ContentProvider implements ContentMenuProvider<PositionContent>
+    {
+        private BlockEntityFramingTable entity;
 
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu (int windowId, @NotNull Inventory playInventory, @NotNull Player player) {
-        return new ContainerFramingTable(ModContainers.FRAMING_TABLE.get(), windowId, playInventory, this);
+        public ContentProvider (BlockEntityFramingTable entity) {
+            this.entity = entity;
+        }
+
+        @Override
+        public PositionContent createContent (ServerPlayer player) {
+            return new PositionContent(entity.getBlockPos());
+        }
+
+        @Override
+        public Component getDisplayName () {
+            return Component.translatable("container.storagedrawers.framing_table");
+        }
+
+        @Nullable
+        @Override
+        public AbstractContainerMenu createMenu (int id, Inventory inventory, Player player) {
+            return new ContainerFramingTable(ModContainers.FRAMING_TABLE.get(), id, inventory, entity);
+        }
     }
 }
