@@ -5,6 +5,7 @@ import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlock;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlockEntity;
 import com.jaquadro.minecraft.storagedrawers.block.BlockController;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityController;
+import com.jaquadro.minecraft.storagedrawers.components.item.FrameData;
 import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import com.jaquadro.minecraft.storagedrawers.util.WorldUtils;
 import net.minecraft.core.BlockPos;
@@ -51,7 +52,7 @@ public class BlockFramedController extends BlockController implements IFramedBlo
             return drop;
 
         if (!tile.material().isEmpty())
-            drop.set(ModDataComponents.MATERIAL_DATA.get(), tile.material());
+            drop.set(ModDataComponents.FRAME_DATA.get(), new FrameData(tile.material()));
 
         return drop;
     }

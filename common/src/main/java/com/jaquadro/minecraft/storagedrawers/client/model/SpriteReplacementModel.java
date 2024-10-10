@@ -1,6 +1,7 @@
 package com.jaquadro.minecraft.storagedrawers.client.model;
 
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -84,24 +85,23 @@ public class SpriteReplacementModel extends ParentModel
         }
 
         private void remapQuad() {
-            int uvIndex = 4;
-
             for(int i = 0; i < 4; ++i) {
-                int blk = DefaultVertexFormat.BLOCK.getVertexSize() * i;
-                this.vertices[blk + uvIndex] = Float.floatToRawIntBits(this.sprite.getU(getUnInterpolatedU(super.sprite, Float.intBitsToFloat(this.vertices[blk + uvIndex]))));
-                this.vertices[blk + uvIndex + 1] = Float.floatToRawIntBits(this.sprite.getV(getUnInterpolatedV(super.sprite, Float.intBitsToFloat(this.vertices[blk + uvIndex + 1]))));
+                int blk = DefaultVertexFormat.BLOCK.getVertexSize() / 4 * i;
+                int offset = DefaultVertexFormat.BLOCK.getOffset(VertexFormatElement.UV) / 4;
+                this.vertices[blk + offset] = Float.floatToRawIntBits(this.sprite.getU(getUnInterpolatedU(super.sprite, Float.intBitsToFloat(this.vertices[blk + offset]))));
+                this.vertices[blk + offset + 1] = Float.floatToRawIntBits(this.sprite.getV(getUnInterpolatedV(super.sprite, Float.intBitsToFloat(this.vertices[blk + offset + 1]))));
             }
 
         }
 
         private float getUnInterpolatedU(TextureAtlasSprite sprite, float u) {
             float diff = sprite.getU1() - sprite.getU0();
-            return (u - sprite.getU0()) / diff * 16.0F;
+            return (u - sprite.getU0()) / diff;
         }
 
         private float getUnInterpolatedV(TextureAtlasSprite sprite, float v) {
             float diff = sprite.getV1() - sprite.getV0();
-            return (v - sprite.getV0()) / diff * 16.0F;
+            return (v - sprite.getV0()) / diff;
         }
     }
 }

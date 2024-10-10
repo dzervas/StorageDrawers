@@ -7,6 +7,7 @@ import com.jaquadro.minecraft.storagedrawers.block.BlockTrim;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityTrim;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlockEntity;
+import com.jaquadro.minecraft.storagedrawers.components.item.FrameData;
 import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import com.jaquadro.minecraft.storagedrawers.util.WorldUtils;
 import net.minecraft.core.BlockPos;
@@ -56,7 +57,7 @@ public class BlockFramedTrim extends BlockTrim implements EntityBlock, IFramedBl
             return drop;
 
         if (!tile.material().isEmpty())
-            drop.set(ModDataComponents.MATERIAL_DATA.get(), tile.material());
+            drop.set(ModDataComponents.FRAME_DATA.get(), new FrameData(tile.material()));
 
         return drop;
     }

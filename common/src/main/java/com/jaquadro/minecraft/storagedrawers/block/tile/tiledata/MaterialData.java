@@ -2,6 +2,7 @@ package com.jaquadro.minecraft.storagedrawers.block.tile.tiledata;
 
 import com.jaquadro.minecraft.storagedrawers.api.framing.FrameMaterial;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedMaterials;
+import com.jaquadro.minecraft.storagedrawers.components.item.FrameData;
 import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -131,12 +132,12 @@ public class MaterialData extends BlockEntityDataShim implements IFramedMaterial
     }
 
     public void read (ItemStack stack) {
-        MaterialData data = stack.getOrDefault(ModDataComponents.MATERIAL_DATA.get(), MaterialData.EMPTY);
+        FrameData data = stack.getOrDefault(ModDataComponents.FRAME_DATA.get(), FrameData.EMPTY);
 
-        frameBase = data.getFrameBase();
-        materialSide = data.getSide();
-        materialFront = data.getFront();
-        materialTrim = data.getTrim();
+        frameBase = data.base();
+        materialSide = data.side();
+        materialFront = data.front();
+        materialTrim = data.trim();
     }
 
     @Override

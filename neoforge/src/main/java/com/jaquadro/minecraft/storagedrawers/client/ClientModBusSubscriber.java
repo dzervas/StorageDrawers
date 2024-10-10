@@ -7,6 +7,7 @@ import com.jaquadro.minecraft.storagedrawers.client.gui.ClientDetachedDrawerTool
 import com.jaquadro.minecraft.storagedrawers.client.gui.ClientKeyringTooltip;
 import com.jaquadro.minecraft.storagedrawers.client.model.DrawerModelGeometry;
 import com.jaquadro.minecraft.storagedrawers.client.model.DrawerModelStore;
+import com.jaquadro.minecraft.storagedrawers.client.model.ParentModel;
 import com.jaquadro.minecraft.storagedrawers.client.model.PlatformDecoratedModel;
 import com.jaquadro.minecraft.storagedrawers.client.model.context.DrawerModelContext;
 import com.jaquadro.minecraft.storagedrawers.client.model.context.FramedModelContext;
@@ -95,7 +96,6 @@ public class ClientModBusSubscriber
             DrawerModelStore.tryAddModel(loc, event.getModels().get(loc));
         });
 
-        ModBlocks.getDrawers().forEach(blockDrawers -> replaceBlock(event, blockDrawers, ClientModBusSubscriber::makeStandardDrawerModel));
         ModBlocks.getFramedDrawers().forEach(blockDrawers -> replaceBlock(event, blockDrawers, ClientModBusSubscriber::makeFramedStandardDrawerModel));
 
         replaceBlock(event, ModBlocks.FRAMED_COMPACTING_DRAWERS_2.get(), ClientModBusSubscriber::makeFramedComp2DrawerModel);
@@ -106,6 +106,8 @@ public class ClientModBusSubscriber
         replaceBlock(event, ModBlocks.FRAMED_TRIM.get(), ClientModBusSubscriber::makeFramedTrimModel);
         replaceBlock(event, ModBlocks.FRAMED_CONTROLLER.get(), ClientModBusSubscriber::makeFramedControllerModel);
         replaceBlock(event, ModBlocks.FRAMED_CONTROLLER_IO.get(), ClientModBusSubscriber::makeFramedControllerIOModel);
+
+        ModBlocks.getDrawers().forEach(blockDrawers -> replaceBlock(event, blockDrawers, ClientModBusSubscriber::makeStandardDrawerModel));
 
         List.of("framed_full_drawers_4", "framed_full_drawers_2", "framed_full_drawers_1", "framed_half_drawers_4",
             "framed_half_drawers_2", "framed_half_drawers_1").forEach(d -> {
@@ -160,6 +162,9 @@ public class ClientModBusSubscriber
                 StorageDrawers.log.warn("Got back null model from ModelBakeEvent.ModelManager for resource " + modelResource.toString());
                 continue;
             } else if (parentModel == missing)
+                continue;
+
+            if (parentModel instanceof ParentModel)
                 continue;
 
             if (DrawerModelStore.INSTANCE.isTargetedModel(modelResource)) {

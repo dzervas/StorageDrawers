@@ -6,6 +6,7 @@ import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlockEntity;
 import com.jaquadro.minecraft.storagedrawers.api.storage.BlockType;
 import com.jaquadro.minecraft.storagedrawers.block.BlockStandardDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawers;
+import com.jaquadro.minecraft.storagedrawers.components.item.FrameData;
 import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import com.jaquadro.minecraft.storagedrawers.util.WorldUtils;
 import net.minecraft.core.BlockPos;
@@ -49,7 +50,7 @@ public class BlockFramedStandardDrawers extends BlockStandardDrawers implements 
         ItemStack drop = super.getMainDrop(state, tile);
 
         if (!tile.material().isEmpty())
-            drop.set(ModDataComponents.MATERIAL_DATA.get(), tile.material());
+            drop.set(ModDataComponents.FRAME_DATA.get(), new FrameData(tile.material()));
 
         return drop;
     }

@@ -7,6 +7,7 @@ import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.MaterialData;
 import com.jaquadro.minecraft.storagedrawers.client.model.context.DrawerModelContext;
 import com.jaquadro.minecraft.storagedrawers.client.model.ModelContextSupplier;
+import com.jaquadro.minecraft.storagedrawers.components.item.FrameData;
 import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
@@ -48,7 +49,7 @@ public class DrawerModelProperties implements ModelContextSupplier<DrawerModelCo
 
     @Override
     public DrawerModelContext makeContext (ItemStack stack) {
-        MaterialData data = stack.getOrDefault(ModDataComponents.MATERIAL_DATA.get(), MaterialData.EMPTY);
+        MaterialData data = stack.getOrDefault(ModDataComponents.FRAME_DATA.get(), FrameData.EMPTY).asMaterialData();
 
         Block block = Blocks.AIR;
         if (stack.getItem() instanceof BlockItem blockItem)

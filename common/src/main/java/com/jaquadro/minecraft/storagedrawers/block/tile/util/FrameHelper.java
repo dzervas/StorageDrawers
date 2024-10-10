@@ -4,6 +4,7 @@ import com.jaquadro.minecraft.storagedrawers.api.framing.FrameMaterial;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlock;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedSourceBlock;
 import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.MaterialData;
+import com.jaquadro.minecraft.storagedrawers.components.item.FrameData;
 import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -35,7 +36,7 @@ public class FrameHelper
             data.setFront(matFront);
 
         ItemStack stack = new ItemStack((Block)resultBlock, source.getCount());
-        stack.set(ModDataComponents.MATERIAL_DATA.get(), data);
+        stack.set(ModDataComponents.FRAME_DATA.get(), new FrameData(data));
 
         return stack;
     }

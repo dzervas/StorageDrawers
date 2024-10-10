@@ -4,6 +4,7 @@ import com.jaquadro.minecraft.storagedrawers.api.framing.FrameMaterial;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedSourceBlock;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlock;
 import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.MaterialData;
+import com.jaquadro.minecraft.storagedrawers.components.item.FrameData;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlockEntities;
 import com.jaquadro.minecraft.storagedrawers.core.ModContainers;
 import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
@@ -125,38 +126,38 @@ public class BlockEntityFramingTable extends BaseBlockEntity implements Containe
         if (level != null && !stack.isEmpty() && stack.getItem() instanceof BlockItem blockItem) {
             Block block = blockItem.getBlock();
             if (block instanceof IFramedBlock fb) {
-                MaterialData data = stack.getOrDefault(ModDataComponents.MATERIAL_DATA.get(), MaterialData.EMPTY);
+                FrameData data = stack.getOrDefault(ModDataComponents.FRAME_DATA.get(), FrameData.EMPTY);
 
                 if (fb.supportsFrameMaterial(FrameMaterial.SIDE)) {
-                    if (!materialData.getSide().isEmpty() && !data.getSide().isEmpty()) {
+                    if (!materialData.getSide().isEmpty() && !data.side().isEmpty()) {
                         resultStack = stack;
                         return;
                     }
                 }
 
                 if (fb.supportsFrameMaterial(FrameMaterial.TRIM)) {
-                    if (!materialData.getTrim().isEmpty() && !data.getTrim().isEmpty()) {
+                    if (!materialData.getTrim().isEmpty() && !data.trim().isEmpty()) {
                         resultStack = stack;
                         return;
                     }
                 }
 
                 if (fb.supportsFrameMaterial(FrameMaterial.FRONT)) {
-                    if (!materialData.getFront().isEmpty() && !data.getFront().isEmpty()) {
+                    if (!materialData.getFront().isEmpty() && !data.front().isEmpty()) {
                         resultStack = stack;
                         return;
                     }
                 }
 
-                ItemStack source = data.getFrameBase();
+                ItemStack source = data.base();
                 if (!source.isEmpty()) {
-                    source.remove(ModDataComponents.MATERIAL_DATA.get());
+                    source.remove(ModDataComponents.FRAME_DATA.get());
 
                     inputStack = source;
 
-                    materialData.setSide(fb.supportsFrameMaterial(FrameMaterial.SIDE) ? data.getSide() : ItemStack.EMPTY);
-                    materialData.setTrim(fb.supportsFrameMaterial(FrameMaterial.TRIM) ? data.getTrim() : ItemStack.EMPTY);
-                    materialData.setFront(fb.supportsFrameMaterial(FrameMaterial.FRONT) ? data.getFront() : ItemStack.EMPTY);
+                    materialData.setSide(fb.supportsFrameMaterial(FrameMaterial.SIDE) ? data.side() : ItemStack.EMPTY);
+                    materialData.setTrim(fb.supportsFrameMaterial(FrameMaterial.TRIM) ? data.trim() : ItemStack.EMPTY);
+                    materialData.setFront(fb.supportsFrameMaterial(FrameMaterial.FRONT) ? data.front() : ItemStack.EMPTY);
 
                     return;
                 }
