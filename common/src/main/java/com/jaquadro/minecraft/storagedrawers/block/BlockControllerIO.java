@@ -1,5 +1,6 @@
 package com.jaquadro.minecraft.storagedrawers.block;
 
+import com.jaquadro.minecraft.storagedrawers.ModServices;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedSourceBlock;
 import com.jaquadro.minecraft.storagedrawers.api.storage.INetworked;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityControllerIO;
@@ -39,7 +40,7 @@ public class BlockControllerIO extends Block implements INetworked, EntityBlock,
 
     @Override
     public BlockEntityControllerIO newBlockEntity (@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new BlockEntityControllerIO(pos, state);
+        return ModServices.RESOURCE_FACTORY.createBlockEntityControllerIO().create(pos, state);
     }
 
     @Override

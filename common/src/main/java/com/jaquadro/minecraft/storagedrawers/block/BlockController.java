@@ -1,5 +1,6 @@
 package com.jaquadro.minecraft.storagedrawers.block;
 
+import com.jaquadro.minecraft.storagedrawers.ModServices;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedSourceBlock;
 import com.jaquadro.minecraft.storagedrawers.api.security.ISecurityProvider;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerAttributesGroupControl;
@@ -160,7 +161,7 @@ public class BlockController extends HorizontalDirectionalBlock implements INetw
 
     @Override
     public BlockEntityController newBlockEntity (@NotNull BlockPos pos, @NotNull BlockState state) {
-        return new BlockEntityController(pos, state);
+        return ModServices.RESOURCE_FACTORY.createBlockEntityController().create(pos, state);
     }
 
     @Override

@@ -40,7 +40,7 @@ public final class ModBlockEntities {
     public static final RegistryEntry<BlockEntityType<BlockEntityDrawersComp>> FRACTIONAL_DRAWERS_3 = registerDrawerBlockEntityType("fractional_drawers_3", ModServices.RESOURCE_FACTORY.createBlockEntityDrawersComp(3), BlockCompDrawers.class, 3);
 
     public static final RegistryEntry<BlockEntityType<BlockEntityController>> CONTROLLER = registerControllerBlockEntityType("controller", ModServices.RESOURCE_FACTORY.createBlockEntityController());
-    public static final RegistryEntry<BlockEntityType<BlockEntityControllerIO>> CONTROLLER_IO = registerControllerBlockEntityType("controller_io", ModServices.RESOURCE_FACTORY.createBlockEntityControllerIO());
+    public static final RegistryEntry<BlockEntityType<BlockEntityControllerIO>> CONTROLLER_IO = registerControllerIOBlockEntityType("controller_io", ModServices.RESOURCE_FACTORY.createBlockEntityControllerIO());
 
     public static final RegistryEntry<BlockEntityType<BlockEntityTrim>> TRIM = BLOCK_ENTITIES.register("trim", () ->
         BlockEntityType.Builder.of(ModServices.RESOURCE_FACTORY.createBlockEntityTrim(), ModBlocks.FRAMED_TRIM.get()).build(null));
@@ -74,7 +74,7 @@ public final class ModBlockEntities {
     }
 
     public static void init(ChameleonInit.InitContext context) {
-        FRAMING_TABLE_RENDERERS.add(new RenderRecord<BlockEntityFramingTable>(FRAMING_TABLE, BlockEntityFramingRenderer::new));
+        FRAMING_TABLE_RENDERERS.add(new RenderRecord<>(FRAMING_TABLE, BlockEntityFramingRenderer::new));
 
         BLOCK_ENTITIES.init(context);
     }

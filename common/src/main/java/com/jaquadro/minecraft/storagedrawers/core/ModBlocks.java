@@ -20,6 +20,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public final class ModBlocks
@@ -339,7 +340,7 @@ public final class ModBlocks
     }
 
     public static Stream<IFramedBlock> getFramedBlocks() {
-        return BLOCKS.stream().filter(IFramedBlock.class::isInstance).map(IFramedBlock.class::cast);
+        return BLOCKS.stream().map(Supplier::get).filter(IFramedBlock.class::isInstance).map(IFramedBlock.class::cast);
     }
 
     private static boolean predFalse (BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {

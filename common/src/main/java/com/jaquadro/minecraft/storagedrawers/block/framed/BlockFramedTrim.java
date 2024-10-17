@@ -1,9 +1,11 @@
 package com.jaquadro.minecraft.storagedrawers.block.framed;
 
+import com.jaquadro.minecraft.storagedrawers.ModServices;
 import com.jaquadro.minecraft.storagedrawers.api.framing.FrameMaterial;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlock;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
 import com.jaquadro.minecraft.storagedrawers.block.BlockTrim;
+import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityControllerIO;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityTrim;
 import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlockEntity;
@@ -62,10 +64,9 @@ public class BlockFramedTrim extends BlockTrim implements EntityBlock, IFramedBl
         return drop;
     }
 
-    @Nullable
     @Override
-    public BlockEntity newBlockEntity (BlockPos pos, BlockState state) {
-        return new BlockEntityTrim(pos, state);
+    public BlockEntityTrim newBlockEntity (@NotNull BlockPos pos, @NotNull BlockState state) {
+        return ModServices.RESOURCE_FACTORY.createBlockEntityTrim().create(pos, state);
     }
 
     @Override

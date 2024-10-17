@@ -13,10 +13,10 @@ public record FrameData (ItemStack base, ItemStack side, ItemStack trim, ItemSta
 
     public static final Codec<FrameData> CODEC = RecordCodecBuilder.create(instance ->
         instance.group(
-            ItemStack.CODEC.fieldOf("base").forGetter(FrameData::base),
-            ItemStack.CODEC.fieldOf("side").forGetter(FrameData::side),
-            ItemStack.CODEC.fieldOf("trim").forGetter(FrameData::trim),
-            ItemStack.CODEC.fieldOf("front").forGetter(FrameData::front)
+            ItemStack.OPTIONAL_CODEC.fieldOf("base").forGetter(FrameData::base),
+            ItemStack.OPTIONAL_CODEC.fieldOf("side").forGetter(FrameData::side),
+            ItemStack.OPTIONAL_CODEC.fieldOf("trim").forGetter(FrameData::trim),
+            ItemStack.OPTIONAL_CODEC.fieldOf("front").forGetter(FrameData::front)
         ).apply(instance, FrameData::new)
     );
 
