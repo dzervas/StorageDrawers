@@ -1,2 +1,1 @@
-- FABRIC: Made dependency on Forge Config API Port optional
-  - If the mod is not installed, config loading will not be supported
+- FABRIC: Fix item transactions not working correctly with other mods

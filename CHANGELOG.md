@@ -1,3 +1,9 @@
+[13.7.4]
+- FABRIC: Fix item transactions not working correctly with other mods
+
+[13.7.3]
+- FORGE: Fix server crash with latest 52.0.18 Forge release
+
 [13.7.2]
 - FABRIC: Made dependency on Forge Config API Port optional
     - If the mod is not installed, config loading will not be supported
