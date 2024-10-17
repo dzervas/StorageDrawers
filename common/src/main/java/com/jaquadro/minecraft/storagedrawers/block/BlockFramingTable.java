@@ -48,8 +48,14 @@ public class BlockFramingTable extends HorizontalDirectionalBlock implements Ent
     public static final MapCodec<BlockFramingTable> CODEC = simpleCodec(BlockFramingTable::new);
 
     protected static final VoxelShape TABLE_TOP = Block.box(0.0D, 14.0D, 0.0D, 16.0D, 16.0D, 16.0D);
-    protected static final VoxelShape TABLE_BOTTOM = Block.box(1.0D, 0.0D, 1.0D, 14.0D, 16.0D, 14.0D);
-    protected static final VoxelShape TABLE_SHAPE = Shapes.or(TABLE_TOP, TABLE_BOTTOM);
+    protected static final VoxelShape TABLE_BOTTOM_NORTH = Block.box(1.0D, 0.0D, 0.0D, 15.0D, 16.0D, 15.0D);
+    protected static final VoxelShape TABLE_BOTTOM_SOUTH = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 16.0D);
+    protected static final VoxelShape TABLE_BOTTOM_WEST = Block.box(1.0D, 0.0D, 1.0D, 16.0D, 16.0D, 15.0D);
+    protected static final VoxelShape TABLE_BOTTOM_EAST = Block.box(0.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
+    protected static final VoxelShape TABLE_SHAPE_NORTH = Shapes.or(TABLE_TOP, TABLE_BOTTOM_NORTH);
+    protected static final VoxelShape TABLE_SHAPE_SOUTH = Shapes.or(TABLE_TOP, TABLE_BOTTOM_SOUTH);
+    protected static final VoxelShape TABLE_SHAPE_WEST = Shapes.or(TABLE_TOP, TABLE_BOTTOM_WEST);
+    protected static final VoxelShape TABLE_SHAPE_EAST = Shapes.or(TABLE_TOP, TABLE_BOTTOM_EAST);
 
     public BlockFramingTable (BlockBehaviour.Properties properties) {
         super(properties);
@@ -73,23 +79,46 @@ public class BlockFramingTable extends HorizontalDirectionalBlock implements Ent
 
     @Override
     public VoxelShape getShape (BlockState state, BlockGetter getter, BlockPos pos, CollisionContext context) {
-        return TABLE_SHAPE;
+        EnumFramingTablePart part = state.getValue(PART);
+        Direction facing = state.getValue(FACING);
+
+        return switch (facing) {
+            case NORTH -> part == EnumFramingTablePart.LEFT ? TABLE_SHAPE_WEST : TABLE_SHAPE_EAST;
+            case SOUTH -> part == EnumFramingTablePart.LEFT ? TABLE_SHAPE_EAST : TABLE_SHAPE_WEST;
+            case WEST -> part == EnumFramingTablePart.LEFT ? TABLE_SHAPE_NORTH : TABLE_SHAPE_SOUTH;
+            case EAST -> part == EnumFramingTablePart.LEFT ? TABLE_SHAPE_SOUTH : TABLE_SHAPE_NORTH;
+            default -> TABLE_TOP;
+        };
     }
 
     @Override
     public BlockState playerWillDestroy (Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide && player.isCreative()) {
-            EnumFramingTablePart part = state.getValue(PART);
-            if (part == EnumFramingTablePart.RIGHT) {
-                BlockPos pos2 = pos.relative(getNeighborDirection(part, state.getValue(FACING)));
-                BlockState state2 = level.getBlockState(pos2);
-                if (state2.is(this) && state2.getValue(PART) == EnumFramingTablePart.LEFT) {
-                    level.setBlock(pos2, Blocks.AIR.defaultBlockState(), 35);
-                }
-            }
+        if (!level.isClientSide ) {
+            preventCreativeDropFromLeft(level, pos, state, player);
+            if (!player.isCreative() && state.getValue(PART) != EnumFramingTablePart.RIGHT)
+                dropResources(state.setValue(PART, EnumFramingTablePart.RIGHT), level, pos, null, player, player.getMainHandItem());
         }
 
         return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    protected static void preventCreativeDropFromLeft (Level level, BlockPos pos, BlockState state, Player player) {
+        EnumFramingTablePart part = state.getValue(PART);
+        if (part == EnumFramingTablePart.RIGHT) {
+            BlockPos pos2 = pos.relative(getNeighborDirection(part, state.getValue(FACING)));
+            BlockState state2 = level.getBlockState(pos2);
+            if (state2.is(state.getBlock()) && state2.getValue(PART) == EnumFramingTablePart.LEFT) {
+                level.setBlock(pos2, Blocks.AIR.defaultBlockState(), 35);
+                level.levelEvent(player, 2001, pos2, Block.getId(state2));
+            }
+        } else if (part == EnumFramingTablePart.LEFT) {
+            BlockPos pos2 = pos.relative(getNeighborDirection(part, state.getValue(FACING)));
+            BlockState state2 = level.getBlockState(pos2);
+            if (state2.is(state.getBlock()) && state2.getValue(PART) == EnumFramingTablePart.RIGHT) {
+                level.setBlock(pos2, Blocks.AIR.defaultBlockState(), 35);
+                level.levelEvent(player, 2001, pos2, Block.getId(state2));
+            }
+        }
     }
 
     @Nullable

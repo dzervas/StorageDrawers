@@ -31,6 +31,7 @@ public class ContainerFramingTable extends AbstractContainerMenu
     private static final int OutputX = 133;
     private static final int OutputY = 35;
 
+    private final BlockEntityFramingTable blockEntity;
     private final Container tableInventory;
     private final Container craftResult;
     private final ContainerLevelAccess access;
@@ -51,6 +52,7 @@ public class ContainerFramingTable extends AbstractContainerMenu
     public ContainerFramingTable (@Nullable MenuType<?> type, int windowId, Inventory playerInventory, BlockEntityFramingTable blockEntity) {
         super(type, windowId);
 
+        this.blockEntity = blockEntity;
         tableInventory = blockEntity;
         craftResult = blockEntity;
         access = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
@@ -75,66 +77,6 @@ public class ContainerFramingTable extends AbstractContainerMenu
         slotsChanged(tableInventory);
     }
 
-    /*
-    @Override
-    @Nonnull
-    public ItemStack transferStackInSlot (EntityPlayer player, int slotIndex) {
-        ItemStack itemStack = ItemStack.EMPTY;
-        Slot slot = inventorySlots.get(slotIndex);
-
-        // Assume inventory and hotbar slot IDs are contiguous
-        int inventoryStart = playerSlots.get(0).slotNumber;
-        int hotbarStart = hotbarSlots.get(0).slotNumber;
-        int hotbarEnd = hotbarSlots.get(hotbarSlots.size() - 1).slotNumber + 1;
-
-        if (slot != null && slot.getHasStack()) {
-            ItemStack slotStack = slot.getStack();
-            itemStack = slotStack.copy();
-
-            // Try merge output into inventory and signal change
-            if (slotIndex == outputSlot.slotNumber) {
-                if (!mergeItemStack(slotStack, inventoryStart, hotbarEnd, true))
-                    return ItemStack.EMPTY;
-                slot.onSlotChange(slotStack, itemStack);
-            }
-
-            // Try merge stacks within inventory and hotbar spaces
-            else if (slotIndex >= inventoryStart && slotIndex < hotbarEnd) {
-                boolean merged = false;
-                if (TileEntityFramingTable.isItemValidDrawer(slotStack))
-                    merged = mergeItemStack(slotStack, inputSlot.slotNumber, inputSlot.slotNumber + 1, false);
-                else if (TileEntityFramingTable.isItemValidMaterial(slotStack))
-                    merged = mergeItemStack(slotStack, materialSideSlot.slotNumber, materialFrontSlot.slotNumber + 1, false);
-
-                if (!merged) {
-                    if (slotIndex >= inventoryStart && slotIndex < hotbarStart) {
-                        if (!mergeItemStack(slotStack, hotbarStart, hotbarEnd, false))
-                            return ItemStack.EMPTY;
-                    } else if (slotIndex >= hotbarStart && slotIndex < hotbarEnd && !this.mergeItemStack(slotStack, inventoryStart, hotbarStart, false))
-                        return ItemStack.EMPTY;
-                }
-            }
-
-            // Try merge stack into inventory
-            else if (!mergeItemStack(slotStack, inventoryStart, hotbarEnd, false))
-                return ItemStack.EMPTY;
-
-            int slotStackSize = slotStack.getCount();
-            if (slotStackSize == 0)
-                slot.putStack(ItemStack.EMPTY);
-            else
-                slot.onSlotChanged();
-
-            if (slotStackSize == itemStack.getCount())
-                return ItemStack.EMPTY;
-
-            slot.onTake(player, slotStack);
-        }
-
-        return itemStack;
-    }
-    */
-
     @Override
     public ItemStack quickMoveStack (Player player, int slotIndex) {
         ItemStack itemStack = ItemStack.EMPTY;
@@ -149,59 +91,42 @@ public class ContainerFramingTable extends AbstractContainerMenu
             ItemStack slotStack = slot.getItem();
             itemStack = slotStack.copy();
 
-            /*
-            // Try merge upgrades to inventory
-            if (slotIndex >= upgradeStart && slotIndex < upgradeEnd) {
+            if (slotIndex == BlockEntityFramingTable.SLOT_RESULT) {
                 if (!moveItemStackTo(slotStack, inventoryStart, hotbarEnd, true))
                     return ItemStack.EMPTY;
                 slot.onQuickCraft(slotStack, itemStack);
             }
 
-            // Try merge inventory to upgrades
-            else if (slotIndex >= inventoryStart && slotIndex < hotbarEnd && !slotStack.isEmpty()) {
-                if (slotStack.getItem() instanceof ItemUpgrade) {
-                    ItemStack slotStack1 = slotStack.copy();
-                    slotStack1.setCount(1);
-
-                    if (!moveItemStackTo(slotStack1, upgradeStart, upgradeEnd, false)) {
-                        if (slotIndex < hotbarStart) {
-                            if (!moveItemStackTo(slotStack, hotbarStart, hotbarEnd, false))
-                                return ItemStack.EMPTY;
-                        } else if (!moveItemStackTo(slotStack, inventoryStart, hotbarStart, false))
-                            return ItemStack.EMPTY;
-                    }
-                    else {
-                        slotStack.shrink(1);
-                        if (slotStack.getCount() == 0)
-                            slot.set(ItemStack.EMPTY);
-                        else
-                            slot.setChanged();
-
-                        slot.onTake(player, slotStack);
-                        return ItemStack.EMPTY;
-                    }
-                } else if (slotIndex < hotbarStart) {
-                    if (!moveItemStackTo(slotStack, hotbarStart, hotbarEnd, false))
-                        return ItemStack.EMPTY;
-                } else if (!moveItemStackTo(slotStack, inventoryStart, hotbarStart, false))
+            else if (slotIndex == BlockEntityFramingTable.SLOT_INPUT || BlockEntityFramingTable.isMaterialSlot(slotIndex)) {
+                if (!moveItemStackTo(slotStack, inventoryStart, hotbarEnd, true))
                     return ItemStack.EMPTY;
             }
 
-            // Try merge stack into inventory
-            else if (!moveItemStackTo(slotStack, inventoryStart, hotbarEnd, false))
-                return ItemStack.EMPTY;
+            else if (slotIndex >= inventoryStart && slotIndex < hotbarEnd) {
+                if (blockEntity.isItemValidTarget(slotStack)) {
+                    if (!moveItemStackTo(slotStack, BlockEntityFramingTable.SLOT_INPUT, BlockEntityFramingTable.SLOT_INPUT + 1, false))
+                        return ItemStack.EMPTY;
+                } else if (BlockEntityFramingTable.isItemValidMaterial(slotStack)) {
+                    if (!moveItemStackTo(slotStack, BlockEntityFramingTable.SLOT_SIDE, BlockEntityFramingTable.SLOT_FRONT + 1, false))
+                        return ItemStack.EMPTY;
+                } else if (slotIndex < hotbarStart) { // Inventory Area
+                    if (!moveItemStackTo(slotStack, hotbarStart, hotbarEnd, false))
+                        return ItemStack.EMPTY;
+                } else { // Hotbar Area
+                    if (!moveItemStackTo(slotStack, inventoryStart, hotbarStart, false))
+                        return ItemStack.EMPTY;
+                }
+            }
 
-            int slotStackSize = slotStack.getCount();
-            if (slotStackSize == 0)
-                slot.set(ItemStack.EMPTY);
+            if (slotStack.isEmpty())
+                slot.setByPlayer(ItemStack.EMPTY);
             else
                 slot.setChanged();
 
-            if (slotStackSize == itemStack.getCount())
+            if (slotStack.getCount() == itemStack.getCount())
                 return ItemStack.EMPTY;
 
             slot.onTake(player, slotStack);
-            */
         }
 
         return itemStack;

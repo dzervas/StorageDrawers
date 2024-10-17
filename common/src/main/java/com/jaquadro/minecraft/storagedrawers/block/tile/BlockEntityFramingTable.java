@@ -51,6 +51,10 @@ public class BlockEntityFramingTable extends BaseBlockEntity implements Containe
         this(ModBlockEntities.FRAMING_TABLE.get(), pos, state);
     }
 
+    public static boolean isMaterialSlot (int slotIndex) {
+        return slotIndex == SLOT_SIDE || slotIndex == SLOT_TRIM || slotIndex == SLOT_FRONT;
+    }
+
     public MaterialData material () {
         return materialData;
     }
@@ -93,7 +97,12 @@ public class BlockEntityFramingTable extends BaseBlockEntity implements Containe
         if (slot < 0 || slot > getContainerSize() || amount <= 0)
             return ItemStack.EMPTY;
 
-        return getItem(slot).split(amount);
+        ItemStack ret = getItem(slot).split(amount);
+
+        rebuildResult();
+        setChanged();
+
+        return ret;
     }
 
     @Override
@@ -153,11 +162,12 @@ public class BlockEntityFramingTable extends BaseBlockEntity implements Containe
                 if (!source.isEmpty()) {
                     source.remove(ModDataComponents.FRAME_DATA.get());
 
-                    inputStack = source;
+                    int count = stack.getCount();
+                    inputStack = source.copyWithCount(count);
 
-                    materialData.setSide(fb.supportsFrameMaterial(FrameMaterial.SIDE) ? data.side() : ItemStack.EMPTY);
-                    materialData.setTrim(fb.supportsFrameMaterial(FrameMaterial.TRIM) ? data.trim() : ItemStack.EMPTY);
-                    materialData.setFront(fb.supportsFrameMaterial(FrameMaterial.FRONT) ? data.front() : ItemStack.EMPTY);
+                    materialData.setSide(fb.supportsFrameMaterial(FrameMaterial.SIDE) ? data.side().copyWithCount(count) : ItemStack.EMPTY);
+                    materialData.setTrim(fb.supportsFrameMaterial(FrameMaterial.TRIM) ? data.trim().copyWithCount(count) : ItemStack.EMPTY);
+                    materialData.setFront(fb.supportsFrameMaterial(FrameMaterial.FRONT) ? data.front().copyWithCount(count) : ItemStack.EMPTY);
 
                     return;
                 }
@@ -187,6 +197,16 @@ public class BlockEntityFramingTable extends BaseBlockEntity implements Containe
                     resultStack = fsb.makeFramedItem(target, matSide, matTrim, matFront);
             }
         }
+
+        int count = resultStack.getCount();
+        if (!matSide.isEmpty())
+            count = Math.min(count, matSide.getCount());
+        if (!matTrim.isEmpty())
+            count = Math.min(count, matTrim.getCount());
+        if (!matFront.isEmpty())
+            count = Math.min(count, matFront.getCount());
+
+        resultStack.setCount(count);
     }
 
     @Override
@@ -227,15 +247,30 @@ public class BlockEntityFramingTable extends BaseBlockEntity implements Containe
         return tag;
     }
 
-    public static boolean isItemValidTarget (ItemStack stack) {
+    public boolean isItemValidTarget (ItemStack stack) {
         if (stack.isEmpty())
             return false;
 
         if (!(stack.getItem() instanceof BlockItem blockItem))
             return false;
 
-        return blockItem.getBlock() instanceof IFramedSourceBlock
-            || blockItem.getBlock() instanceof IFramedBlock;
+        if (blockItem.getBlock() instanceof IFramedBlock) {
+            FrameData data = stack.getOrDefault(ModDataComponents.FRAME_DATA.get(), FrameData.EMPTY);
+
+            if (!data.side().isEmpty() && !materialData.getSide().isEmpty())
+                return false;
+            if (!data.trim().isEmpty() && !materialData.getTrim().isEmpty())
+                return false;
+            if (!data.front().isEmpty() && !materialData.getFront().isEmpty())
+                return false;
+
+            return true;
+        }
+
+        if (blockItem.getBlock() instanceof IFramedSourceBlock)
+            return true;
+
+        return false;
     }
 
     public static boolean isItemValidMaterial (ItemStack stack) {
