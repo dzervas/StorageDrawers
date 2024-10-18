@@ -11,9 +11,9 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PlatformBlockEntityControllerIO extends BlockEntityControllerIO
+public class PlatformBlockEntityTrim extends BlockEntityTrim
 {
-    public PlatformBlockEntityControllerIO (BlockPos pos, BlockState state) {
+    public PlatformBlockEntityTrim (BlockPos pos, BlockState state) {
         super(pos, state);
     }
 
