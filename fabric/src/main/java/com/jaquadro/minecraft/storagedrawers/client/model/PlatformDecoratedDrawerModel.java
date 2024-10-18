@@ -1,6 +1,8 @@
 package com.jaquadro.minecraft.storagedrawers.client.model;
 
 import com.jaquadro.minecraft.storagedrawers.client.model.context.DrawerModelContext;
+import com.jaquadro.minecraft.storagedrawers.client.model.context.ModelContext;
+import com.jaquadro.minecraft.storagedrawers.client.model.decorator.ModelDecorator;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockview.v2.FabricBlockView;
@@ -17,10 +19,15 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
-public class PlatformDecoratedDrawerModel extends DecoratedDrawerModel implements FabricBakedModel
+public class PlatformDecoratedDrawerModel<C extends ModelContext> extends ParentModel implements FabricBakedModel
 {
-    public PlatformDecoratedDrawerModel (BakedModel mainModel, DrawerModelStore.DecorationSet overlays) {
-        super(mainModel, overlays);
+    private final ModelDecorator<C> decorator;
+    private final ModelContextSupplier<C> contextSupplier;
+
+    public PlatformDecoratedDrawerModel (BakedModel parent, ModelDecorator<C> decorator, ModelContextSupplier<C> contextSupplier) {
+        super(parent);
+        this.decorator = decorator;
+        this.contextSupplier = contextSupplier;
     }
 
     @Override
@@ -35,20 +42,28 @@ public class PlatformDecoratedDrawerModel extends DecoratedDrawerModel implement
 
     @Override
     public void emitBlockQuads (BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
-        mainModel.emitBlockQuads(blockView, state, pos, randomSupplier, context);
+        if (state == null) {
+            parent.emitBlockQuads(blockView, state, pos, randomSupplier, context);
+            return;
+        }
 
         FabricBlockView fabricView = blockView;
         if (fabricView == null)
             return;
 
         Object renderData = fabricView.getBlockEntityRenderData(pos);
-        if (renderData instanceof DrawerModelContext modelContext) {
-            Consumer<BakedModel> emitModel = model -> {
-                if (model != null)
-                    model.emitBlockQuads(blockView, state, pos, randomSupplier, context);
-            };
+        Supplier<C> supplier = () -> contextSupplier.makeContext(state, null, randomSupplier.get(), renderData, null);
 
-            emitDecoratedQuads(modelContext, emitModel);
-        }
+        if (decorator.shouldRenderBase(supplier))
+            parent.emitBlockQuads(blockView, state, pos, randomSupplier, context);
+
+        Consumer<BakedModel> emitModel = model -> {
+            if (model != null)
+                model.emitBlockQuads(blockView, state, pos, randomSupplier, context);
+        };
+
+        try {
+            decorator.emitQuads(supplier, emitModel);
+        } catch (Exception e) { }
     }
 }

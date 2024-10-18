@@ -20,6 +20,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.level.block.Block;
 
 @Environment(EnvType.CLIENT)
 public class StorageDrawersClient implements ClientModInitializer
@@ -33,6 +34,8 @@ public class StorageDrawersClient implements ClientModInitializer
 
         ModBlocks.getDrawers().forEach(block ->
             BlockRenderLayerMap.INSTANCE.putBlock(block, RenderType.cutoutMipped()));
+        ModBlocks.getFramedBlocks().forEach(block ->
+            BlockRenderLayerMap.INSTANCE.putBlock((Block)block, RenderType.translucent()));
 
         MenuScreens.register(ModContainers.DRAWER_CONTAINER_1.get(), DrawerScreen.Slot1::new);
         MenuScreens.register(ModContainers.DRAWER_CONTAINER_2.get(), DrawerScreen.Slot2::new);
