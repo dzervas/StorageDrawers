@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -40,7 +41,7 @@ public class DrawerModelDecorator extends ModelDecorator<DrawerModelContext>
     }
 
     @Override
-    public void emitQuads (Supplier<DrawerModelContext> contextSupplier, Consumer<BakedModel> emitModel) {
+    public void emitQuads (Supplier<DrawerModelContext> contextSupplier, BiConsumer<BakedModel, RenderType> emitModel) {
         DrawerModelContext context = contextSupplier.get();
         if (context == null)
             return;
@@ -48,7 +49,7 @@ public class DrawerModelDecorator extends ModelDecorator<DrawerModelContext>
         emitDecoratedQuads(context, emitModel);
     }
 
-    public void emitDecoratedQuads(DrawerModelContext context, Consumer<BakedModel> emitModel) {
+    public void emitDecoratedQuads(DrawerModelContext context, BiConsumer<BakedModel, RenderType> emitModel) {
         Direction dir = context.state().getValue(BlockDrawers.FACING);
         boolean half = false;
         Block block = context.state().getBlock();
@@ -65,11 +66,11 @@ public class DrawerModelDecorator extends ModelDecorator<DrawerModelContext>
         boolean isClaimed = protectable != null && protectable.getOwner() != null;
 
         if (isLocked && isClaimed)
-            emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.LOCK_CLAIM, dir, half));
+            emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.LOCK_CLAIM, dir, half), RenderType.cutoutMipped());
         else if (isLocked)
-            emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.LOCK, dir, half));
+            emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.LOCK, dir, half), RenderType.cutoutMipped());
         else if (isClaimed)
-            emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.CLAIM, dir, half));
+            emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.CLAIM, dir, half), RenderType.cutoutMipped());
 
         DrawerModelStore.DynamicPart priorityPart = switch (attr.getPriority()) {
             case 1 -> DrawerModelStore.DynamicPart.PRIORITY_P1;
@@ -79,19 +80,19 @@ public class DrawerModelDecorator extends ModelDecorator<DrawerModelContext>
             default -> null;
         };
         if (priorityPart != null)
-            emitModel.accept(DrawerModelStore.getModel(priorityPart, dir, half));
+            emitModel.accept(DrawerModelStore.getModel(priorityPart, dir, half), RenderType.cutoutMipped());
 
         if (attr.isVoid())
-            emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.VOID, dir, half));
+            emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.VOID, dir, half), RenderType.cutoutMipped());
         if (attr.isConcealed())
-            emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.SHROUD, dir, half));
+            emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.SHROUD, dir, half), RenderType.cutoutMipped());
         if (attr.hasFillLevel()) {
             if (block instanceof BlockCompDrawers compBlock) {
                 int count = compBlock.getDrawerCount();
-                emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.INDICATOR_COMP, dir, half, count));
+                emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.INDICATOR_COMP, dir, half, count), RenderType.cutoutMipped());
             } else if (block instanceof BlockStandardDrawers stdBlock) {
                 int count = stdBlock.getDrawerCount();
-                emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.INDICATOR, dir, half, count));
+                emitModel.accept(DrawerModelStore.getModel(DrawerModelStore.DynamicPart.INDICATOR, dir, half, count), RenderType.cutoutMipped());
             }
         }
         if (block instanceof BlockStandardDrawers) {
@@ -101,7 +102,7 @@ public class DrawerModelDecorator extends ModelDecorator<DrawerModelContext>
                 DrawerModelStore.DynamicPart[] groupMissingSlots = DrawerModelStore.missingSlots[count - 1];
                 for (int i = 0; i < groupMissingSlots.length; i++) {
                     if (group.getDrawer(i).isMissing())
-                        emitModel.accept(DrawerModelStore.getModel(groupMissingSlots[i], dir, half, count));
+                        emitModel.accept(DrawerModelStore.getModel(groupMissingSlots[i], dir, half, count), RenderType.cutoutMipped());
                 }
             }
         }

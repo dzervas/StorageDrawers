@@ -12,11 +12,16 @@ import com.jaquadro.minecraft.storagedrawers.client.model.context.FramedModelCon
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -24,6 +29,8 @@ public abstract class MaterialModelDecorator<C extends FramedModelContext> exten
 {
     protected final DrawerModelStore.FrameMatSet matSet;
     protected final boolean shaded;
+
+    private static Map<BakedModel, Map<ResourceLocation, BakedModel>> replacementCache = new HashMap<>();
 
     public MaterialModelDecorator (DrawerModelStore.FrameMatSet matSet, boolean shaded) {
         this.matSet = matSet;
@@ -54,22 +61,23 @@ public abstract class MaterialModelDecorator<C extends FramedModelContext> exten
     }
 
     @Override
-    public void emitQuads (Supplier<C> contextSupplier, Consumer<BakedModel> emitModel) {
+    public void emitQuads (Supplier<C> contextSupplier, BiConsumer<BakedModel, RenderType> emitModel) {
         FramedModelContext context = contextSupplier.get();
         if (context == null)
             return;
 
         MaterialData matData = context.materialData();
         if (matData != null && !matData.getEffectiveSide().isEmpty()) {
-            if (shaded && context.renderType() == RenderType.translucent())
-                emitFramedOverlayQuads(context, emitModel);
-            if (context.renderType() == RenderType.cutoutMipped())
+            RenderType renderType = context.renderType();
+            if (renderType == null || renderType == RenderType.cutoutMipped())
                 emitFramedQuads(context, emitModel);
+            if (shaded && (renderType == null || renderType == RenderType.translucent()))
+                emitFramedOverlayQuads(context, emitModel);
         }
     }
 
     @Override
-    public void emitItemQuads (Supplier<C> contextSupplier, Consumer<BakedModel> emitModel, ItemStack stack) {
+    public void emitItemQuads (Supplier<C> contextSupplier, BiConsumer<BakedModel, RenderType> emitModel, ItemStack stack) {
         FramedModelContext context = contextSupplier.get();
         if (context == null)
             return;
@@ -96,37 +104,58 @@ public abstract class MaterialModelDecorator<C extends FramedModelContext> exten
         return List.of(RenderType.cutoutMipped());
     }
 
-    public void emitFramedQuads(FramedModelContext context, Consumer<BakedModel> emitModel) {
+    private BakedModel getReplacementModel (BakedModel baseModel, ItemStack material) {
+        Map<ResourceLocation, BakedModel> matCache;
+        if (replacementCache.containsKey(baseModel))
+            matCache = replacementCache.get(baseModel);
+        else {
+            matCache = new HashMap<>();
+            replacementCache.put(baseModel, matCache);
+        }
+
+        ResourceLocation matName = BuiltInRegistries.ITEM.getKey(material.getItem());
+        BakedModel replacedModel = null;
+        if (matCache.containsKey(matName))
+            replacedModel = matCache.get(matName);
+        else {
+            replacedModel = new SpriteReplacementModel(baseModel, material);
+            matCache.put(matName, replacedModel);
+        }
+
+        return replacedModel;
+    }
+
+    public void emitFramedQuads(FramedModelContext context, BiConsumer<BakedModel, RenderType> emitModel) {
         Block block = context.state().getBlock();
 
         if (block instanceof IFramedBlock fb) {
             MaterialData matData = context.materialData();
             if (matData != null && !matData.isEmpty()) {
                 if (matSet.sidePart() != null && fb.supportsFrameMaterial(FrameMaterial.SIDE)) {
-                    emitModel.accept(new SpriteReplacementModel(getStoreModel(context, matSet.sidePart()),
-                        matData.getEffectiveSide()));
+                    emitModel.accept(getReplacementModel(getStoreModel(context, matSet.sidePart()),
+                        matData.getEffectiveSide()), RenderType.cutoutMipped());
                 }
 
                 if (matSet.trimPart() != null && fb.supportsFrameMaterial(FrameMaterial.TRIM)) {
-                    emitModel.accept(new SpriteReplacementModel(getStoreModel(context, matSet.trimPart()),
-                        matData.getEffectiveTrim()));
+                    emitModel.accept(getReplacementModel(getStoreModel(context, matSet.trimPart()),
+                        matData.getEffectiveTrim()), RenderType.cutoutMipped());
                 }
 
                 if (matSet.frontPart() != null && fb.supportsFrameMaterial(FrameMaterial.FRONT)) {
-                    emitModel.accept(new SpriteReplacementModel(getStoreModel(context, matSet.frontPart()),
-                        matData.getEffectiveFront()));
+                    emitModel.accept(getReplacementModel(getStoreModel(context, matSet.frontPart()),
+                        matData.getEffectiveFront()), RenderType.cutoutMipped());
                 }
             }
         }
     }
 
-    public void emitFramedOverlayQuads(FramedModelContext context, Consumer<BakedModel> emitModel) {
+    public void emitFramedOverlayQuads(FramedModelContext context, BiConsumer<BakedModel, RenderType> emitModel) {
         MaterialData matData = context.materialData();
         if (matData != null && !matData.isEmpty()) {
             if (matSet.shadeFrontPart() != null)
-                emitModel.accept(getStoreModel(context, matSet.shadeFrontPart()));
+                emitModel.accept(getStoreModel(context, matSet.shadeFrontPart()), RenderType.translucent());
             if (matSet.shadeSidePart() != null)
-                emitModel.accept(getStoreModel(context, matSet.shadeSidePart()));
+                emitModel.accept(getStoreModel(context, matSet.shadeSidePart()), RenderType.translucent());
         }
     }
 

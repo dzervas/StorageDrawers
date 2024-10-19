@@ -2,28 +2,42 @@ package com.jaquadro.minecraft.storagedrawers.client.model;
 
 import com.jaquadro.minecraft.storagedrawers.client.model.context.ModelContext;
 import com.jaquadro.minecraft.storagedrawers.client.model.decorator.ModelDecorator;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.blockview.v2.FabricBlockView;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+import net.fabricmc.fabric.api.renderer.v1.mesh.Mesh;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.renderer.v1.model.FabricBakedModel;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.ChunkRenderTypeSet;
-import net.neoforged.neoforge.client.model.IDynamicBakedModel;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-public class PlatformDecoratedModel<C extends ModelContext> extends ParentModel implements IDynamicBakedModel
+@Environment(EnvType.CLIENT)
+public class PlatformDecoratedModel<C extends ModelContext> extends ParentModel implements FabricBakedModel
 {
     private final ModelDecorator<C> decorator;
     private final ModelContextSupplier<C> contextSupplier;
+
+    private static Map<BakedModel, Mesh> meshCache = new HashMap<>();
+    private static RenderMaterial cutoutMat;
+    private static RenderMaterial transMat;
 
     public PlatformDecoratedModel (BakedModel parent, ModelDecorator<C> decorator, ModelContextSupplier<C> contextSupplier) {
         super(parent);
@@ -32,108 +46,109 @@ public class PlatformDecoratedModel<C extends ModelContext> extends ParentModel 
     }
 
     @Override
-    public List<BakedQuad> getQuads (@Nullable BlockState state, @Nullable Direction side, RandomSource rand, ModelData extraData, @Nullable RenderType type) {
+    public boolean isVanillaAdapter () {
+        return false;
+    }
+
+    @Override
+    public void emitItemQuads (ItemStack stack, Supplier<RandomSource> randomSupplier, RenderContext context) {
+        Supplier<C> supplier = () -> contextSupplier.makeContext(stack);
+
+        if (decorator.shouldRenderBase(supplier, stack))
+            parent.emitItemQuads(stack, randomSupplier, context);
+
+        RandomSource randomSource = randomSupplier.get();
+
+        BiConsumer<BakedModel, RenderType> emitModel = (model, renderType) -> {
+            if (model != null) {
+                if (renderType == RenderType.translucent()) {
+                    if (stack.getItem() instanceof BlockItem bi) {
+                        Mesh mesh = getMesh(model, bi.getBlock().defaultBlockState(), randomSource, renderType);
+                        mesh.outputTo(context.getEmitter());
+                    }
+                } else
+                    model.emitItemQuads(stack, randomSupplier, context);
+            }
+        };
+
+        try {
+            decorator.emitItemQuads(supplier, emitModel, stack);
+        } catch (Exception e) { }
+    }
+
+    @Override
+    public void emitBlockQuads (BlockAndTintGetter blockView, BlockState state, BlockPos pos, Supplier<RandomSource> randomSupplier, RenderContext context) {
         if (state == null) {
-            // NB: getting here for item renders (state == null) implies that the caller has not
-            // respected #getRenderPasses, since if they had this method wouldn't be called.
-            // If that's the case, then we might as well return the main quads that they're looking
-            // for anyway.
-            return parent.getQuads(state, side, rand, extraData, type);
+            parent.emitBlockQuads(blockView, state, pos, randomSupplier, context);
+            return;
         }
 
-        List<BakedQuad> quads = new ArrayList<>();
+        FabricBlockView fabricView = blockView;
+        if (fabricView == null)
+            return;
 
-        Supplier<C> supplier = () -> contextSupplier.makeContext(state, side, rand, extraData, type);
+        RandomSource randomSource = randomSupplier.get();
+
+        Object renderData = fabricView.getBlockEntityRenderData(pos);
+        Supplier<C> supplier = () -> contextSupplier.makeContext(state, null, randomSource, renderData, null);
+
         if (decorator.shouldRenderBase(supplier))
-            quads.addAll(parent.getQuads(state, side, rand, extraData, type));
+            parent.emitBlockQuads(blockView, state, pos, randomSupplier, context);
 
-        Consumer<BakedModel> emitModel = model -> {
-            if (model != null)
-                quads.addAll(model.getQuads(state, side, rand, extraData, type));
+        BiConsumer<BakedModel, RenderType> emitModel = (model, renderType) -> {
+            if (model != null) {
+                if (renderType == RenderType.translucent()) {
+                    Mesh mesh = getMesh(model, state, randomSource, renderType);
+                    mesh.outputTo(context.getEmitter());
+                } else
+                    model.emitBlockQuads(blockView, state, pos, randomSupplier, context);
+            }
         };
 
         try {
             decorator.emitQuads(supplier, emitModel);
-        } catch (Exception e) {
-            return quads;
+        } catch (Exception e) { }
+    }
+
+    private Mesh getMesh (BakedModel model, BlockState state, RandomSource randomSource, RenderType renderType) {
+        if (meshCache.containsKey(model))
+            return meshCache.get(model);
+
+        Mesh mesh = buildMesh(model, state, randomSource, renderType);
+        meshCache.put(model, mesh);
+        return mesh;
+    }
+
+    private Mesh buildMesh (BakedModel model, BlockState state, RandomSource randomSource, RenderType renderType) {
+        Renderer render = RendererAccess.INSTANCE.getRenderer();
+        RenderMaterial mat = null;
+
+        if (renderType == RenderType.cutoutMipped()) {
+            if (cutoutMat == null)
+                cutoutMat = render.materialFinder().blendMode(BlendMode.CUTOUT_MIPPED).find();
+            mat = cutoutMat;
+        }
+        else if (renderType == RenderType.translucent()) {
+            if (transMat == null)
+                transMat = render.materialFinder().blendMode(BlendMode.TRANSLUCENT).find();
+            mat = transMat;
         }
 
-        return quads;
-    }
+        if (mat == null)
+            return null;
 
-    @Override
-    public TextureAtlasSprite getParticleIcon (ModelData data) {
-        return parent.getParticleIcon(data);
-    }
+        MeshBuilder builder = render.meshBuilder();
+        QuadEmitter quadEmit = builder.getEmitter();
 
-    @Override
-    public ChunkRenderTypeSet getRenderTypes (BlockState state, RandomSource rand, ModelData data) {
-        return ChunkRenderTypeSet.of(decorator.getRenderTypes(state));
-    }
-
-    @Override
-    public List<RenderType> getRenderTypes (ItemStack itemStack, boolean fabulous) {
-        return decorator.getRenderTypes(itemStack);
-    }
-
-    @Override
-    public List<BakedModel> getRenderPasses (ItemStack itemStack, boolean fabulous) {
-        if (decorator.shouldRenderItem())
-            return List.of(new ItemRender(itemStack));
-
-        return parent.getRenderPasses(itemStack, fabulous);
-    }
-
-    public class ItemRender extends ParentModel
-    {
-        private ItemStack stack;
-
-        public ItemRender (ItemStack stack) {
-            super(PlatformDecoratedModel.this.parent);
-            this.stack = stack;
-        }
-
-        @Override
-        public List<BakedQuad> getQuads (@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-            List<BakedQuad> quads = new ArrayList<>();
-
-            Supplier<C> supplier = () -> PlatformDecoratedModel.this.contextSupplier.makeContext(stack);
-            ModelDecorator<C> decorator = PlatformDecoratedModel.this.decorator;
-            if (decorator.shouldRenderBase(supplier, stack))
-                quads.addAll(PlatformDecoratedModel.this.parent.getQuads(state, side, rand));
-
-            Consumer<BakedModel> emitModel = model -> {
-                if (model != null)
-                    quads.addAll(model.getQuads(state, side, rand));
-            };
-
-            try {
-                decorator.emitItemQuads(supplier, emitModel, stack);
-            } catch (Exception e) {
-                return quads;
+        for (var d : Direction.values()) {
+            for (var quad : model.getQuads(state, d, randomSource)) {
+                quadEmit.fromVanilla(quad, mat, d).emit();
             }
-
-            return quads;
+        }
+        for (var quad : model.getQuads(state, null, randomSource)) {
+            quadEmit.fromVanilla(quad, mat, null).emit();
         }
 
-        @Override
-        public List<BakedModel> getRenderPasses (ItemStack itemStack, boolean fabulous) {
-            return PlatformDecoratedModel.this.parent.getRenderPasses(itemStack, fabulous);
-        }
-
-        @Override
-        public TextureAtlasSprite getParticleIcon (ModelData data) {
-            return PlatformDecoratedModel.this.parent.getParticleIcon(data);
-        }
-
-        @Override
-        public ChunkRenderTypeSet getRenderTypes (BlockState state, RandomSource rand, ModelData data) {
-            return PlatformDecoratedModel.this.getRenderTypes(state, rand, data);
-        }
-
-        @Override
-        public List<RenderType> getRenderTypes (ItemStack itemStack, boolean fabulous) {
-            return PlatformDecoratedModel.this.getRenderTypes(itemStack, fabulous);
-        }
+        return builder.build();
     }
 }

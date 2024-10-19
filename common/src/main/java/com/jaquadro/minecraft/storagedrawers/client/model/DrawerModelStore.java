@@ -8,6 +8,8 @@ import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -172,6 +174,9 @@ public class DrawerModelStore
                 if (blockTrim instanceof Block mcBlock) {
                     for (BlockState state : mcBlock.getStateDefinition().getPossibleStates())
                         targetBlocks.add(BlockModelShaper.stateToModelLocation(state).toString());
+
+                    ModelResourceLocation invLoc = new ModelResourceLocation(BuiltInRegistries.BLOCK.getKey(mcBlock), "inventory");
+                    targetBlocks.add(invLoc.toString());
                 }
             });
         }

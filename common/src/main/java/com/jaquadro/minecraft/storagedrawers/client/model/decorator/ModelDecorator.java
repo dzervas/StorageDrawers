@@ -7,6 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -32,7 +33,7 @@ public abstract class ModelDecorator<C extends ModelContext>
         return List.of(RenderType.solid());
     }
 
-    public void emitQuads(Supplier<C> contextSupplier, Consumer<BakedModel> emitModel) { }
+    public void emitQuads(Supplier<C> contextSupplier, BiConsumer<BakedModel, RenderType> emitModel) { }
 
-    public void emitItemQuads(Supplier<C> contextSupplier, Consumer<BakedModel> emitModel, ItemStack stack) { }
+    public void emitItemQuads(Supplier<C> contextSupplier, BiConsumer<BakedModel, RenderType> emitModel, ItemStack stack) { }
 }

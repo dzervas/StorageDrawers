@@ -9,6 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -89,13 +90,13 @@ public class CombinedModelDecorator<C extends ModelContext> extends ModelDecorat
     }
 
     @Override
-    public void emitQuads (Supplier<C> contextSupplier, Consumer<BakedModel> emitModel) {
+    public void emitQuads (Supplier<C> contextSupplier, BiConsumer<BakedModel, RenderType> emitModel) {
         for (var decorator : decorators)
             decorator.emitQuads(contextSupplier, emitModel);
     }
 
     @Override
-    public void emitItemQuads (Supplier<C> contextSupplier, Consumer<BakedModel> emitModel, ItemStack stack) {
+    public void emitItemQuads (Supplier<C> contextSupplier, BiConsumer<BakedModel, RenderType> emitModel, ItemStack stack) {
         for (var decorator : decorators)
             decorator.emitItemQuads(contextSupplier, emitModel, stack);
     }
