@@ -26,6 +26,7 @@ import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -92,80 +93,48 @@ public class ClientModBusSubscriber {
             DrawerModelStore.tryAddModel(loc, event.getModels().get(loc));
         });
 
-        ModBlocks.getFramedDrawers().forEach(blockDrawers -> replaceBlock(event, blockDrawers, ClientModBusSubscriber::makeFramedStandardDrawerModel));
+        ModBlocks.getFramedDrawers().forEach(blockDrawers -> replaceBlockAndInv(event, blockDrawers, ClientModBusSubscriber::makeFramedStandardDrawerModel));
 
-        replaceBlock(event, ModBlocks.FRAMED_COMPACTING_DRAWERS_2.get(), ClientModBusSubscriber::makeFramedComp2DrawerModel);
-        replaceBlock(event, ModBlocks.FRAMED_COMPACTING_HALF_DRAWERS_2.get(), ClientModBusSubscriber::makeFramedComp2DrawerModel);
-        replaceBlock(event, ModBlocks.FRAMED_COMPACTING_DRAWERS_3.get(), ClientModBusSubscriber::makeFramedComp3DrawerModel);
-        replaceBlock(event, ModBlocks.FRAMED_COMPACTING_HALF_DRAWERS_3.get(), ClientModBusSubscriber::makeFramedComp3DrawerModel);
+        replaceBlockAndInv(event, ModBlocks.FRAMED_COMPACTING_DRAWERS_2.get(), ClientModBusSubscriber::makeFramedComp2DrawerModel);
+        replaceBlockAndInv(event, ModBlocks.FRAMED_COMPACTING_HALF_DRAWERS_2.get(), ClientModBusSubscriber::makeFramedComp2DrawerModel);
+        replaceBlockAndInv(event, ModBlocks.FRAMED_COMPACTING_DRAWERS_3.get(), ClientModBusSubscriber::makeFramedComp3DrawerModel);
+        replaceBlockAndInv(event, ModBlocks.FRAMED_COMPACTING_HALF_DRAWERS_3.get(), ClientModBusSubscriber::makeFramedComp3DrawerModel);
 
-        replaceBlock(event, ModBlocks.FRAMED_TRIM.get(), ClientModBusSubscriber::makeFramedTrimModel);
-        replaceBlock(event, ModBlocks.FRAMED_CONTROLLER.get(), ClientModBusSubscriber::makeFramedControllerModel);
-        replaceBlock(event, ModBlocks.FRAMED_CONTROLLER_IO.get(), ClientModBusSubscriber::makeFramedControllerIOModel);
+        replaceBlockAndInv(event, ModBlocks.FRAMED_TRIM.get(), ClientModBusSubscriber::makeFramedTrimModel);
+        replaceBlockAndInv(event, ModBlocks.FRAMED_CONTROLLER.get(), ClientModBusSubscriber::makeFramedControllerModel);
+        replaceBlockAndInv(event, ModBlocks.FRAMED_CONTROLLER_IO.get(), ClientModBusSubscriber::makeFramedControllerIOModel);
 
         ModBlocks.getDrawers().forEach(blockDrawers -> replaceBlock(event, blockDrawers, ClientModBusSubscriber::makeStandardDrawerModel));
-
-        List.of("framed_full_drawers_4", "framed_full_drawers_2", "framed_full_drawers_1", "framed_half_drawers_4",
-            "framed_half_drawers_2", "framed_half_drawers_1").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
-            BakedModel test = event.getModels().get(testResource);
-            if (test != null)
-                event.getModels().put(testResource, makeFramedStandardDrawerModel(test));
-        });
-
-        List.of("framed_compacting_drawers_2", "framed_compacting_half_drawers_2").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
-            BakedModel test = event.getModels().get(testResource);
-            if (test != null)
-                event.getModels().put(testResource, makeFramedComp2DrawerModel(test));
-        });
-
-        List.of("framed_compacting_drawers_3", "framed_compacting_half_drawers_3").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
-            BakedModel test = event.getModels().get(testResource);
-            if (test != null)
-                event.getModels().put(testResource, makeFramedComp3DrawerModel(test));
-        });
-
-        List.of("framed_trim").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
-            BakedModel test = event.getModels().get(testResource);
-            if (test != null)
-                event.getModels().put(testResource, makeFramedTrimModel(test));
-        });
-
-        List.of("framed_controller").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
-            BakedModel test = event.getModels().get(testResource);
-            if (test != null)
-                event.getModels().put(testResource, makeFramedControllerModel(test));
-        });
-
-        List.of("framed_controller_io").forEach(d -> {
-            ModelResourceLocation testResource = new ModelResourceLocation(ResourceLocation.fromNamespaceAndPath("storagedrawers", d), "inventory");
-            BakedModel test = event.getModels().get(testResource);
-            if (test != null)
-                event.getModels().put(testResource, makeFramedControllerIOModel(test));
-        });
     }
 
-    static void replaceBlock(ModelEvent.ModifyBakingResult event, Block block, Function<BakedModel, BakedModel> replacer) {
-        BakedModel missing = event.getModels().get(ModelBakery.MISSING_MODEL_LOCATION);
+    public static void replaceBlock(ModelEvent.ModifyBakingResult event, Block block, Function<BakedModel, BakedModel> replacer) {
         for (BlockState state : block.getStateDefinition().getPossibleStates()) {
             ModelResourceLocation modelResource = BlockModelShaper.stateToModelLocation(state);
-            BakedModel parentModel = event.getModels().get(modelResource);
-            if (parentModel == null) {
-                StorageDrawers.log.warn("Got back null model from ModelBakeEvent.ModelManager for resource " + modelResource.toString());
-                continue;
-            } else if (parentModel == missing)
-                continue;
+            replaceBlock(event, modelResource, replacer);
+        }
+    }
 
-            if (parentModel instanceof ParentModel)
-                continue;
+    public static void replaceBlockAndInv(ModelEvent.ModifyBakingResult event, Block block, Function<BakedModel, BakedModel> replacer) {
+        replaceBlock(event, block, replacer);
 
-            if (DrawerModelStore.INSTANCE.isTargetedModel(modelResource)) {
-                event.getModels().put(modelResource, replacer.apply(parentModel));
-            }
+        ModelResourceLocation invLoc = new ModelResourceLocation(BuiltInRegistries.BLOCK.getKey(block), "inventory");
+        replaceBlock(event, invLoc, replacer);
+    }
+
+    private static void replaceBlock (ModelEvent.ModifyBakingResult event, ModelResourceLocation modelResource, Function<BakedModel, BakedModel> replacer) {
+        BakedModel missing = event.getModels().get(ModelBakery.MISSING_MODEL_LOCATION);
+        BakedModel parentModel = event.getModels().get(modelResource);
+        if (parentModel == null) {
+            StorageDrawers.log.warn("Got back null model from ModelBakeEvent.ModelManager for resource " + modelResource.toString());
+            return;
+        } else if (parentModel == missing)
+            return;
+
+        if (parentModel instanceof ParentModel)
+            return;
+
+        if (DrawerModelStore.INSTANCE.isTargetedModel(modelResource)) {
+            event.getModels().put(modelResource, replacer.apply(parentModel));
         }
     }
 

@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
 public class PlatformDecoratedModel<C extends ModelContext> extends ParentModel implements IDynamicBakedModel
@@ -47,8 +47,8 @@ public class PlatformDecoratedModel<C extends ModelContext> extends ParentModel 
         if (decorator.shouldRenderBase(supplier))
             quads.addAll(parent.getQuads(state, side, rand, extraData, type));
 
-        Consumer<BakedModel> emitModel = model -> {
-            if (model != null)
+        BiConsumer<BakedModel, RenderType> emitModel = (model, renderType) -> {
+            if (model != null && renderType == type)
                 quads.addAll(model.getQuads(state, side, rand, extraData, type));
         };
 
@@ -102,7 +102,7 @@ public class PlatformDecoratedModel<C extends ModelContext> extends ParentModel 
             if (decorator.shouldRenderBase(supplier, stack))
                 quads.addAll(PlatformDecoratedModel.this.parent.getQuads(state, side, rand));
 
-            Consumer<BakedModel> emitModel = model -> {
+            BiConsumer<BakedModel, RenderType> emitModel = (model, renderType) -> {
                 if (model != null)
                     quads.addAll(model.getQuads(state, side, rand));
             };
