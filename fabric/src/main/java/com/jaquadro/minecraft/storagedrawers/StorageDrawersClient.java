@@ -4,6 +4,7 @@ import com.jaquadro.minecraft.storagedrawers.client.gui.ClientDetachedDrawerTool
 import com.jaquadro.minecraft.storagedrawers.client.gui.ClientKeyringTooltip;
 import com.jaquadro.minecraft.storagedrawers.client.model.ModelLoadPlugin;
 import com.jaquadro.minecraft.storagedrawers.client.renderer.BlockEntityDrawersRenderer;
+import com.jaquadro.minecraft.storagedrawers.client.renderer.BlockEntityFramingRenderer;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlockEntities;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlocks;
 import com.jaquadro.minecraft.storagedrawers.core.ModContainers;
@@ -28,8 +29,8 @@ public class StorageDrawersClient implements ClientModInitializer
 {
     @Override
     public void onInitializeClient () {
-        ModBlockEntities.DRAWER_RENDERERS.forEach(ro -> BlockEntityRenderers.register(ro.blockEntityType().get(), ro.renderProvider()));
-        ModBlockEntities.FRAMING_TABLE_RENDERERS.forEach(ro -> BlockEntityRenderers.register(ro.blockEntityType().get(), ro.renderProvider()));
+        ModBlockEntities.DRAWER_TYPES.forEach(ro -> BlockEntityRenderers.register(ro.get(), BlockEntityDrawersRenderer::new));
+        BlockEntityRenderers.register(ModBlockEntities.FRAMING_TABLE.get(), BlockEntityFramingRenderer::new);
 
         ModelLoadingPlugin.register(new ModelLoadPlugin());
 

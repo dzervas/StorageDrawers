@@ -14,6 +14,8 @@ import com.jaquadro.minecraft.storagedrawers.client.model.context.FramedModelCon
 import com.jaquadro.minecraft.storagedrawers.client.model.decorator.CombinedModelDecorator;
 import com.jaquadro.minecraft.storagedrawers.client.model.decorator.DrawerModelDecorator;
 import com.jaquadro.minecraft.storagedrawers.client.model.decorator.MaterialModelDecorator;
+import com.jaquadro.minecraft.storagedrawers.client.renderer.BlockEntityDrawersRenderer;
+import com.jaquadro.minecraft.storagedrawers.client.renderer.BlockEntityFramingRenderer;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlockEntities;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlocks;
 import com.jaquadro.minecraft.storagedrawers.core.ModContainers;
@@ -61,8 +63,8 @@ public class ClientModBusSubscriber
 
     @SubscribeEvent
     public static void registerEntityRenderers(RegisterRenderers event) {
-        ModBlockEntities.DRAWER_RENDERERS.forEach(ro -> event.registerBlockEntityRenderer(ro.blockEntityType().get(), ro.renderProvider()));
-        ModBlockEntities.FRAMING_TABLE_RENDERERS.forEach(ro -> event.registerBlockEntityRenderer(ro.blockEntityType().get(), ro.renderProvider()));
+        ModBlockEntities.DRAWER_TYPES.forEach(ro -> event.registerBlockEntityRenderer(ro.get(), BlockEntityDrawersRenderer::new));
+        event.registerBlockEntityRenderer(ModBlockEntities.FRAMING_TABLE.get(), BlockEntityFramingRenderer::new);
     }
 
     @OnlyIn(Dist.CLIENT)

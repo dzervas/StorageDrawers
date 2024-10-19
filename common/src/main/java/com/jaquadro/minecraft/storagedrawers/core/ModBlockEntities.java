@@ -12,8 +12,6 @@ import com.texelsaurus.minecraft.chameleon.ChameleonServices;
 import com.texelsaurus.minecraft.chameleon.api.ChameleonInit;
 import com.texelsaurus.minecraft.chameleon.registry.ChameleonRegistry;
 import com.texelsaurus.minecraft.chameleon.registry.RegistryEntry;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -27,11 +25,8 @@ import java.util.stream.Stream;
 public final class ModBlockEntities {
     public static final ChameleonRegistry<BlockEntityType<?>> BLOCK_ENTITIES = ChameleonServices.REGISTRY.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, ModConstants.MOD_ID);
 
-    private static final Map<RegistryEntry<? extends BlockEntityType<? extends BlockEntity>>, BlockEntityRendererProvider<?>> BLOCK_ENTITY_TYPES_WITH_RENDERERS = new HashMap<>();
-    private static final Set<RegistryEntry<? extends BlockEntityType<? extends BlockEntityDrawers>>> DRAWER_TYPES = new HashSet<>();
-
-    public static final Set<RenderRecord<BlockEntityDrawers>> DRAWER_RENDERERS = new HashSet<>();
-    public static final Set<RenderRecord<BlockEntityFramingTable>> FRAMING_TABLE_RENDERERS = new HashSet<>();
+    public static final Set<RegistryEntry<? extends BlockEntityType<? extends BlockEntityDrawers>>> DRAWER_TYPES = new HashSet<>();
+    public static final Set<RegistryEntry<? extends BlockEntityType<? extends BlockEntityDrawers>>> FRAMING_TABLE_TYPES = new HashSet<>();
 
     public static final RegistryEntry<BlockEntityType<BlockEntityDrawersStandard>> STANDARD_DRAWERS_1 = registerDrawerBlockEntityType("standard_drawers_1", ModServices.RESOURCE_FACTORY.createBlockEntityDrawersStandard(1), BlockStandardDrawers.class, 1);
     public static final RegistryEntry<BlockEntityType<BlockEntityDrawersStandard>> STANDARD_DRAWERS_2 = registerDrawerBlockEntityType("standard_drawers_2", ModServices.RESOURCE_FACTORY.createBlockEntityDrawersStandard(2), BlockStandardDrawers.class, 2);
@@ -52,8 +47,6 @@ public final class ModBlockEntities {
 
     private static <BE extends BlockEntityDrawers, B extends BlockDrawers> RegistryEntry<BlockEntityType<BE>> registerDrawerBlockEntityType(String name, BlockEntityType.BlockEntitySupplier<BE> blockEntitySupplier, Class<B> drawerBlockClass, int size) {
         RegistryEntry<BlockEntityType<BE>> ro = registerBlockEntityType(name, blockEntitySupplier, drawerBlockClass, size);
-        //BLOCK_ENTITY_TYPES_WITH_RENDERERS.put(ro, BlockEntityDrawersRenderer::new);
-        DRAWER_RENDERERS.add(new RenderRecord<>(ro, BlockEntityDrawersRenderer::new));
         DRAWER_TYPES.add(ro);
         return ro;
     }
@@ -74,8 +67,6 @@ public final class ModBlockEntities {
     }
 
     public static void init(ChameleonInit.InitContext context) {
-        FRAMING_TABLE_RENDERERS.add(new RenderRecord<>(FRAMING_TABLE, BlockEntityFramingRenderer::new));
-
         BLOCK_ENTITIES.init(context);
     }
 
@@ -86,6 +77,4 @@ public final class ModBlockEntities {
     public static Stream<BlockEntityType<? extends BlockEntityDrawers>> getDrawerTypes() {
         return DRAWER_TYPES.stream().map(RegistryEntry::get);
     }
-
-    public record RenderRecord<T extends BlockEntity> (RegistryEntry<? extends BlockEntityType<? extends T>> blockEntityType, BlockEntityRendererProvider<T> renderProvider) { }
 }
