@@ -3,6 +3,8 @@ package com.jaquadro.minecraft.storagedrawers.core;
 import com.jaquadro.minecraft.storagedrawers.ModConstants;
 import com.jaquadro.minecraft.storagedrawers.block.BlockDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.BlockTrim;
+import com.jaquadro.minecraft.storagedrawers.block.framed.BlockFramedStandardDrawers;
+import com.jaquadro.minecraft.storagedrawers.block.framed.BlockFramedTrim;
 import com.jaquadro.minecraft.storagedrawers.block.meta.BlockMeta;
 import com.jaquadro.minecraft.storagedrawers.item.*;
 import com.texelsaurus.minecraft.chameleon.ChameleonServices;
@@ -117,8 +119,12 @@ public final class ModItems
             Block block = blockHolder.get();
             if (block instanceof BlockMeta)
                 return null;
-            if (block instanceof BlockDrawers) {
+            if (block instanceof BlockFramedStandardDrawers) {
+                return new ItemFramedDrawers(block, new Item.Properties());
+            } else if (block instanceof BlockDrawers) {
                 return new ItemDrawers(block, new Item.Properties());
+            } else if (block instanceof BlockFramedTrim) {
+                return new ItemFramedTrim(block, new Item.Properties());
             } else if (block instanceof BlockTrim) {
                 return new ItemTrim(block, new Item.Properties());
             } else {

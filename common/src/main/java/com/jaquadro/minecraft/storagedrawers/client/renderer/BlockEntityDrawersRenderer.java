@@ -6,6 +6,7 @@ import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
 import com.jaquadro.minecraft.storagedrawers.block.BlockDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawersComp;
+import com.jaquadro.minecraft.storagedrawers.client.model.DrawerModelStore;
 import com.jaquadro.minecraft.storagedrawers.config.ModClientConfig;
 import com.jaquadro.minecraft.storagedrawers.util.CountFormatter;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -14,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -34,6 +36,8 @@ import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+
+import java.util.List;
 
 public class BlockEntityDrawersRenderer implements BlockEntityRenderer<BlockEntityDrawers>
 {
@@ -61,6 +65,8 @@ public class BlockEntityDrawersRenderer implements BlockEntityRenderer<BlockEnti
         BlockState state = blockEntityDrawers.getBlockState();
         if (!(state.getBlock() instanceof BlockDrawers))
             return;
+
+        //renderOverlay((BlockDrawers)state.getBlock(), blockEntityDrawers, matrix, buffer, state.getValue(BlockDrawers.FACING), combinedLight, combinedOverlay);
 
         Direction side = state.getValue(BlockDrawers.FACING);
         if (playerBehindBlock(blockEntityDrawers.getBlockPos(), side))
@@ -247,6 +253,22 @@ public class BlockEntityDrawersRenderer implements BlockEntityRenderer<BlockEnti
     public static final ResourceLocation TEXTURE_IND_4 = ModConstants.loc("block/indicator/indicator_4_on");
     public static final ResourceLocation TEXTURE_IND_COMP_3 = ModConstants.loc("block/indicator/indicator_comp_on");
     public static final ResourceLocation TEXTURE_IND_COMP_2 = ModConstants.loc("block/indicator/indicator_comp2_on");
+
+    private void renderOverlay (BlockDrawers block, BlockEntityDrawers blockEntityDrawers, PoseStack matrixStack, MultiBufferSource buffer, Direction side, int combinedLight, int combinedOverlay) {
+        matrixStack.pushPose();
+
+        alignRendering(matrixStack, side);
+        BakedModel model = DrawerModelStore.getModel(DrawerModelStore.DynamicPart.FRAMED_CONTROLLER_SHADING, Direction.SOUTH);
+        if (model != null) {
+            List<BakedQuad> quads = model.getQuads(block.defaultBlockState(), null, null);
+
+            VertexConsumer builder = buffer.getBuffer(RenderType.translucent());
+            for (BakedQuad quad : quads)
+                builder.putBulkData(matrixStack.last(), quad, 1, 1, 1, 1, combinedLight, combinedOverlay);
+        }
+
+        matrixStack.popPose();
+    }
 
     private void renderIndicator (BlockDrawers block, BlockEntityDrawers blockEntityDrawers, PoseStack matrixStack, MultiBufferSource buffer, Direction side, int combinedLight, int combinedOverlay) {
         int count = (blockEntityDrawers instanceof BlockEntityDrawersComp) ? 1 : block.getDrawerCount();

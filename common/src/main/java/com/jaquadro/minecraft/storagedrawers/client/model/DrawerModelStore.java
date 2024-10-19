@@ -2,12 +2,15 @@ package com.jaquadro.minecraft.storagedrawers.client.model;
 
 import com.jaquadro.minecraft.storagedrawers.ModConstants;
 import com.jaquadro.minecraft.storagedrawers.block.BlockDrawers;
+import com.jaquadro.minecraft.storagedrawers.block.EnumCompDrawer;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlocks;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
@@ -18,7 +21,8 @@ import java.util.stream.Stream;
 
 public class DrawerModelStore
 {
-    public enum DynamicPart {
+    public enum DynamicPart
+    {
         LOCK("lock"),
         CLAIM("claim"),
         LOCK_CLAIM("lock_claim"),
@@ -33,7 +37,29 @@ public class DrawerModelStore
         MISSING_1("missing_1"),
         MISSING_2("missing_2"),
         MISSING_3("missing_3"),
-        MISSING_4("missing_4");
+        MISSING_4("missing_4"),
+        FRAMED_DRAWERS_SIDE("framed_drawers_side"),
+        FRAMED_DRAWERS_TRIM("framed_drawers_trim"),
+        FRAMED_DRAWERS_FRONT("framed_drawers_front"),
+        FRAMED_DRAWERS_SHADING("framed_drawers_shading"),
+        FRAMED_TRIM_SIDE("framed_trim_side"),
+        FRAMED_TRIM_TRIM("framed_trim_trim"),
+        FRAMED_CONTROLLER_SIDE("framed_controller_side"),
+        FRAMED_CONTROLLER_TRIM("framed_controller_trim"),
+        FRAMED_CONTROLLER_FRONT("framed_controller_front"),
+        FRAMED_CONTROLLER_SHADING("framed_controller_shading"),
+        FRAMED_CONTROLLER_IO_SIDE("framed_controller_io_side"),
+        FRAMED_CONTROLLER_IO_TRIM("framed_controller_io_trim"),
+        FRAMED_CONTROLLER_IO_SHADING("framed_controller_io_shading"),
+        FRAMED_COMP2_SIDE("framed_comp2_side"),
+        FRAMED_COMP2_TRIM("framed_comp2_trim"),
+        FRAMED_COMP2_FRONT("framed_comp2_front"),
+        FRAMED_COMP2_SHADING("framed_comp2_shading"),
+        FRAMED_COMP3_SIDE("framed_comp3_side"),
+        FRAMED_COMP3_TRIM("framed_comp3_trim"),
+        FRAMED_COMP3_FRONT("framed_comp3_front"),
+        FRAMED_COMP3_SHADING("framed_comp3_shading"),
+        ;
 
         private String name;
 
@@ -45,6 +71,77 @@ public class DrawerModelStore
             return name;
         }
     }
+
+    public static class FrameMatSet {
+        private DynamicPart sidePart;
+        private DynamicPart trimPart;
+        private DynamicPart frontPart;
+        private DynamicPart shadeFrontPart;
+        private DynamicPart shadeSidePart;
+
+        public DynamicPart sidePart () {
+            return sidePart;
+        }
+
+        public DynamicPart trimPart () {
+            return trimPart;
+        }
+
+        public DynamicPart frontPart () {
+            return frontPart;
+        }
+
+        public DynamicPart shadeFrontPart () {
+            return shadeFrontPart;
+        }
+
+        public DynamicPart shadeSidePart () {
+            return shadeSidePart;
+        }
+
+        public FrameMatSet sidePart (DynamicPart part) {
+            this.sidePart = part;
+            return this;
+        }
+
+        public FrameMatSet trimPart (DynamicPart part) {
+            this.trimPart = part;
+            return this;
+        }
+
+        public FrameMatSet frontPart (DynamicPart part) {
+            this.frontPart = part;
+            return this;
+        }
+
+        public FrameMatSet shadeFrontPart (DynamicPart part) {
+            this.shadeFrontPart = part;
+            return this;
+        }
+
+        public FrameMatSet shadeSidePart (DynamicPart part) {
+            this.shadeSidePart = part;
+            return this;
+        }
+    }
+
+    public static final FrameMatSet FramedStandardDrawerMaterials = new FrameMatSet()
+        .sidePart(DynamicPart.FRAMED_DRAWERS_SIDE).trimPart(DynamicPart.FRAMED_DRAWERS_TRIM)
+        .frontPart(DynamicPart.FRAMED_DRAWERS_FRONT).shadeFrontPart(DynamicPart.FRAMED_DRAWERS_SHADING);
+    public static final FrameMatSet FramedComp2DrawerMaterials = new FrameMatSet()
+        .sidePart(DynamicPart.FRAMED_COMP2_SIDE).trimPart(DynamicPart.FRAMED_COMP2_TRIM)
+        .frontPart(DynamicPart.FRAMED_COMP2_FRONT).shadeFrontPart(DynamicPart.FRAMED_COMP2_SHADING);
+    public static final FrameMatSet FramedComp3DrawerMaterials = new FrameMatSet()
+        .sidePart(DynamicPart.FRAMED_COMP3_SIDE).trimPart(DynamicPart.FRAMED_COMP3_TRIM)
+        .frontPart(DynamicPart.FRAMED_COMP3_FRONT).shadeFrontPart(DynamicPart.FRAMED_COMP3_SHADING);
+    public static final FrameMatSet FramedControllerMaterials = new FrameMatSet()
+        .sidePart(DynamicPart.FRAMED_CONTROLLER_SIDE).trimPart(DynamicPart.FRAMED_CONTROLLER_TRIM)
+        .frontPart(DynamicPart.FRAMED_CONTROLLER_FRONT).shadeFrontPart(DynamicPart.FRAMED_CONTROLLER_SHADING);
+    public static final FrameMatSet FramedControllerIOMaterials = new FrameMatSet()
+        .sidePart(DynamicPart.FRAMED_CONTROLLER_IO_SIDE).trimPart(DynamicPart.FRAMED_CONTROLLER_IO_TRIM)
+        .shadeFrontPart(DynamicPart.FRAMED_CONTROLLER_IO_SHADING);
+    public static final FrameMatSet FramedTrimMaterials = new FrameMatSet()
+        .sidePart(DynamicPart.FRAMED_TRIM_SIDE).trimPart(DynamicPart.FRAMED_TRIM_TRIM);
 
     private static final Map<String, BakedModel> modelStore = new HashMap<>();
     private static final Map<String, ModelResourceLocation> locationStore = new HashMap<>();
@@ -67,14 +164,23 @@ public class DrawerModelStore
     public static class DecorationSet {
         public final Set<String> targetBlocks = new HashSet<>();
         public final Map<String, ModelResourceLocation> overlays = new HashMap<>();
-        
+
         public DecorationSet () {
             ModBlocks.getDrawersOfType(BlockDrawers.class).forEach(blockDrawers -> {
                 for (BlockState state : blockDrawers.getStateDefinition().getPossibleStates())
                     targetBlocks.add(BlockModelShaper.stateToModelLocation(state).toString());
             });
+            ModBlocks.getFramedBlocks().forEach(blockTrim -> {
+                if (blockTrim instanceof Block mcBlock) {
+                    for (BlockState state : mcBlock.getStateDefinition().getPossibleStates())
+                        targetBlocks.add(BlockModelShaper.stateToModelLocation(state).toString());
+
+                    ModelResourceLocation invLoc = new ModelResourceLocation(BuiltInRegistries.BLOCK.getKey(mcBlock), "inventory");
+                    targetBlocks.add(invLoc.toString());
+                }
+            });
         }
-        
+
         public void add (Direction dir, boolean half) {
             addOverlay(getVariant(DynamicPart.LOCK, dir, half), new ModelResourceLocation(ModConstants.loc("meta_locked"), getVariant(dir, half)));
             addOverlay(getVariant(DynamicPart.CLAIM, dir, half), new ModelResourceLocation(ModConstants.loc("meta_claimed"), getVariant(dir, half)));
@@ -101,13 +207,46 @@ public class DrawerModelStore
             addOverlay(getVariant(DynamicPart.MISSING_3, dir, half, 4), new ModelResourceLocation(ModConstants.loc("meta_missing_slot_4_3"), getVariant(dir, half)));
             addOverlay(getVariant(DynamicPart.MISSING_4, dir, half, 4), new ModelResourceLocation(ModConstants.loc("meta_missing_slot_4_4"), getVariant(dir, half)));
 
-            //lockOverlays.put(dir, addLocation(new ModelResourceLocation(ModConstants.loc("meta_locked"), getVariant(dir, half))));
-            //voidOverlays.put(dir, addLocation(new ModelResourceLocation(ModConstants.loc("meta_void"), getVariant(dir, half))));
-            //shroudOverlays.put(dir, addLocation(new ModelResourceLocation(ModConstants.loc("meta_shroud"), getVariant(dir, half))));
-            //indicator1.put(dir, addLocation(new ModelResourceLocation(ModConstants.loc("meta_indicator"), getVariant(dir, half, 1))));
-            //indicator2.put(dir, addLocation(new ModelResourceLocation(ModConstants.loc("meta_indicator"), getVariant(dir, half, 2))));
-            //indicator4.put(dir, addLocation(new ModelResourceLocation(ModConstants.loc("meta_indicator"), getVariant(dir, half, 4))));
-            //indicatorComp.put(dir, addLocation(new ModelResourceLocation(ModConstants.loc("meta_comp_indicator"), getVariant(dir, false))));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_SIDE, dir, half, 1), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_side"), getVariant(dir, half, 1)));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_SIDE, dir, half, 2), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_side"), getVariant(dir, half, 2)));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_SIDE, dir, half, 4), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_side"), getVariant(dir, half, 4)));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_TRIM, dir, half, 1), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_trim"), getVariant(dir, half, 1)));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_TRIM, dir, half, 2), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_trim"), getVariant(dir, half, 2)));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_TRIM, dir, half, 4), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_trim"), getVariant(dir, half, 4)));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_FRONT, dir, half, 1), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_front"), getVariant(dir, half, 1)));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_FRONT, dir, half, 2), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_front"), getVariant(dir, half, 2)));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_FRONT, dir, half, 4), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_front"), getVariant(dir, half, 4)));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_SHADING, dir, half, 1), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_shading"), getVariant(dir, half, 1)));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_SHADING, dir, half, 2), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_shading"), getVariant(dir, half, 2)));
+            addOverlay(getVariant(DynamicPart.FRAMED_DRAWERS_SHADING, dir, half, 4), new ModelResourceLocation(ModConstants.loc("meta_framed_drawers_shading"), getVariant(dir, half, 4)));
+
+            addOverlay(getVariant(DynamicPart.FRAMED_TRIM_SIDE), new ModelResourceLocation(ModConstants.loc("meta_framed_trim_side"), getVariant()));
+            addOverlay(getVariant(DynamicPart.FRAMED_TRIM_TRIM), new ModelResourceLocation(ModConstants.loc("meta_framed_trim_trim"), getVariant()));
+
+            addOverlay(getVariant(DynamicPart.FRAMED_CONTROLLER_SIDE, dir), new ModelResourceLocation(ModConstants.loc("meta_framed_controller_side"), getVariant(dir)));
+            addOverlay(getVariant(DynamicPart.FRAMED_CONTROLLER_TRIM, dir), new ModelResourceLocation(ModConstants.loc("meta_framed_controller_trim"), getVariant(dir)));
+            addOverlay(getVariant(DynamicPart.FRAMED_CONTROLLER_FRONT, dir), new ModelResourceLocation(ModConstants.loc("meta_framed_controller_front"), getVariant(dir)));
+            addOverlay(getVariant(DynamicPart.FRAMED_CONTROLLER_SHADING, dir), new ModelResourceLocation(ModConstants.loc("meta_framed_controller_shading"), getVariant(dir)));
+
+            addOverlay(getVariant(DynamicPart.FRAMED_CONTROLLER_IO_SIDE), new ModelResourceLocation(ModConstants.loc("meta_framed_controller_io_side"), getVariant()));
+            addOverlay(getVariant(DynamicPart.FRAMED_CONTROLLER_IO_TRIM), new ModelResourceLocation(ModConstants.loc("meta_framed_controller_io_trim"), getVariant()));
+            addOverlay(getVariant(DynamicPart.FRAMED_CONTROLLER_IO_SHADING), new ModelResourceLocation(ModConstants.loc("meta_framed_controller_io_shading"), getVariant()));
+
+            for (int i = 1; i <= 2; i++) {
+                EnumCompDrawer open = EnumCompDrawer.byOpenSlots(i);
+                addOverlay(getVariant(DynamicPart.FRAMED_COMP2_SIDE, dir, half, open), new ModelResourceLocation(ModConstants.loc("meta_framed_compdrawers_2_side"), getVariant(dir, half, open)));
+                addOverlay(getVariant(DynamicPart.FRAMED_COMP2_TRIM, dir, half, open), new ModelResourceLocation(ModConstants.loc("meta_framed_compdrawers_2_trim"), getVariant(dir, half, open)));
+                addOverlay(getVariant(DynamicPart.FRAMED_COMP2_FRONT, dir, half, open), new ModelResourceLocation(ModConstants.loc("meta_framed_compdrawers_2_front"), getVariant(dir, half, open)));
+                addOverlay(getVariant(DynamicPart.FRAMED_COMP2_SHADING, dir, half, open), new ModelResourceLocation(ModConstants.loc("meta_framed_compdrawers_2_shading"), getVariant(dir, half, open)));
+            }
+
+            for (int i = 1; i <= 3; i++) {
+                EnumCompDrawer open = EnumCompDrawer.byOpenSlots(i);
+                addOverlay(getVariant(DynamicPart.FRAMED_COMP3_SIDE, dir, half, open), new ModelResourceLocation(ModConstants.loc("meta_framed_compdrawers_3_side"), getVariant(dir, half, open)));
+                addOverlay(getVariant(DynamicPart.FRAMED_COMP3_TRIM, dir, half, open), new ModelResourceLocation(ModConstants.loc("meta_framed_compdrawers_3_trim"), getVariant(dir, half, open)));
+                addOverlay(getVariant(DynamicPart.FRAMED_COMP3_FRONT, dir, half, open), new ModelResourceLocation(ModConstants.loc("meta_framed_compdrawers_3_front"), getVariant(dir, half, open)));
+                addOverlay(getVariant(DynamicPart.FRAMED_COMP3_SHADING, dir, half, open), new ModelResourceLocation(ModConstants.loc("meta_framed_compdrawers_3_shading"), getVariant(dir, half, open)));
+            }
         }
 
         void addOverlay(String variant, ModelResourceLocation loc) {
@@ -137,6 +276,14 @@ public class DrawerModelStore
         return loc;
     }
 
+    static String getVariant() {
+        return "";
+    }
+
+    static String getVariant(Direction dir) {
+        return "facing=" + dir.getName();
+    }
+
     static String getVariant(Direction dir, boolean half) {
         return "facing=" + dir.getName() + ",half=" + half;
     }
@@ -145,11 +292,27 @@ public class DrawerModelStore
         return "facing=" + dir.getName() + ",half=" + half + ",slots=" + slots;
     }
 
+    static String getVariant(Direction dir, boolean half, EnumCompDrawer slots) {
+        return "facing=" + dir.getName() + ",half=" + half + ",slots=" + slots;
+    }
+
+    static String getVariant(DynamicPart part) {
+        return "part=" + part.getName();
+    }
+
+    static String getVariant(DynamicPart part, Direction dir) {
+        return "part=" + part.getName() + ",facing=" + dir.getName();
+    }
+
     static String getVariant(DynamicPart part, Direction dir, boolean half) {
         return "part=" + part.getName() + ",facing=" + dir.getName() + ",half=" + half;
     }
 
     static String getVariant(DynamicPart part, Direction dir, boolean half, int slots) {
+        return "part=" + part.getName() + ",facing=" + dir.getName() + ",half=" + half + ",slots=" + slots;
+    }
+
+    static String getVariant(DynamicPart part, Direction dir, boolean half, EnumCompDrawer slots) {
         return "part=" + part.getName() + ",facing=" + dir.getName() + ",half=" + half + ",slots=" + slots;
     }
 
@@ -177,11 +340,23 @@ public class DrawerModelStore
         return getModel(INSTANCE.overlays.getOrDefault(variant, null));
     }
 
+    public static BakedModel getModel(DynamicPart part) {
+        return getModel(getVariant(part));
+    }
+
+    public static BakedModel getModel(DynamicPart part, Direction dir) {
+        return getModel(getVariant(part, dir));
+    }
+
     public static BakedModel getModel(DynamicPart part, Direction dir, boolean half) {
         return getModel(getVariant(part, dir, half));
     }
 
     public static BakedModel getModel(DynamicPart part, Direction dir, boolean half, int slots) {
+        return getModel(getVariant(part, dir, half, slots));
+    }
+
+    public static BakedModel getModel(DynamicPart part, Direction dir, boolean half, EnumCompDrawer slots) {
         return getModel(getVariant(part, dir, half, slots));
     }
 }
