@@ -79,7 +79,7 @@
     "item.storagedrawers.remote_group_upgrade.desc": "ドロワーグループをコントローラーにリモート接続させられます。",
     "item.storagedrawers.remote_group_upgrade.bound": "Use on controller to bind upgrade",
     "item.storagedrawers.remote_group_upgrade_bound": "Remote Upgrade",
-    "item.storagedrawers.remote_group_upgrade_bound.desc": "ドロワーグループをコントローラーにリモート接続させられます。また、アップグレードされたドロワーに再び関連付けることに使用できます",
+    "item.storagedrawers.remote_group_upgrade_bound.desc": "ドロワーグループをコントローラーにリモート接続させられます。また、アップグレードされたドロワーに再び関連付けることに使用できます。",
     "item.storagedrawers.remote_group_upgrade_bound.bound": "コントローラーに関連付けられました。 [%d, %d, %d]",
     "item.storagedrawers.upgrade_template": "アップグレードテンプレート",
     "item.storagedrawers.drawer_key": "ドロワーキー",
@@ -109,8 +109,8 @@
     "item.storagedrawers.detached_drawer": "取り外された引き出し",
     "item.storagedrawers.detached_drawer.desc": "ドロワーブロックの空いているスペースに入れる",
 
-    "itemConfig.storagedrawers.disabled_upgrade": "現在のmod設定では効果がありません",
-    "itemConfig.storagedrawers.disabled_tool": "現在のmod設定では効果がありません",
+    "itemConfig.storagedrawers.disabled_upgrade": "現在のmod設定では効果がありません。",
+    "itemConfig.storagedrawers.disabled_tool": "現在のmod設定では効果がありません。",
 
     "itemGroup.storagedrawers": "Storage Drawers",
 
@@ -119,7 +119,7 @@
     "message.storagedrawers.missing_slots_upgrade": "引き出しが取り外されている間はアップグレードを変更することはできません。",
     "message.storagedrawers.updated_remote_binding": "コントローラーへの関連付けを更新しました。 [%d, %d, %d]",
 
-    "tooltip.storagedrawers.drawers.capacity": "引き出しごとに %d スタックが収納",
+    "tooltip.storagedrawers.drawers.capacity": "引き出しごとに %d スタックを収納",
     "tooltip.storagedrawers.drawers.sealed": "内容物は封がされています。",
     "tooltip.storagedrawers.drawers.too_heavy": "重すぎる！",
     "tooltip.storagedrawers.waila.empty": "<空>",
