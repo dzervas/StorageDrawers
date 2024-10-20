@@ -43,7 +43,7 @@
     "config.jade.plugin_storagedrawers.display.status": "アップグレード状態",
 
     "container.storagedrawers.upgrades": "アップグレード",
-    "container.storagedrawers.framing_table": "フレーミング台",
+    "container.storagedrawers.framing_table": "枠取り台",
 
     "item.storagedrawers.storage_upgrade.desc": "ストレージ容量を基本値の %d 増加させます。",
     "item.storagedrawers.obsidian_storage_upgrade": "ストレージアップグレード (I)",
