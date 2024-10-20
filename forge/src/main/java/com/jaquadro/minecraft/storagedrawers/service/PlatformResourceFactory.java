@@ -33,4 +33,14 @@ public class PlatformResourceFactory implements ResourceFactory
     public BlockEntityType.BlockEntitySupplier<BlockEntityControllerIO> createBlockEntityControllerIO () {
         return PlatformBlockEntityControllerIO::new;
     }
+
+    @Override
+    public BlockEntityType.BlockEntitySupplier<BlockEntityFramingTable> createBlockEntityFramingTable () {
+        return BlockEntityFramingTable::new;
+    }
+
+    @Override
+    public BlockEntityType.BlockEntitySupplier<BlockEntityTrim> createBlockEntityTrim () {
+        return PlatformBlockEntityTrim::new;
+    }
 }

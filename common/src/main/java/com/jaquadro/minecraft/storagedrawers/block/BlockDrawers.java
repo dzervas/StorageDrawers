@@ -244,9 +244,13 @@ public abstract class BlockDrawers extends FaceSlotBlock implements INetworked, 
         if (!SecurityManager.hasAccess(context.player, blockEntity))
             return Optional.of(InteractionResult.PASS);
 
+        ItemStack keyItem = null;
+        if (item.getItem() instanceof ItemKeyring keyring)
+            keyItem = keyring.getKey();
+
         // Drawer pulling
         if (ModCommonConfig.INSTANCE.GENERAL.enableDetachedDrawers.get() && context.slot >= 0) {
-            if (item.getItem() == ModItems.DRAWER_PULLER.get()) {
+            if (item.getItem() == ModItems.DRAWER_PULLER.get() || (keyItem != null && keyItem.getItem() == ModItems.DRAWER_PULLER.get())) {
                 this.interactPullDrawer(context);
                 return Optional.of(InteractionResult.SUCCESS);
             } else if (item.getItem() instanceof ItemDetachedDrawer) {
@@ -286,10 +290,6 @@ public abstract class BlockDrawers extends FaceSlotBlock implements INetworked, 
 
             return Optional.of(InteractionResult.SUCCESS);
         }
-
-        ItemStack keyItem = null;
-        if (item.getItem() instanceof ItemKeyring keyring)
-            keyItem = keyring.getKey();
 
         // Personal Key
         if (item.getItem() instanceof ItemPersonalKey || (keyItem != null && keyItem.getItem() instanceof ItemPersonalKey)) {

@@ -1,6 +1,7 @@
 package com.jaquadro.minecraft.storagedrawers.core;
 
 import com.jaquadro.minecraft.storagedrawers.ModConstants;
+import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedBlock;
 import com.texelsaurus.minecraft.chameleon.api.ChameleonInit;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -10,6 +11,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
@@ -30,6 +32,11 @@ public class ModCreativeTabs
                     return;
                 if (ModItems.EXCLUDE_ITEMS_CREATIVE_TAB.contains(reg))
                     return;
+                if (reg.get() instanceof BlockItem blockItem) {
+                    if (blockItem.getBlock() instanceof IFramedBlock)
+                        return;
+                }
+
                 itemGroup.accept(new ItemStack(reg.get()));
             });
         });
