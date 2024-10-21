@@ -11,6 +11,8 @@ import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawers;
 import com.jaquadro.minecraft.storagedrawers.core.ModBlockEntities;
 import com.texelsaurus.minecraft.chameleon.capabilities.ChameleonCapability;
 import com.texelsaurus.minecraft.chameleon.capabilities.ForgeCapability;
+import com.texelsaurus.minecraft.chameleon.capabilities.IForgeCapability;
+import com.texelsaurus.minecraft.chameleon.service.ForgeCapabilities;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -29,15 +31,15 @@ public class PlatformCapabilities
     static final Capability<IItemRepository> NATIVE_ITEM_REPOSITORY = CapabilityManager.get(new CapabilityToken<>(){});
     static final Capability<IItemHandler> NATIVE_ITEM_HANDLER = CapabilityManager.get(new CapabilityToken<>(){});
 
-    public final static ForgeCapability<IDrawerAttributes> DRAWER_ATTRIBUTES = new ForgeCapability<>(NATIVE_DRAWER_ATTRIBUTES);
-    public final static ForgeCapability<IDrawerGroup> DRAWER_GROUP = new ForgeCapability<>(NATIVE_DRAWER_GROUP);
-    public final static ForgeCapability<IItemRepository> ITEM_REPOSITORY = new ForgeCapability<>(NATIVE_ITEM_REPOSITORY);
-    public final static ForgeCapability<IItemHandler> ITEM_HANDLER = new ForgeCapability<>(NATIVE_ITEM_HANDLER);
+    public final static ForgeCapability<IDrawerAttributes> DRAWER_ATTRIBUTES = new ForgeCapability<>(Capabilities.DRAWER_ATTRIBUTES.id(), NATIVE_DRAWER_ATTRIBUTES);
+    public final static ForgeCapability<IDrawerGroup> DRAWER_GROUP = new ForgeCapability<>(Capabilities.DRAWER_GROUP.id(), NATIVE_DRAWER_GROUP);
+    public final static ForgeCapability<IItemRepository> ITEM_REPOSITORY = new ForgeCapability<>(Capabilities.ITEM_REPOSITORY.id(), NATIVE_ITEM_REPOSITORY);
+    public final static ForgeCapability<IItemHandler> ITEM_HANDLER = new ForgeCapability<>(Capabilities.ITEM_HANDLER.id(), NATIVE_ITEM_HANDLER);
 
     private static Map<Capability, ForgeCapability> nativeMap = new HashMap<>();
 
-    static <T> ForgeCapability<T> cast(ChameleonCapability<T> cap) {
-        return (ForgeCapability<T>) cap;
+    static <T> IForgeCapability<T> cast(ChameleonCapability<T> cap) {
+        return (IForgeCapability<T>) cap;
     }
 
     public static <T> T getCapability(Capability<T> capability, BlockEntity blockEntity) {
@@ -62,6 +64,11 @@ public class PlatformCapabilities
     }
 
     public static void initHandlers() {
+        ForgeCapabilities.reigsterCapability(DRAWER_ATTRIBUTES);
+        ForgeCapabilities.reigsterCapability(DRAWER_GROUP);
+        ForgeCapabilities.reigsterCapability(ITEM_REPOSITORY);
+        ForgeCapabilities.reigsterCapability(ITEM_HANDLER);
+
         ModBlockEntities.getDrawerTypes().forEach((entity) -> {
             cast(Capabilities.DRAWER_ATTRIBUTES).register(entity, e -> BlockEntityDrawers.getDrawerAttributes(e));
             cast(Capabilities.DRAWER_GROUP).register(entity, e -> BlockEntityDrawers.getGroup(e));

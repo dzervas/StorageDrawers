@@ -11,20 +11,27 @@ import com.jaquadro.minecraft.storagedrawers.core.ModBlockEntities;
 import com.jaquadro.minecraft.storagedrawers.inventory.DrawerStorageImpl;
 import com.texelsaurus.minecraft.chameleon.capabilities.ChameleonCapability;
 import com.texelsaurus.minecraft.chameleon.capabilities.FabricCapability;
+import com.texelsaurus.minecraft.chameleon.capabilities.IFabricCapability;
+import com.texelsaurus.minecraft.chameleon.service.FabricCapabilities;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
 
 public class PlatformCapabilities
 {
-    public final static FabricCapability<IDrawerAttributes> DRAWER_ATTRIBUTES = new FabricCapability<>();
-    public final static FabricCapability<IDrawerGroup> DRAWER_GROUP = new FabricCapability<>();
-    public final static FabricCapability<IItemRepository> ITEM_REPOSITORY = new FabricCapability<>();
-    public final static FabricCapability<IItemHandler> ITEM_HANDLER = new FabricCapability<>();
+    public final static FabricCapability<IDrawerAttributes> DRAWER_ATTRIBUTES = new FabricCapability<>(Capabilities.DRAWER_ATTRIBUTES.id());
+    public final static FabricCapability<IDrawerGroup> DRAWER_GROUP = new FabricCapability<>(Capabilities.DRAWER_GROUP.id());
+    public final static FabricCapability<IItemRepository> ITEM_REPOSITORY = new FabricCapability<>(Capabilities.ITEM_REPOSITORY.id());
+    public final static FabricCapability<IItemHandler> ITEM_HANDLER = new FabricCapability<>(Capabilities.ITEM_HANDLER.id());
 
-    static <T> FabricCapability<T> cast(ChameleonCapability<T> cap) {
-        return (FabricCapability<T>) cap;
+    static <T> IFabricCapability<T> cast(ChameleonCapability<T> cap) {
+        return (IFabricCapability<T>) cap;
     }
 
     public static void initHandlers() {
+        FabricCapabilities.reigsterCapability(DRAWER_ATTRIBUTES);
+        FabricCapabilities.reigsterCapability(DRAWER_GROUP);
+        FabricCapabilities.reigsterCapability(ITEM_REPOSITORY);
+        FabricCapabilities.reigsterCapability(ITEM_HANDLER);
+
         ModBlockEntities.getDrawerTypes().forEach((entity) -> {
             cast(Capabilities.DRAWER_ATTRIBUTES).register(entity, e -> BlockEntityDrawers.getDrawerAttributes(e));
             cast(Capabilities.DRAWER_GROUP).register(entity, e -> BlockEntityDrawers.getGroup(e));

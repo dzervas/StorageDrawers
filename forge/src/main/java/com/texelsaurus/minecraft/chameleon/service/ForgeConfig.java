@@ -18,7 +18,7 @@ public class ForgeConfig implements ChameleonConfig
     }
 
     @Override
-    public void init() {
+    public void init(String modId, ChameleonConfig.Type type) {
         localSpec.init();
         forgeSpec = BUILDER.build();
     }

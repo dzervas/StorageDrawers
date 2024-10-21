@@ -1,6 +1,7 @@
 package com.texelsaurus.minecraft.chameleon.capabilities;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -9,11 +10,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-public class FabricCapability<T> implements ChameleonCapability<T>
+public class FabricCapability<T> implements IFabricCapability<T>
 {
+    final ResourceLocation id;
     final Map<BlockEntityType<?>, Function<BlockEntity, T>> handlers = new HashMap<>();
 
-    public FabricCapability () { }
+    public FabricCapability (ResourceLocation id) {
+        this.id = id;
+    }
+
+    @Override
+    public ResourceLocation id () {
+        return null;
+    }
 
     @Override
     public T getCapability (Level level, BlockPos pos) {

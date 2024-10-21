@@ -7,6 +7,7 @@ import com.jaquadro.minecraft.storagedrawers.config.ModCommonConfig;
 import com.jaquadro.minecraft.storagedrawers.core.*;
 import com.jaquadro.minecraft.storagedrawers.core.ModCreativeTabs;
 import com.texelsaurus.minecraft.chameleon.api.ChameleonInit;
+import com.texelsaurus.minecraft.chameleon.service.ChameleonConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 
@@ -16,8 +17,8 @@ public class StorageDrawers implements ModInitializer
 
     @Override
     public void onInitialize () {
-        ModCommonConfig.INSTANCE.context().init();
-        ModClientConfig.INSTANCE.context().init();
+        ModCommonConfig.INSTANCE.context().init(ModConstants.MOD_ID, ChameleonConfig.Type.COMMON);
+        ModClientConfig.INSTANCE.context().init(ModConstants.MOD_ID, ChameleonConfig.Type.CLIENT);
 
         ChameleonInit.InitContext context = new ChameleonInit.InitContext();
 

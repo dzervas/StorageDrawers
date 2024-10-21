@@ -18,7 +18,7 @@ public class NeoforgeConfig implements ChameleonConfig
     }
 
     @Override
-    public void init() {
+    public void init(String modId, ChameleonConfig.Type type) {
         localSpec.init();
         neoSpec = BUILDER.build();
     }

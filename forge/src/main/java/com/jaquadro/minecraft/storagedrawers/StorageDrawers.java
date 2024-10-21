@@ -6,6 +6,7 @@ import com.jaquadro.minecraft.storagedrawers.core.*;
 import com.jaquadro.minecraft.storagedrawers.network.PlayerBoolConfigMessage;
 import com.texelsaurus.minecraft.chameleon.ChameleonServices;
 import com.texelsaurus.minecraft.chameleon.registry.ForgeRegistryContext;
+import com.texelsaurus.minecraft.chameleon.service.ChameleonConfig;
 import com.texelsaurus.minecraft.chameleon.service.ForgeConfig;
 import com.texelsaurus.minecraft.chameleon.service.ForgeNetworking;
 import net.minecraft.client.Minecraft;
@@ -44,8 +45,8 @@ public class StorageDrawers
     //public static SecurityRegistry securityRegistry;
 
     public StorageDrawers () {
-        ModCommonConfig.INSTANCE.context().init();
-        ModClientConfig.INSTANCE.context().init();
+        ModCommonConfig.INSTANCE.context().init(ModConstants.MOD_ID, ChameleonConfig.Type.COMMON);
+        ModClientConfig.INSTANCE.context().init(ModConstants.MOD_ID, ChameleonConfig.Type.CLIENT);
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ((ForgeConfig)ModCommonConfig.INSTANCE.context()).forgeSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ((ForgeConfig)ModClientConfig.INSTANCE.context()).forgeSpec);
 

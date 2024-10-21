@@ -23,7 +23,7 @@ public class StaticConfig implements ChameleonConfig
     }
 
     @Override
-    public void init () {
+    public void init (String modId, ChameleonConfig.Type type) {
         if (localSpec != null) {
             localSpec.init();
             localSpec.setLoaded();

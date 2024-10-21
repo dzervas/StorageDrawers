@@ -9,7 +9,7 @@ public interface ChameleonConfig
 {
     <T extends ChameleonConfig> T create(ConfigSpec spec);
 
-    void init();
+    void init(String modId, Type type);
 
     <T> ConfigEntry<T> define(String name, T defaultValue);
 
@@ -23,6 +23,12 @@ public interface ChameleonConfig
 
     void pushGroup(String name);
     void popGroup();
+
+    enum Type {
+       COMMON,
+       CLIENT,
+       SERVER;
+    }
 
     abstract class ConfigEntry<T> implements Supplier<T>, Consumer<T>
     {

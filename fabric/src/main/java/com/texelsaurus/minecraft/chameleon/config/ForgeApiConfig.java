@@ -1,11 +1,6 @@
 package com.texelsaurus.minecraft.chameleon.config;
 
-import com.jaquadro.minecraft.storagedrawers.ModConstants;
-import com.jaquadro.minecraft.storagedrawers.config.ModClientConfig;
-import com.jaquadro.minecraft.storagedrawers.config.ModCommonConfig;
-import com.texelsaurus.minecraft.chameleon.ChameleonServices;
 import com.texelsaurus.minecraft.chameleon.service.ChameleonConfig;
-import com.texelsaurus.minecraft.chameleon.service.FabricConfig;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -27,16 +22,16 @@ public class ForgeApiConfig implements ChameleonConfig
     }
 
     @Override
-    public void init() {
+    public void init(String modId, ChameleonConfig.Type type) {
         if (localSpec != null)
             localSpec.init();
 
         neoSpec = BUILDER.build();
 
-        if (localSpec == ModCommonConfig.INSTANCE)
-            NeoForgeConfigRegistry.INSTANCE.register(ModConstants.MOD_ID, ModConfig.Type.COMMON, neoSpec);
-        else if (localSpec == ModClientConfig.INSTANCE)
-            NeoForgeConfigRegistry.INSTANCE.register(ModConstants.MOD_ID, ModConfig.Type.CLIENT, neoSpec);
+        if (type == Type.COMMON)
+            NeoForgeConfigRegistry.INSTANCE.register(modId, ModConfig.Type.COMMON, neoSpec);
+        else if (type == Type.CLIENT)
+            NeoForgeConfigRegistry.INSTANCE.register(modId, ModConfig.Type.CLIENT, neoSpec);
 
         if (localSpec != null)
             localSpec.setLoaded();
