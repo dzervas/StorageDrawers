@@ -18,13 +18,20 @@
     "block.storagedrawers.mat.bamboo": "竹",
     "block.storagedrawers.mat.crimson": "クリムゾン",
     "block.storagedrawers.mat.warped": "歪んだ",
+    "block.storagedrawers.mat.framed": "フレーム付き",
 
     "block.storagedrawers.compacting_drawers_2": "圧縮ドロワー (2ティア)",
     "block.storagedrawers.compacting_drawers_3": "圧縮ドロワー (3ティア)",
     "block.storagedrawers.compacting_half_drawers_2": "圧縮ハーフドロワー (2ティア)",
     "block.storagedrawers.compacting_half_drawers_3": "圧縮ハーフドロワー (3ティア)",
+    "block.storagedrawers.framed_compacting_drawers_2": "フレーム付き圧縮ドロワー (2ティア)",
+    "block.storagedrawers.framed_compacting_drawers_3": "フレーム付き圧縮ドロワー (3ティア)",
+    "block.storagedrawers.framed_compacting_half_drawers_2": "フレーム付き圧縮ハーフドロワー (2ティア)",
+    "block.storagedrawers.framed_compacting_half_drawers_3": "フレーム付き圧縮ハーフドロワー (3ティア)",
     "block.storagedrawers.controller": "ドロワーコントローラー",
-    "block.storagedrawers.controller_slave": "ドロワーコントローラースレーヴ",
+    "block.storagedrawers.controller_io": "ドロワーコントローラー IO",
+    "block.storagedrawers.framed_controller": "フレーム付きドロワーコントローラー",
+    "block.storagedrawers.framed_controller_io": "フレーム付きドロワーコントローラー IO",
     "block.storagedrawers.keybutton_drawer": "ドロワーキーボタン",
     "block.storagedrawers.keybutton_quantify": "測量キーボタン",
     "block.storagedrawers.keybutton_concealment": "秘匿キーボタン",
@@ -36,6 +43,7 @@
     "config.jade.plugin_storagedrawers.display.status": "アップグレード状態",
 
     "container.storagedrawers.upgrades": "アップグレード",
+    "container.storagedrawers.framing_table": "枠取り台",
 
     "item.storagedrawers.storage_upgrade.desc": "ストレージ容量を基本値の %d 増加させます。",
     "item.storagedrawers.obsidian_storage_upgrade": "ストレージアップグレード (I)",
@@ -77,9 +85,9 @@
     "item.storagedrawers.remote_upgrade_bound.bound": "コントローラーに関連付けられました。 [%d, %d, %d]",
     "item.storagedrawers.remote_group_upgrade": "リモートグループアップグレード",
     "item.storagedrawers.remote_group_upgrade.desc": "ドロワーグループをコントローラーにリモート接続させられます。",
-    "item.storagedrawers.remote_group_upgrade.bound": "Use on controller to bind upgrade",
-    "item.storagedrawers.remote_group_upgrade_bound": "Remote Upgrade",
-    "item.storagedrawers.remote_group_upgrade_bound.desc": "ドロワーグループをコントローラーにリモート接続させられます。また、アップグレードされたドロワーに再び関連付けることに使用できます",
+    "item.storagedrawers.remote_group_upgrade.bound": "コントローラーに使用してアップグレードを関連付けます。e",
+    "item.storagedrawers.remote_group_upgrade_bound": "リモートグループアップグレード",
+    "item.storagedrawers.remote_group_upgrade_bound.desc": "ドロワーグループをコントローラーにリモート接続させられます。また、アップグレードされたドロワーに再び関連付けることに使用できます。",
     "item.storagedrawers.remote_group_upgrade_bound.bound": "コントローラーに関連付けられました。 [%d, %d, %d]",
     "item.storagedrawers.upgrade_template": "アップグレードテンプレート",
     "item.storagedrawers.drawer_key": "ドロワーキー",
@@ -109,8 +117,8 @@
     "item.storagedrawers.detached_drawer": "取り外された引き出し",
     "item.storagedrawers.detached_drawer.desc": "ドロワーブロックの空いているスペースに入れる",
 
-    "itemConfig.storagedrawers.disabled_upgrade": "現在のmod設定では効果がありません",
-    "itemConfig.storagedrawers.disabled_tool": "現在のmod設定では効果がありません",
+    "itemConfig.storagedrawers.disabled_upgrade": "現在のmod設定では効果がありません。",
+    "itemConfig.storagedrawers.disabled_tool": "現在のmod設定では効果がありません。",
 
     "itemGroup.storagedrawers": "Storage Drawers",
 
@@ -119,7 +127,7 @@
     "message.storagedrawers.missing_slots_upgrade": "引き出しが取り外されている間はアップグレードを変更することはできません。",
     "message.storagedrawers.updated_remote_binding": "コントローラーへの関連付けを更新しました。 [%d, %d, %d]",
 
-    "tooltip.storagedrawers.drawers.capacity": "引き出しごとに %d スタックが収納",
+    "tooltip.storagedrawers.drawers.capacity": "引き出しごとに %d スタックを収納",
     "tooltip.storagedrawers.drawers.sealed": "内容物は封がされています。",
     "tooltip.storagedrawers.drawers.too_heavy": "重すぎる！",
     "tooltip.storagedrawers.waila.empty": "<空>",
