@@ -1,5 +1,12 @@
+[12.9.9]
+- Fixed framing table voiding framed input if materials already present
+- Updated ja_jp translation (contrib by sharpedmimishee)
+- Added nl_nl translation (contrib by Jack McKalling)
+
 [12.9.8]
 - Add several missing recipe advancement entries
+- Added ja_jp translation (contrib by sharpedmimishee)
+- Added ru_ru translation (contrib by gri3229)
 
 [12.9.7]
 - Fix framing table voiding framed drawer if quick-moved to input with materials already present

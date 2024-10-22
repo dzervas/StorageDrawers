@@ -289,6 +289,16 @@ public class BlockEntityFramingTable extends BaseBlockEntity implements Containe
     }
 
     @Override
+    public boolean canPlaceItem (int slotIndex, ItemStack stack) {
+        if (slotIndex == SLOT_INPUT)
+            return isItemValidTarget(stack);
+        if (slotIndex == SLOT_SIDE || slotIndex == SLOT_TRIM || slotIndex == SLOT_FRONT)
+            return isItemValidMaterial(stack);
+
+        return false;
+    }
+
+    @Override
     public @NotNull Component getDisplayName () {
         return Component.translatable("container.storagedrawers.framing_table");
     }

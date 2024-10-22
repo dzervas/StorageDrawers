@@ -1,1 +1,3 @@
-- Add several missing recipe advancement entries
+- Fixed framing table voiding framed input if materials already present
+- Updated ja_jp translation (contrib by sharpedmimishee)
+- Added nl_nl translation (contrib by Jack McKalling)
