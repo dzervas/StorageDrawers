@@ -21,7 +21,7 @@ public class FabricCapability<T> implements IFabricCapability<T>
 
     @Override
     public ResourceLocation id () {
-        return null;
+        return this.id;
     }
 
     @Override

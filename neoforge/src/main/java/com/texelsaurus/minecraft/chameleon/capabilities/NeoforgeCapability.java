@@ -11,14 +11,22 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 public class NeoforgeCapability<T, C> implements ChameleonCapability<T>
 {
+    final ResourceLocation id;
     final BlockCapability<T, C> nativeCapability;
 
     public NeoforgeCapability(ResourceLocation location, Class<T> clazz, Class<C> context) {
+        id = location;
         nativeCapability = BlockCapability.create(location, clazz, context);
     }
 
     public NeoforgeCapability(BlockCapability<T, C> nativeCapability) {
+        id = null;
         this.nativeCapability = nativeCapability;
+    }
+
+    @Override
+    public ResourceLocation id () {
+        return id;
     }
 
     @Override
