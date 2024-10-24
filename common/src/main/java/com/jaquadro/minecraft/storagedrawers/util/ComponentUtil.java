@@ -11,7 +11,7 @@ import java.util.List;
 public class ComponentUtil
 {
     public static List<MutableComponent> getSplitDescription (Item item) {
-        return Arrays.stream(item.getDescription().getString().split("\n")).map(Component::literal).toList();
+        return Arrays.stream(item.getName().getString().split("\n")).map(Component::literal).toList();
     }
 
     public static void appendSplitDescription (List<Component> list, Item item) {

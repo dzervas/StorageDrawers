@@ -11,13 +11,18 @@ import com.texelsaurus.minecraft.chameleon.ChameleonServices;
 import com.texelsaurus.minecraft.chameleon.api.ChameleonInit;
 import com.texelsaurus.minecraft.chameleon.registry.ChameleonRegistry;
 import com.texelsaurus.minecraft.chameleon.registry.RegistryEntry;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public final class ModItems
@@ -27,58 +32,62 @@ public final class ModItems
     public static final List<RegistryEntry<? extends Item>> EXCLUDE_ITEMS_CREATIVE_TAB = new ArrayList<>();
 
     public static final RegistryEntry<? extends Item>
-        OBSIDIAN_STORAGE_UPGRADE = ITEMS.register("obsidian_storage_upgrade", () -> new ItemUpgradeStorage(EnumUpgradeStorage.OBSIDIAN, new Item.Properties())),
-        IRON_STORAGE_UPGRADE = ITEMS.register("iron_storage_upgrade", () -> new ItemUpgradeStorage(EnumUpgradeStorage.IRON, new Item.Properties())),
-        GOLD_STORAGE_UPGRADE = ITEMS.register("gold_storage_upgrade", () -> new ItemUpgradeStorage(EnumUpgradeStorage.GOLD, new Item.Properties())),
-        DIAMOND_STORAGE_UPGRADE = ITEMS.register("diamond_storage_upgrade", () -> new ItemUpgradeStorage(EnumUpgradeStorage.DIAMOND, new Item.Properties())),
-        EMERALD_STORAGE_UPGRADE = ITEMS.register("emerald_storage_upgrade", () -> new ItemUpgradeStorage(EnumUpgradeStorage.EMERALD, new Item.Properties())),
-        ONE_STACK_UPGRADE = ITEMS.register("one_stack_upgrade", () -> new ItemUpgrade(new Item.Properties())),
-        VOID_UPGRADE = ITEMS.register("void_upgrade", () -> new ItemUpgradeVoid(new Item.Properties())),
-        CREATIVE_STORAGE_UPGRADE = ITEMS.register("creative_storage_upgrade", () -> new ItemUpgrade(new Item.Properties())),
-        CREATIVE_VENDING_UPGRADE = ITEMS.register("creative_vending_upgrade", () -> new ItemUpgrade(new Item.Properties())),
-        //CONVERSION_UPGRADE = ITEMS.register("conversion_upgrade", () -> new ItemUpgrade(new Item.Properties())),
-        REDSTONE_UPGRADE = ITEMS.register("redstone_upgrade", () -> new ItemUpgradeRedstone(EnumUpgradeRedstone.COMBINED, new Item.Properties())),
-        MIN_REDSTONE_UPGRADE = ITEMS.register("min_redstone_upgrade", () -> new ItemUpgradeRedstone(EnumUpgradeRedstone.MIN, new Item.Properties())),
-        MAX_REDSTONE_UPGRADE = ITEMS.register("max_redstone_upgrade", () -> new ItemUpgradeRedstone(EnumUpgradeRedstone.MAX, new Item.Properties())),
-        ILLUMINATION_UPGRADE = ITEMS.register("illumination_upgrade", () -> new ItemUpgradeIllumination(new Item.Properties())),
-        FILL_LEVEL_UPGRADE = ITEMS.register("fill_level_upgrade", () -> new ItemUpgradeFillLevel(new Item.Properties())),
-        BALANCE_FILL_UPGRADE = ITEMS.register("balance_fill_upgrade", () -> new ItemUpgradeBalance(new Item.Properties())),
-        PORTABILITY_UPGRADE = ITEMS.register("portability_upgrade", () -> new ItemUpgradePortability(new Item.Properties())),
-        REMOTE_UPGRADE = ITEMS.register("remote_upgrade", () -> new ItemUpgradeRemote(false, false, new Item.Properties())),
-        REMOTE_UPGRADE_BOUND = ITEMS.register("remote_upgrade_bound", () -> new ItemUpgradeRemote(false, true, new Item.Properties())),
-        REMOTE_GROUP_UPGRADE = ITEMS.register("remote_group_upgrade", () -> new ItemUpgradeRemote(true, false, new Item.Properties())),
-        REMOTE_GROUP_UPGRADE_BOUND = ITEMS.register("remote_group_upgrade_bound", () -> new ItemUpgradeRemote(true, true, new Item.Properties())),
-        UPGRADE_TEMPLATE = ITEMS.register("upgrade_template", () -> new Item(new Item.Properties())),
-        DETACHED_DRAWER = ITEMS.register("detached_drawer", () -> new ItemDetachedDrawer(new Item.Properties())),
-        DETACHED_DRAWER_FULL = ITEMS.register("detached_drawer_full", () -> new ItemDetachedDrawer(new Item.Properties().stacksTo(1)));
+        OBSIDIAN_STORAGE_UPGRADE = register("obsidian_storage_upgrade", (p) -> new ItemUpgradeStorage(EnumUpgradeStorage.OBSIDIAN, p), new Item.Properties()),
+        IRON_STORAGE_UPGRADE = register("iron_storage_upgrade", (p) -> new ItemUpgradeStorage(EnumUpgradeStorage.IRON, p), new Item.Properties()),
+        GOLD_STORAGE_UPGRADE = register("gold_storage_upgrade", (p) -> new ItemUpgradeStorage(EnumUpgradeStorage.GOLD, p), new Item.Properties()),
+        DIAMOND_STORAGE_UPGRADE = register("diamond_storage_upgrade", (p) -> new ItemUpgradeStorage(EnumUpgradeStorage.DIAMOND, p), new Item.Properties()),
+        EMERALD_STORAGE_UPGRADE = register("emerald_storage_upgrade", (p) -> new ItemUpgradeStorage(EnumUpgradeStorage.EMERALD, p), new Item.Properties()),
+        ONE_STACK_UPGRADE = register("one_stack_upgrade", (p) -> new ItemUpgrade(p), new Item.Properties()),
+        VOID_UPGRADE = register("void_upgrade", (p) -> new ItemUpgradeVoid(p), new Item.Properties()),
+        CREATIVE_STORAGE_UPGRADE = register("creative_storage_upgrade", (p) -> new ItemUpgrade(p), new Item.Properties()),
+        CREATIVE_VENDING_UPGRADE = register("creative_vending_upgrade", (p) -> new ItemUpgrade(p), new Item.Properties()),
+        //CONVERSION_UPGRADE = register("conversion_upgrade", (p) -> new ItemUpgrade(p), new Item.Properties()),
+        REDSTONE_UPGRADE = register("redstone_upgrade", (p) -> new ItemUpgradeRedstone(EnumUpgradeRedstone.COMBINED, p), new Item.Properties()),
+        MIN_REDSTONE_UPGRADE = register("min_redstone_upgrade", (p) -> new ItemUpgradeRedstone(EnumUpgradeRedstone.MIN, p), new Item.Properties()),
+        MAX_REDSTONE_UPGRADE = register("max_redstone_upgrade", (p) -> new ItemUpgradeRedstone(EnumUpgradeRedstone.MAX, p), new Item.Properties()),
+        ILLUMINATION_UPGRADE = register("illumination_upgrade", (p) -> new ItemUpgradeIllumination(p), new Item.Properties()),
+        FILL_LEVEL_UPGRADE = register("fill_level_upgrade", (p) -> new ItemUpgradeFillLevel(p), new Item.Properties()),
+        BALANCE_FILL_UPGRADE = register("balance_fill_upgrade", (p) -> new ItemUpgradeBalance(p), new Item.Properties()),
+        PORTABILITY_UPGRADE = register("portability_upgrade", (p) -> new ItemUpgradePortability(p), new Item.Properties()),
+        REMOTE_UPGRADE = register("remote_upgrade", (p) -> new ItemUpgradeRemote(false, false, p), new Item.Properties()),
+        REMOTE_UPGRADE_BOUND = register("remote_upgrade_bound", (p) -> new ItemUpgradeRemote(false, true, p), new Item.Properties()),
+        REMOTE_GROUP_UPGRADE = register("remote_group_upgrade", (p) -> new ItemUpgradeRemote(true, false, p), new Item.Properties()),
+        REMOTE_GROUP_UPGRADE_BOUND = register("remote_group_upgrade_bound", (p) -> new ItemUpgradeRemote(true, true, p), new Item.Properties()),
+        UPGRADE_TEMPLATE = register("upgrade_template", (p) -> new Item(p), new Item.Properties()),
+        DETACHED_DRAWER = register("detached_drawer", (p) -> new ItemDetachedDrawer(p), new Item.Properties()),
+        DETACHED_DRAWER_FULL = register("detached_drawer_full", (p) -> new ItemDetachedDrawer(p), new Item.Properties().stacksTo(1).overrideDescription("item.storagedrawers.detached_drawer"));
 
     public static final RegistryEntry<? extends ItemKey>
-        DRAWER_KEY = ITEMS.register("drawer_key", () -> new ItemDrawerKey(new Item.Properties())),
-        QUANTIFY_KEY = ITEMS.register("quantify_key", () -> new ItemQuantifyKey(new Item.Properties())),
-        SHROUD_KEY = ITEMS.register("shroud_key", () -> new ItemShroudKey(new Item.Properties())),
-        PERSONAL_KEY = ITEMS.register("personal_key", () -> new ItemPersonalKey(null, new Item.Properties())),
-        PERSONAL_KEY_COFH = ITEMS.register("personal_key_cofh", () -> new ItemPersonalKey("cofh", new Item.Properties())),
-        PRIORITY_KEY = ITEMS.register("priority_key", () -> new ItemPriorityKey(0, 1, new Item.Properties())),
-        PRIORITY_KEY_P1 = ITEMS.register("priority_key_p1", () -> new ItemPriorityKey(1, 2, new Item.Properties())),
-        PRIORITY_KEY_P2 = ITEMS.register("priority_key_p2", () -> new ItemPriorityKey(2, -1, new Item.Properties())),
-        PRIORITY_KEY_N1 = ITEMS.register("priority_key_n1", () -> new ItemPriorityKey(-1, -2, new Item.Properties())),
-        PRIORITY_KEY_N2 = ITEMS.register("priority_key_n2", () -> new ItemPriorityKey(-2, 0, new Item.Properties())),
-        DRAWER_PULLER = ITEMS.register("drawer_puller", () -> new ItemDrawerPuller(new Item.Properties()));
+        DRAWER_KEY = register("drawer_key", (p) -> new ItemDrawerKey(p), new Item.Properties()),
+        QUANTIFY_KEY = register("quantify_key", (p) -> new ItemQuantifyKey(p), new Item.Properties()),
+        SHROUD_KEY = register("shroud_key", (p) -> new ItemShroudKey(p), new Item.Properties()),
+        PERSONAL_KEY = register("personal_key", (p) -> new ItemPersonalKey(null, p), new Item.Properties()),
+        PERSONAL_KEY_COFH = register("personal_key_cofh", (p) -> new ItemPersonalKey("cofh", p), new Item.Properties()),
+        PRIORITY_KEY = register("priority_key", (p) -> new ItemPriorityKey(0, 1, p), new Item.Properties()),
+        PRIORITY_KEY_P1 = register("priority_key_p1", (p) -> new ItemPriorityKey(1, 2, p), new Item.Properties()),
+        PRIORITY_KEY_P2 = register("priority_key_p2", (p) -> new ItemPriorityKey(2, -1, p), new Item.Properties()),
+        PRIORITY_KEY_N1 = register("priority_key_n1", (p) -> new ItemPriorityKey(-1, -2, p), new Item.Properties()),
+        PRIORITY_KEY_N2 = register("priority_key_n2", (p) -> new ItemPriorityKey(-2, 0, p), new Item.Properties()),
+        DRAWER_PULLER = register("drawer_puller", (p) -> new ItemDrawerPuller(p), new Item.Properties());
 
     public static final RegistryEntry<? extends ItemKeyring>
-        KEYRING = ITEMS.register("keyring", () -> new ItemKeyring(null, new Item.Properties().stacksTo(1))),
-        KEYRING_DRAWER = ITEMS.register("keyring_drawer", () -> new ItemKeyring(DRAWER_KEY, new Item.Properties().stacksTo(1))),
-        KEYRING_QUANTIFY = ITEMS.register("keyring_quantify", () -> new ItemKeyring(QUANTIFY_KEY, new Item.Properties().stacksTo(1))),
-        KEYRING_SHROUD = ITEMS.register("keyring_shroud", () -> new ItemKeyring(SHROUD_KEY, new Item.Properties().stacksTo(1))),
-        KEYRING_PERSONAL = ITEMS.register("keyring_personal", () -> new ItemKeyring(PERSONAL_KEY, new Item.Properties().stacksTo(1))),
-        KEYRING_PERSONAL_COFH = ITEMS.register("keyring_personal_cofh", () -> new ItemKeyring(PERSONAL_KEY_COFH, new Item.Properties().stacksTo(1))),
-        KEYRING_PRIORITY = ITEMS.register("keyring_priority", () -> new ItemKeyring(PRIORITY_KEY, new Item.Properties().stacksTo(1))),
-        KEYRING_PRIORITY_P1 = ITEMS.register("keyring_priority_p1", () -> new ItemKeyring(PRIORITY_KEY_P1, new Item.Properties().stacksTo(1))),
-        KEYRING_PRIORITY_P2 = ITEMS.register("keyring_priority_p2", () -> new ItemKeyring(PRIORITY_KEY_P2, new Item.Properties().stacksTo(1))),
-        KEYRING_PRIORITY_N1 = ITEMS.register("keyring_priority_n1", () -> new ItemKeyring(PRIORITY_KEY_N1, new Item.Properties().stacksTo(1))),
-        KEYRING_PRIORITY_N2 = ITEMS.register("keyring_priority_n2", () -> new ItemKeyring(PRIORITY_KEY_N2, new Item.Properties().stacksTo(1))),
-        KEYRING_PULLER = ITEMS.register("keyring_puller", () -> new ItemKeyring(DRAWER_PULLER, new Item.Properties().stacksTo(1)));
+        KEYRING = register("keyring", (p) -> new ItemKeyring(null, p), new Item.Properties().stacksTo(1)),
+        KEYRING_DRAWER = register("keyring_drawer", (p) -> new ItemKeyring(DRAWER_KEY, p), new Item.Properties().stacksTo(1)),
+        KEYRING_QUANTIFY = register("keyring_quantify", (p) -> new ItemKeyring(QUANTIFY_KEY, p), new Item.Properties().stacksTo(1)),
+        KEYRING_SHROUD = register("keyring_shroud", (p) -> new ItemKeyring(SHROUD_KEY, p), new Item.Properties().stacksTo(1)),
+        KEYRING_PERSONAL = register("keyring_personal", (p) -> new ItemKeyring(PERSONAL_KEY, p), new Item.Properties().stacksTo(1)),
+        KEYRING_PERSONAL_COFH = register("keyring_personal_cofh", (p) -> new ItemKeyring(PERSONAL_KEY_COFH, p), new Item.Properties().stacksTo(1)),
+        KEYRING_PRIORITY = register("keyring_priority", (p) -> new ItemKeyring(PRIORITY_KEY, p), new Item.Properties().stacksTo(1)),
+        KEYRING_PRIORITY_P1 = register("keyring_priority_p1", (p) -> new ItemKeyring(PRIORITY_KEY_P1, p), new Item.Properties().stacksTo(1)),
+        KEYRING_PRIORITY_P2 = register("keyring_priority_p2", (p) -> new ItemKeyring(PRIORITY_KEY_P2, p), new Item.Properties().stacksTo(1)),
+        KEYRING_PRIORITY_N1 = register("keyring_priority_n1", (p) -> new ItemKeyring(PRIORITY_KEY_N1, p), new Item.Properties().stacksTo(1)),
+        KEYRING_PRIORITY_N2 = register("keyring_priority_n2", (p) -> new ItemKeyring(PRIORITY_KEY_N2, p), new Item.Properties().stacksTo(1)),
+        KEYRING_PULLER = register("keyring_puller", (p) -> new ItemKeyring(DRAWER_PULLER, p), new Item.Properties().stacksTo(1));
 
+    private static <C extends Item> RegistryEntry<C> register (String name, Function<Item.Properties, C> supplier, Item.Properties props) {
+        return ITEMS.register(name, () -> supplier.apply(props.setId(modKey(name))));
+    }
+    
     private ModItems () { }
 
     public static void init (ChameleonInit.InitContext context) {
@@ -111,24 +120,38 @@ public final class ModItems
         ITEMS.init(context);
     }
 
+    static ResourceLocation modLoc (String name) {
+        return ResourceLocation.fromNamespaceAndPath(ModConstants.MOD_ID, name);
+    }
+
+    static ResourceKey<Item> modKey (String name) {
+        return ResourceKey.create(Registries.ITEM, modLoc(name));
+    }
+
+    static ResourceKey<Item> modKey (ResourceLocation name) {
+        return ResourceKey.create(Registries.ITEM, name);
+    }
+
     static void registerBlock (ChameleonRegistry<Item> register, RegistryEntry<? extends Block> blockHolder) {
         if (blockHolder == null)
             return;
 
         register.register(blockHolder.getId().getPath(), () -> {
             Block block = blockHolder.get();
+            Item.Properties itemProperties = new Item.Properties().useBlockDescriptionPrefix().setId(modKey(blockHolder.getId()));
+            
             if (block instanceof BlockMeta)
                 return null;
             if (block instanceof BlockFramedStandardDrawers) {
-                return new ItemFramedDrawers(block, new Item.Properties());
+                return new ItemFramedDrawers(block, itemProperties);
             } else if (block instanceof BlockDrawers) {
-                return new ItemDrawers(block, new Item.Properties());
+                return new ItemDrawers(block, itemProperties);
             } else if (block instanceof BlockFramedTrim) {
-                return new ItemFramedTrim(block, new Item.Properties());
+                return new ItemFramedTrim(block, itemProperties);
             } else if (block instanceof BlockTrim) {
-                return new ItemTrim(block, new Item.Properties());
+                return new ItemTrim(block, itemProperties);
             } else {
-                return new BlockItem(block, new Item.Properties());
+                return new BlockItem(block, itemProperties);
             }
         });
     }

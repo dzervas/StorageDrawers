@@ -26,7 +26,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -143,7 +143,7 @@ public class BlockEntityDrawersRenderer implements BlockEntityRenderer<BlockEnti
         }
     }
 
-    private static final int TEXT_COLOR_TRANSPARENT = FastColor.ARGB32.color(0, 255, 255, 255);
+    private static final int TEXT_COLOR_TRANSPARENT = ARGB.color(0, 255, 255, 255);
 
     private void renderText (String text, BlockState state, int slot, PoseStack matrix, MultiBufferSource buffer, int combinedLight, Direction side, float alpha) {
         if (text == null || text.isEmpty())

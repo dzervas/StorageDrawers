@@ -695,7 +695,7 @@ public abstract class BlockEntityDrawers extends BaseBlockEntity implements IDra
         if (getLevel() == null || !getLevel().isClientSide)
             return;
 
-        Minecraft.getInstance().tell(() -> BlockEntityDrawers.this.clientUpdateCountAsync(slot, count));
+        Minecraft.getInstance().schedule(() -> BlockEntityDrawers.this.clientUpdateCountAsync(slot, count));
     }
 
     private void clientUpdateCountAsync (int slot, int count) {

@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "///",
+        "#X#",
+        "///"
+    ],
+    "key": {
+        "/": "#c:rods/wooden",
+        "#": "#c:gems/emerald",
+        "X": "storagedrawers:upgrade_template"
+    },
+    "result": { "id": "storagedrawers:emerald_storage_upgrade" }
+}

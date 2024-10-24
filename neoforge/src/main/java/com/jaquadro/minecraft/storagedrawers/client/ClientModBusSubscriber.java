@@ -25,6 +25,7 @@ import com.jaquadro.minecraft.storagedrawers.inventory.tooltip.DetachedDrawerToo
 import com.jaquadro.minecraft.storagedrawers.inventory.tooltip.KeyringTooltip;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.MissingBlockModel;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -128,7 +129,7 @@ public class ClientModBusSubscriber
     }
 
     private static void replaceBlock (ModelEvent.ModifyBakingResult event, ModelResourceLocation modelResource, Function<BakedModel, BakedModel> replacer) {
-        BakedModel missing = event.getModels().get(ModelBakery.MISSING_MODEL_LOCATION);
+        BakedModel missing = event.getModels().get(MissingBlockModel.VARIANT);
         BakedModel parentModel = event.getModels().get(modelResource);
         if (parentModel == null) {
             StorageDrawers.log.warn("Got back null model from ModelBakeEvent.ModelManager for resource " + modelResource.toString());

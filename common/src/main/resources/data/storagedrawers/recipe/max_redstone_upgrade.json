@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "RRR",
+        "/X/",
+        "///"
+    ],
+    "key": {
+        "/": "#c:rods/wooden",
+        "R": "#c:dusts/redstone",
+        "X": "storagedrawers:upgrade_template"
+    },
+    "result": { "id": "storagedrawers:max_redstone_upgrade" }
+}

@@ -1,0 +1,8 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        "storagedrawers:personal_key",
+        "#cofh_core:crafting/locks"
+    ],
+    "result": { "id": "storagedrawers:personal_key_cofh" }
+}

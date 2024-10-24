@@ -181,7 +181,7 @@ public abstract class BlockEntityDrawersComp extends BlockEntityDrawers
         if (getLevel() == null || !getLevel().isClientSide)
             return;
 
-        Minecraft.getInstance().tell(() -> BlockEntityDrawersComp.this.clientUpdateCountAsync(count));
+        Minecraft.getInstance().schedule(() -> BlockEntityDrawersComp.this.clientUpdateCountAsync(count));
     }
 
     private void clientUpdateCountAsync (int count) {

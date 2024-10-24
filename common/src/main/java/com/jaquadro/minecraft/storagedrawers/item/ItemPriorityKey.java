@@ -3,7 +3,7 @@ package com.jaquadro.minecraft.storagedrawers.item;
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerAttributesModifiable;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -41,14 +41,14 @@ public class ItemPriorityKey extends ItemKey
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use (Level level, Player player, InteractionHand hand) {
+    public InteractionResult use (Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!player.isShiftKeyDown())
-            return InteractionResultHolder.pass(stack);
+            return InteractionResult.PASS;
 
         ItemStack nextKey = new ItemStack(getNextKey(), 1);
         nextKey.set(DataComponents.CUSTOM_DATA, stack.get(DataComponents.CUSTOM_DATA));
 
-        return InteractionResultHolder.success(nextKey);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(nextKey);
     }
 }

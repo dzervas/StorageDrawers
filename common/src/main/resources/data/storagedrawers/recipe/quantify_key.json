@@ -1,0 +1,8 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        "storagedrawers:drawer_key",
+        "minecraft:writable_book"
+    ],
+    "result": { "id": "storagedrawers:quantify_key" }
+}

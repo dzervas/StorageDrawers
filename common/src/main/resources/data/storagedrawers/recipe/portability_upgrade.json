@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "///",
+        "#X#",
+        "///"
+    ],
+    "key": {
+        "/": "#c:rods/wooden",
+        "#": "minecraft:shulker_shell",
+        "X": "storagedrawers:upgrade_template"
+    },
+    "result": { "id": "storagedrawers:portability_upgrade" }
+}

@@ -2,9 +2,9 @@ package com.jaquadro.minecraft.storagedrawers.inventory;
 
 import com.jaquadro.minecraft.storagedrawers.ModConstants;
 import com.jaquadro.minecraft.storagedrawers.client.gui.StorageGuiGraphics;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -105,14 +105,14 @@ public class DrawerScreen extends AbstractContainerScreen<ContainerDrawers>
     protected void renderBg (GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
         int guiX = (width - imageWidth) / 2;
         int guiY = (height - imageHeight) / 2;
-        graphics.blit(background, guiX, guiY, 0, 0, imageWidth, imageHeight);
+        graphics.blit(RenderType::guiTextured, background, guiX, guiY, 0, 0, imageWidth, imageHeight, 256, 256);
 
         List<Slot> storageSlots = menu.getStorageSlots();
         for (Slot slot : storageSlots) {
             if (slot instanceof SlotDrawer sd && sd.getDrawer().isMissing())
-                graphics.blit(background, guiX + slot.x, guiY + slot.y, smDisabledX, smMissingY, 16, 16);
+                graphics.blit(RenderType::guiTextured, background, guiX + slot.x, guiY + slot.y, smDisabledX, smMissingY, 16, 16, 256, 256);
             else
-                graphics.blit(background, guiX + slot.x, guiY + slot.y, smDisabledX, smDisabledY, 16, 16);
+                graphics.blit(RenderType::guiTextured, background, guiX + slot.x, guiY + slot.y, smDisabledX, smDisabledY, 16, 16, 256, 256);
         }
 
         List<Slot> upgradeSlots = menu.getUpgradeSlots();
@@ -122,7 +122,7 @@ public class DrawerScreen extends AbstractContainerScreen<ContainerDrawers>
                 locked = ucontainer.slotIsLocked(slot.getContainerSlot());
 
             if (locked)
-                graphics.blit(background, guiX + slot.x, guiY + slot.y, smDisabledX, smDisabledY, 16, 16);
+                graphics.blit(RenderType::guiTextured, background, guiX + slot.x, guiY + slot.y, smDisabledX, smDisabledY, 16, 16, 256, 256);
         }
     }
 

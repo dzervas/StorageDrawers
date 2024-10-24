@@ -55,18 +55,18 @@ public class ItemDrawers extends BlockItem implements IPortable
 
     @Override
     public Component getName (ItemStack stack) {
-        String fallback = null;
+        Component fallback = Component.empty();
         Block block = Block.byItem(stack.getItem());
 
         if (block instanceof BlockStandardDrawers drawers) {
             String matKey = drawers.getMatKey();
             if (matKey != null) {
                 String mat = Component.translatable(drawers.getNameMatKey()).getString();
-                fallback = Component.translatable(drawers.getNameTypeKey(), mat).getString();
+                fallback = Component.translatable(drawers.getNameTypeKey(), mat);
             }
         }
 
-        return Component.translatableWithFallback(this.getDescriptionId(stack), fallback);
+        return fallback;
     }
 
     @NotNull

@@ -1,0 +1,13 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "/X/",
+        "///",
+        "/X/"
+    ],
+    "key": {
+        "/": "minecraft:oak_slab",
+        "X": "#c:chests/wooden"
+    },
+    "result": { "id": "storagedrawers:oak_half_drawers_2", "count": 2 }
+}

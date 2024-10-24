@@ -115,10 +115,10 @@ public class CompTierRegistry
             return false;
 
         ResourceLocation upperResource = ResourceLocation.parse(parts[0]);
-        Item upperItem = BuiltInRegistries.ITEM.get(upperResource);
+        Item upperItem = BuiltInRegistries.ITEM.getValue(upperResource);
 
         ResourceLocation lowerResource = ResourceLocation.parse(parts[1]);
-        Item lowerItem = BuiltInRegistries.ITEM.get(lowerResource);
+        Item lowerItem = BuiltInRegistries.ITEM.getValue(lowerResource);
 
         try {
             int conv = Integer.parseInt(parts[2]);

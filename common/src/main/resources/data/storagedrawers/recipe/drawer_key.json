@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "-#",
+        " #",
+        " X"
+    ],
+    "key": {
+        "-": "minecraft:gold_nugget",
+        "#": "#c:ingots/gold",
+        "X": "storagedrawers:upgrade_template"
+    },
+    "result": { "id": "storagedrawers:drawer_key" }
+}

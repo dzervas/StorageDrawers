@@ -5,6 +5,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -22,7 +23,7 @@ public class ClientKeyringTooltip implements ClientTooltipComponent
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight(Font font) {
         return backgroundHeight() + 4;
     }
 
@@ -40,10 +41,11 @@ public class ClientKeyringTooltip implements ClientTooltipComponent
     }
 
     @Override
-    public void renderImage(Font font, int pX, int pY, GuiGraphics graphics) {
+    public void renderImage(Font font, int pX, int pY, int pW, int pH, GuiGraphics graphics) {
         int i = gridSizeX();
         int j = gridSizeY();
-        graphics.blitSprite(BACKGROUND_SPRITE, pX, pY, this.backgroundWidth(), this.backgroundHeight());
+        graphics.blitSprite(RenderType::guiTextured, BACKGROUND_SPRITE,
+            pX, pY, this.backgroundWidth(), this.backgroundHeight());
         boolean isFull = contents.size() >= 64;
         int k = 0;
 
@@ -64,14 +66,14 @@ public class ClientKeyringTooltip implements ClientTooltipComponent
             blit(graphics, pX, pY, Texture.SLOT);
             graphics.renderItem(itemstack, pX + 1, pY + 1, index);
             graphics.renderItemDecorations(font, itemstack, pX + 1, pY + 1);
-            if (index == 0) {
-                AbstractContainerScreen.renderSlotHighlight(graphics, pX + 1, pY + 1, 0);
-            }
+            //if (index == 0) {
+            //    AbstractContainerScreen.renderSlotHighlightFront(graphics, pX + 1, pY + 1, 0);
+            //}
         }
     }
 
     private void blit(GuiGraphics graphics, int x, int y, Texture texture) {
-        graphics.blitSprite(texture.sprite, x, y, 0, texture.w, texture.h);
+        graphics.blitSprite(RenderType::guiTextured, texture.sprite, x, y, 0, texture.w, texture.h);
     }
 
     private int gridSizeX() {

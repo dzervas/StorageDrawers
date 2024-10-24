@@ -11,6 +11,8 @@ import com.texelsaurus.minecraft.chameleon.registry.ChameleonRegistry;
 import com.texelsaurus.minecraft.chameleon.registry.RegistryEntry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -137,9 +139,9 @@ public final class ModBlocks
         CONTROLLER_IO = registerControllerIOBlock("controller_io");
 
     public static final RegistryEntry<BlockFramedController> FRAMED_CONTROLLER = BLOCKS.register("framed_controller",
-        () -> new BlockFramedController(getStoneBlockProperties()));
+        () -> new BlockFramedController(getStoneBlockProperties().setId(modKey("framed_controller"))));
     public static final RegistryEntry<BlockFramedControllerIO> FRAMED_CONTROLLER_IO = BLOCKS.register("framed_controller_io",
-        () -> new BlockFramedControllerIO(getStoneBlockProperties()));
+        () -> new BlockFramedControllerIO(getStoneBlockProperties().setId(modKey("framed_controller_io"))));
 
     public static final RegistryEntry<BlockFramingTable> FRAMING_TABLE = registerFramingTableBlock("framing_table");
 
@@ -187,11 +189,11 @@ public final class ModBlocks
 
     public static final RegistryEntry<BlockKeyButton>
         KEYBUTTON_DRAWER = BLOCKS.register("keybutton_drawer",
-        () -> new BlockKeyButton(KeyType.DRAWER, Properties.of().sound(SoundType.STONE))),
+        () -> new BlockKeyButton(KeyType.DRAWER, Properties.of().setId(modKey("keybutton_drawer")).sound(SoundType.STONE))),
         KEYBUTTON_QUANTIFY = BLOCKS.register("keybutton_quantify",
-            () -> new BlockKeyButton(KeyType.QUANTIFY, Properties.of().sound(SoundType.STONE))),
+            () -> new BlockKeyButton(KeyType.QUANTIFY, Properties.of().setId(modKey("keybutton_quantify")).sound(SoundType.STONE))),
         KEYBUTTON_CONCEALMENT = BLOCKS.register("keybutton_concealment",
-            () -> new BlockKeyButton(KeyType.CONCEALMENT, Properties.of().sound(SoundType.STONE)));
+            () -> new BlockKeyButton(KeyType.CONCEALMENT, Properties.of().setId(modKey("keybutton_concealment")).sound(SoundType.STONE)));
 
     private ModBlocks() {}
 
@@ -199,29 +201,33 @@ public final class ModBlocks
         return ResourceLocation.fromNamespaceAndPath(ModConstants.MOD_ID, name);
     }
 
+    static ResourceKey<Block> modKey (String name) {
+        return ResourceKey.create(Registries.BLOCK, modLoc(name));
+    }
+
     static RegistryEntry<BlockStandardDrawers> registerWoodenDrawerBlock(ResourceLocation name, int drawerCount, boolean halfDepth) {
         return registerWoodenDrawerBlock(BLOCKS, name, drawerCount, halfDepth);
     }
 
     static RegistryEntry<BlockStandardDrawers> registerWoodenDrawerBlock(ChameleonRegistry<Block> register, String name, int drawerCount, boolean halfDepth) {
-        return register.register(name, () -> new BlockStandardDrawers(drawerCount, halfDepth, getWoodenDrawerBlockProperties()));
+        return register.register(name, () -> new BlockStandardDrawers(drawerCount, halfDepth, getWoodenDrawerBlockProperties().setId(modKey(name))));
     }
 
     static RegistryEntry<BlockStandardDrawers> registerWoodenDrawerBlock(ChameleonRegistry<Block> register, ResourceLocation material, int drawerCount, boolean halfDepth) {
         String name = material.getPath() + (halfDepth ? "_half_drawers_" : "_full_drawers_") + drawerCount;
-        return register.register(name, () -> new BlockStandardDrawers(drawerCount, halfDepth, getWoodenDrawerBlockProperties()).setMatKey(material));
+        return register.register(name, () -> new BlockStandardDrawers(drawerCount, halfDepth, getWoodenDrawerBlockProperties().setId(modKey(name))).setMatKey(material));
     }
 
     static RegistryEntry<BlockFramedStandardDrawers> registerFramedDrawerBlock(String name, int drawerCount, boolean halfDepth) {
-        return BLOCKS.register(name, () -> (BlockFramedStandardDrawers)new BlockFramedStandardDrawers(drawerCount, halfDepth, getWoodenDrawerBlockProperties()).setMatKey("framed"));
+        return BLOCKS.register(name, () -> (BlockFramedStandardDrawers)new BlockFramedStandardDrawers(drawerCount, halfDepth, getWoodenDrawerBlockProperties().setId(modKey(name))).setMatKey("framed"));
     }
 
     static RegistryEntry<BlockCompDrawers> registerCompactingDrawerBlock(String name, int drawerCount, boolean halfDepth) {
-        return BLOCKS.register(name, () -> new BlockCompDrawers(drawerCount, halfDepth, getStoneDrawerBlockProperties()));
+        return BLOCKS.register(name, () -> new BlockCompDrawers(drawerCount, halfDepth, getStoneDrawerBlockProperties().setId(modKey(name))));
     }
 
     static RegistryEntry<BlockFramedCompDrawers> registerFramedCompactingDrawerBlock(String name, int drawerCount, boolean halfDepth) {
-        return BLOCKS.register(name, () -> new BlockFramedCompDrawers(drawerCount, halfDepth, getStoneDrawerBlockProperties()));
+        return BLOCKS.register(name, () -> new BlockFramedCompDrawers(drawerCount, halfDepth, getStoneDrawerBlockProperties().setId(modKey(name))));
     }
 
     static RegistryEntry<BlockTrim> registerTrimBlock(ResourceLocation name) {
@@ -229,53 +235,53 @@ public final class ModBlocks
     }
 
     static RegistryEntry<BlockTrim> registerTrimBlock(ChameleonRegistry<Block> register, String name) {
-        return register.register(name, () -> new BlockTrim(getWoodenBlockProperties()));
+        return register.register(name, () -> new BlockTrim(getWoodenBlockProperties().setId(modKey(name))));
     }
 
     static RegistryEntry<BlockTrim> registerTrimBlock(ChameleonRegistry<Block> register, ResourceLocation material) {
         String name = material.getPath() + "_trim";
-        return register.register(name, () -> new BlockTrim(getWoodenBlockProperties()).setMatKey(material));
+        return register.register(name, () -> new BlockTrim(getWoodenBlockProperties().setId(modKey(name))).setMatKey(material));
     }
 
     static RegistryEntry<BlockFramedTrim> registerFramedTrimBlock(String name) {
-        return BLOCKS.register(name, () -> (BlockFramedTrim)new BlockFramedTrim(getWoodenDrawerBlockProperties()).setMatKey("framed"));
+        return BLOCKS.register(name, () -> (BlockFramedTrim)new BlockFramedTrim(getWoodenDrawerBlockProperties().setId(modKey(name))).setMatKey("framed"));
     }
 
     static RegistryEntry<BlockController> registerControllerBlock(String name) {
-        return BLOCKS.register(name, () -> new BlockController(getStoneBlockProperties()));
+        return BLOCKS.register(name, () -> new BlockController(getStoneBlockProperties().setId(modKey(name))));
     }
 
     static RegistryEntry<BlockControllerIO> registerControllerIOBlock (String name) {
-        return BLOCKS.register(name, () -> new BlockControllerIO(getStoneBlockProperties()));
+        return BLOCKS.register(name, () -> new BlockControllerIO(getStoneBlockProperties().setId(modKey(name))));
     }
 
     static RegistryEntry<BlockFramingTable> registerFramingTableBlock(String name) {
-        return BLOCKS.register(name, () -> new BlockFramingTable(getWoodenBlockProperties()));
+        return BLOCKS.register(name, () -> new BlockFramingTable(getWoodenBlockProperties().setId(modKey(name))));
     }
 
     static RegistryEntry<BlockMeta> registerMetaBlock (String name) {
         EXCLUDE_ITEMS.add(name);
-        return BLOCKS.register(name, () -> new BlockMeta(Properties.of().air()));
+        return BLOCKS.register(name, () -> new BlockMeta(Properties.of().air().setId(modKey(name))));
     }
 
     static RegistryEntry<BlockMeta> registerMetaFacingBlock (String name) {
         EXCLUDE_ITEMS.add(name);
-        return BLOCKS.register(name, () -> new BlockMetaFacing(Properties.of().air()));
+        return BLOCKS.register(name, () -> new BlockMetaFacing(Properties.of().air().setId(modKey(name))));
     }
 
     static RegistryEntry<BlockMeta> registerMetaFacingSizedBlock (String name) {
         EXCLUDE_ITEMS.add(name);
-        return BLOCKS.register(name, () -> new BlockMetaFacingSized(Properties.of().air()));
+        return BLOCKS.register(name, () -> new BlockMetaFacingSized(Properties.of().air().setId(modKey(name))));
     }
 
     static RegistryEntry<BlockMeta> registerMetaFacingSizedSlottedBlock (String name) {
         EXCLUDE_ITEMS.add(name);
-        return BLOCKS.register(name, () -> new BlockMetaFacingSizedSlotted(Properties.of().air()));
+        return BLOCKS.register(name, () -> new BlockMetaFacingSizedSlotted(Properties.of().air().setId(modKey(name))));
     }
 
     static RegistryEntry<BlockMeta> registerMetaFacingSizedOpenBlock (String name) {
         EXCLUDE_ITEMS.add(name);
-        return BLOCKS.register(name, () -> new BlockMetaFacingSizedOpen(Properties.of().air()));
+        return BLOCKS.register(name, () -> new BlockMetaFacingSizedOpen(Properties.of().air().setId(modKey(name))));
     }
 
     static Properties getWoodenBlockProperties() {

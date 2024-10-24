@@ -3,6 +3,7 @@ package com.jaquadro.minecraft.storagedrawers.item;
 import com.jaquadro.minecraft.storagedrawers.block.BlockDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.BlockTrim;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -19,18 +20,18 @@ public class ItemTrim extends BlockItem
 
     @Override
     public Component getName (ItemStack stack) {
-        String fallback = null;
+        Component fallback = Component.empty();
         Block block = Block.byItem(stack.getItem());
 
         if (block instanceof BlockTrim trim) {
             String matKey = trim.getMatKey();
             if (matKey != null) {
                 String mat = Component.translatable(trim.getNameMatKey()).getString();
-                fallback = Component.translatable(trim.getNameTypeKey(), mat).getString();
+                fallback = Component.translatable(trim.getNameTypeKey(), mat);
             }
         }
 
-        return Component.translatableWithFallback(this.getDescriptionId(stack), fallback);
+        return fallback;
     }
 
     // TODO: Forge extension

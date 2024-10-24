@@ -7,6 +7,7 @@ import com.jaquadro.minecraft.storagedrawers.util.CountFormatter;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
@@ -23,7 +24,7 @@ public class ClientDetachedDrawerTooltip implements ClientTooltipComponent
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight(Font font) {
         return backgroundHeight() + 4;
     }
 
@@ -41,10 +42,11 @@ public class ClientDetachedDrawerTooltip implements ClientTooltipComponent
     }
 
     @Override
-    public void renderImage(Font font, int pX, int pY, GuiGraphics graphics) {
+    public void renderImage(Font font, int pX, int pY, int pW, int pH, GuiGraphics graphics) {
         boolean forceCapCheck = ModCommonConfig.INSTANCE.GENERAL.forceDetachedDrawersMaxCapacityCheck.get();
         int bgY = forceCapCheck ? 0 : 24;
-        graphics.blit(BACKGROUND_SPRITE, pX, pY, 0, bgY, this.backgroundWidth(), this.backgroundHeight(), 128, 64);
+        graphics.blit(RenderType::guiTextured, BACKGROUND_SPRITE,
+            pX, pY, 0, bgY, this.backgroundWidth(), this.backgroundHeight(), 128, 64);
 
         renderSlot(pX + 3, pY + 3, graphics, font);
 

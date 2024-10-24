@@ -19,7 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 public class ModelLoadPlugin implements ModelLoadingPlugin
 {
     @Override
-    public void onInitializeModelLoader (Context pluginContext) {
+    public void initialize (Context pluginContext) {
         DrawerModelGeometry.loadGeometryData();
         pluginContext.modifyModelAfterBake().register((original, context) -> {
             if (context.topLevelId() == null)

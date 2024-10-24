@@ -3,7 +3,6 @@ package com.jaquadro.minecraft.storagedrawers.item;
 import com.jaquadro.minecraft.storagedrawers.api.storage.attribute.IPortable;
 import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.DetachedDrawerData;
 import com.jaquadro.minecraft.storagedrawers.config.ModCommonConfig;
-import com.jaquadro.minecraft.storagedrawers.core.ModItems;
 import com.jaquadro.minecraft.storagedrawers.util.ComponentUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.HolderLookup;
@@ -46,14 +45,6 @@ public class ItemDetachedDrawer extends Item implements IPortable
         if (ModCommonConfig.INSTANCE.GENERAL.heavyDrawers.get() && isHeavy(context.registries(), stack)) {
             tooltip.add(Component.translatable("tooltip.storagedrawers.drawers.too_heavy").withStyle(ChatFormatting.RED));
         }
-    }
-
-    @Override
-    public String getDescriptionId () {
-        if (this == ModItems.DETACHED_DRAWER.get())
-            return super.getDescriptionId();
-
-        return ModItems.DETACHED_DRAWER.get().getDescriptionId();
     }
 
     @NotNull

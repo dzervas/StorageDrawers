@@ -1,0 +1,8 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        "storagedrawers:upgrade_template",
+        "minecraft:repeater"
+    ],
+    "result": { "id": "storagedrawers:fill_level_upgrade" }
+}

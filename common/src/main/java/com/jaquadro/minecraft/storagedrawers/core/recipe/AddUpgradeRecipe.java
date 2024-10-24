@@ -101,13 +101,8 @@ public class AddUpgradeRecipe extends CustomRecipe
     }
 
     @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= 2;
-    }
-
-    @Override
     @NotNull
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends CustomRecipe> getSerializer() {
         return ModRecipes.UPGRADE_RECIPE_SERIALIZER.get();
     }
 }

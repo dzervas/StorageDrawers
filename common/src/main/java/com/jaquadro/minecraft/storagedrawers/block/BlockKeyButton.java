@@ -103,7 +103,7 @@ public class BlockKeyButton  extends FaceAttachedHorizontalDirectionalBlock
             this.playSound(player, level, pos, true);
             level.gameEvent(player, GameEvent.BLOCK_ACTIVATE, pos);
 
-            BlockPos targetPos = pos.offset(state.getValue(FACING).getOpposite().getNormal());
+            BlockPos targetPos = pos.offset(state.getValue(FACING).getOpposite().getUnitVec3i());
             Block target = level.getBlockState(targetPos).getBlock();
             if (target instanceof BlockController controller)
                 controller.toggle(level, targetPos, player, keyType);
@@ -113,7 +113,7 @@ public class BlockKeyButton  extends FaceAttachedHorizontalDirectionalBlock
                     controller.toggle(level, targetPos, player, keyType);
             }
 
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS;
         }
     }
 

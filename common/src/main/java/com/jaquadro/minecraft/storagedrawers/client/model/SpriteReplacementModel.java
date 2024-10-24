@@ -74,7 +74,7 @@ public class SpriteReplacementModel extends ParentModel
         TextureAtlasSprite sprite;
 
         public ReplacementBakedQuad (BakedQuad quad, @NotNull TextureAtlasSprite sprite) {
-            super(quad.getVertices().clone(), quad.getTintIndex(), quad.getDirection(), quad.getSprite(), quad.isShade());
+            super(quad.getVertices().clone(), quad.getTintIndex(), quad.getDirection(), quad.getSprite(), quad.isShade(), quad.getLightEmission());
             this.sprite = sprite;
             remapQuad();
         }

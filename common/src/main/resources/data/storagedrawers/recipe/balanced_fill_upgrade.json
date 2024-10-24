@@ -1,0 +1,15 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "G G",
+        "CXC",
+        "///"
+    ],
+    "key": {
+        "/": "#c:rods/wooden",
+        "C": "minecraft:comparator",
+        "G": "#c:ingots/gold",
+        "X": "storagedrawers:upgrade_template"
+    },
+    "result": { "id": "storagedrawers:balance_fill_upgrade" }
+}

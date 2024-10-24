@@ -6,13 +6,11 @@ import com.jaquadro.minecraft.storagedrawers.core.ModItems;
 import com.jaquadro.minecraft.storagedrawers.inventory.tooltip.KeyringTooltip;
 import com.jaquadro.minecraft.storagedrawers.util.ComponentUtil;
 import com.texelsaurus.minecraft.chameleon.registry.RegistryEntry;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -82,14 +80,14 @@ public class ItemKeyring extends Item
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use (Level level, Player player, InteractionHand hand) {
+    public InteractionResult use (Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (!player.isShiftKeyDown())
-            return InteractionResultHolder.pass(stack);
+            return InteractionResult.PASS;
 
         KeyringContents contents = stack.get(ModDataComponents.KEYRING_CONTENTS.get());
         if (contents == null || contents.size() == 0)
-            return InteractionResultHolder.pass(stack);
+            return InteractionResult.PASS;
 
         int index = 0;
         for (int i = 0; i < contents.size(); i++) {
@@ -107,7 +105,7 @@ public class ItemKeyring extends Item
         ItemStack keyring = getKeyring(nextItem);
         keyring.set(ModDataComponents.KEYRING_CONTENTS.get(), contents);
 
-        return InteractionResultHolder.success(keyring);
+        return InteractionResult.SUCCESS.heldItemTransformedTo(keyring);
     }
 
     @Override

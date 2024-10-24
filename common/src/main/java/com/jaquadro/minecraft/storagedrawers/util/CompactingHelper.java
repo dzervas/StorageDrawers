@@ -3,13 +3,19 @@ package com.jaquadro.minecraft.storagedrawers.util;
 import com.jaquadro.minecraft.storagedrawers.ModServices;
 import com.jaquadro.minecraft.storagedrawers.config.CompTierRegistry;
 import com.jaquadro.minecraft.storagedrawers.config.ModCommonConfig;
+import net.minecraft.core.Holder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.TransientCraftingContainer;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,7 +100,8 @@ public class CompactingHelper
             }
         }
 
-        ItemStack modMatch = findMatchingModCandidate(stack, candidates);
+        List<Item> candidateItems = candidates.stream().map(ItemStack::getItem).toList();
+        ItemStack modMatch = findMatchingModCandidate(stack, candidateItems);
         if (!modMatch.isEmpty())
             return new Result(modMatch, lookupSize);
 
@@ -124,32 +131,42 @@ public class CompactingHelper
         List<ItemStack> candidates = new ArrayList<>();
         Map<ItemStack, Integer> candidatesRate = new HashMap<>();
 
-        for (var recipe : world.getRecipeManager().getAllRecipesFor(RecipeType.CRAFTING)) {
-            ItemStack output = recipe.value().getResultItem(world.registryAccess());
-            // TODO: ItemStackOreMatcher.areItemsEqual(stack, output, true)
-            if (!ItemStackMatcher.areItemsEqual(stack, output))
-                continue;
+        if (world instanceof ServerLevel serverWorld) {
+            for (var recipe : serverWorld.recipeAccess().recipes.byType(RecipeType.CRAFTING)) {
+                ItemStack output;
+                List<Optional<Ingredient>> ingredients;
+                if (recipe.value() instanceof ShapedRecipe shaped) {
+                    output = shaped.result;
+                    ingredients = shaped.pattern.ingredients();
+                } else
+                    continue;
 
-            @NotNull ItemStack match = tryMatch(stack, recipe.value().getIngredients());
-            if (!match.isEmpty()) {
-                int lookupSize = setupLookup(lookup1, output);
-                List<ItemStack> compMatches = findAllMatchingRecipes(lookup1);
-                for (ItemStack comp : compMatches) {
-                    int recipeSize = recipe.value().getIngredients().size();
-                    // TODO: ItemStackOreMatcher.areItemsEqual(match, comp, true)
-                    if (ItemStackMatcher.areItemsEqual(match, comp) && comp.getCount() == recipeSize) {
-                        candidates.add(match);
-                        candidatesRate.put(match, recipeSize);
+                // TODO: ItemStackOreMatcher.areItemsEqual(stack, output, true)
+                if (!ItemStackMatcher.areItemsEqual(stack, output))
+                    continue;
 
-                        if (!world.isClientSide && debugTrace)
-                            ModServices.log.info("Found descending candidate for " + stack.toString() + ": " + match.toString() + " size=" + recipeSize + ", inverse=" + comp.toString());
-                    } else if (!world.isClientSide && debugTrace)
-                        ModServices.log.info("Back-check failed for " + match.toString() + " size=" + lookupSize + ", inverse=" + comp.toString());
+                @NotNull ItemStack match = tryMatch(stack, ingredients);
+                if (!match.isEmpty()) {
+                    int lookupSize = setupLookup(lookup1, output);
+                    List<ItemStack> compMatches = findAllMatchingRecipes(lookup1);
+                    for (ItemStack comp : compMatches) {
+                        int recipeSize = ingredients.size();
+                        // TODO: ItemStackOreMatcher.areItemsEqual(match, comp, true)
+                        if (ItemStackMatcher.areItemsEqual(match, comp) && comp.getCount() == recipeSize) {
+                            candidates.add(match);
+                            candidatesRate.put(match, recipeSize);
+
+                            if (!world.isClientSide && debugTrace)
+                                ModServices.log.info("Found descending candidate for " + stack.toString() + ": " + match.toString() + " size=" + recipeSize + ", inverse=" + comp.toString());
+                        } else if (!world.isClientSide && debugTrace)
+                            ModServices.log.info("Back-check failed for " + match.toString() + " size=" + lookupSize + ", inverse=" + comp.toString());
+                    }
                 }
             }
         }
 
-        ItemStack modMatch = findMatchingModCandidate(stack, candidates);
+        List<Item> candidateItems = candidates.stream().map(ItemStack::getItem).toList();
+        ItemStack modMatch = findMatchingModCandidate(stack, candidateItems);
         if (!modMatch.isEmpty())
             return new Result(modMatch, candidatesRate.get(modMatch));
 
@@ -168,11 +185,13 @@ public class CompactingHelper
         List<ItemStack> candidates = new ArrayList<>();
 
         CraftingInput input = crafting.asCraftInput();
-        for (RecipeHolder<CraftingRecipe> recipe : world.getRecipeManager().getRecipesFor(RecipeType.CRAFTING, input, world)) {
-            if (recipe.value().matches(input, world)) {
-                ItemStack result = recipe.value().assemble(input, world.registryAccess());
-                if (!result.isEmpty())
-                    candidates.add(result);
+        if (world instanceof ServerLevel serverWorld) {
+            for (RecipeHolder<CraftingRecipe> recipe : serverWorld.recipeAccess().recipes.getRecipesFor(RecipeType.CRAFTING, input, world).toList()) {
+                if (recipe.value().matches(input, world)) {
+                    ItemStack result = recipe.value().assemble(input, world.registryAccess());
+                    if (!result.isEmpty())
+                        candidates.add(result);
+                }
             }
         }
 
@@ -180,14 +199,14 @@ public class CompactingHelper
     }
 
     @NotNull
-    private ItemStack findMatchingModCandidate (@NotNull ItemStack reference, List<ItemStack> candidates) {
+    private ItemStack findMatchingModCandidate (@NotNull ItemStack reference, List<Item> candidates) {
         ResourceLocation referenceName = BuiltInRegistries.ITEM.getKey(reference.getItem());
         if (referenceName != null) {
-            for (ItemStack candidate : candidates) {
-                ResourceLocation matchName = BuiltInRegistries.ITEM.getKey(candidate.getItem());
+            for (Item candidate : candidates) {
+                ResourceLocation matchName = BuiltInRegistries.ITEM.getKey(candidate);
                 if (matchName != null) {
                     if (referenceName.getNamespace().equals(matchName.getPath()))
-                        return candidate;
+                        return new ItemStack(candidate);
                 }
             }
         }
@@ -196,33 +215,40 @@ public class CompactingHelper
     }
 
     @NotNull
-    private ItemStack tryMatch (@NotNull ItemStack stack, NonNullList<Ingredient> ingredients) {
+    private ItemStack tryMatch (@NotNull ItemStack stack, List<Optional<Ingredient>> ingredients) {
         if (ingredients.size() != 9 && ingredients.size() != 4)
             return ItemStack.EMPTY;
 
-        Ingredient refIngredient = ingredients.get(0);
-        ItemStack[] refMatchingStacks = refIngredient.getItems();
-        if (refMatchingStacks.length == 0)
+        if (ingredients.getFirst().isEmpty())
+            return ItemStack.EMPTY;
+
+        Ingredient refIngredient = ingredients.getFirst().get();
+        List<Item> refMatchingItems = refIngredient.items().stream().map(Holder::value).toList();
+        if (refMatchingItems.isEmpty())
             return ItemStack.EMPTY;
 
         for (int i = 1, n = ingredients.size(); i < n; i++) {
-            Ingredient ingredient = ingredients.get(i);
-            @NotNull ItemStack match = ItemStack.EMPTY;
+            if (ingredients.get(i).isEmpty())
+                return ItemStack.EMPTY;
 
-            for (ItemStack ingItemMatch : refMatchingStacks) {
-                if (ingredient.test(ingItemMatch)) {
-                    match = ingItemMatch;
-                    break;
+            boolean match = false;
+            for (var refItem : refMatchingItems) {
+                List<Item> slotItems = ingredients.get(i).get().items().stream().map(Holder::value).toList();
+                for (var slotItem : slotItems) {
+                    if (refItem.equals(slotItem)) {
+                        match = true;
+                        break;
+                    }
                 }
             }
 
-            if (match.isEmpty())
+            if (!match)
                 return ItemStack.EMPTY;
         }
 
-        ItemStack match = findMatchingModCandidate(stack, Arrays.asList(refMatchingStacks));
+        ItemStack match = findMatchingModCandidate(stack, refMatchingItems);
         if (match.isEmpty())
-            match = refMatchingStacks[0];
+            match = new ItemStack(refMatchingItems.getFirst());
 
         return match;
     }

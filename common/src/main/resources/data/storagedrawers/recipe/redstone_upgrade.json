@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "R/R",
+        "/X/",
+        "R/R"
+    ],
+    "key": {
+        "/": "#c:rods/wooden",
+        "R": "#c:dusts/redstone",
+        "X": "storagedrawers:upgrade_template"
+    },
+    "result": { "id": "storagedrawers:redstone_upgrade" }
+}

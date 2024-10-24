@@ -72,16 +72,16 @@ public class PlatformDecoratedModel<C extends ModelContext> extends ParentModel 
     }
 
     @Override
-    public List<RenderType> getRenderTypes (ItemStack itemStack, boolean fabulous) {
+    public List<RenderType> getRenderTypes (ItemStack itemStack) {
         return decorator.getRenderTypes(itemStack);
     }
 
     @Override
-    public List<BakedModel> getRenderPasses (ItemStack itemStack, boolean fabulous) {
+    public List<BakedModel> getRenderPasses (ItemStack itemStack) {
         if (decorator.shouldRenderItem())
             return List.of(new ItemRender(itemStack));
 
-        return parent.getRenderPasses(itemStack, fabulous);
+        return parent.getRenderPasses(itemStack);
     }
 
     public class ItemRender extends ParentModel
@@ -117,8 +117,8 @@ public class PlatformDecoratedModel<C extends ModelContext> extends ParentModel 
         }
 
         @Override
-        public List<BakedModel> getRenderPasses (ItemStack itemStack, boolean fabulous) {
-            return PlatformDecoratedModel.this.parent.getRenderPasses(itemStack, fabulous);
+        public List<BakedModel> getRenderPasses (ItemStack itemStack) {
+            return PlatformDecoratedModel.this.parent.getRenderPasses(itemStack);
         }
 
         @Override
@@ -132,8 +132,8 @@ public class PlatformDecoratedModel<C extends ModelContext> extends ParentModel 
         }
 
         @Override
-        public List<RenderType> getRenderTypes (ItemStack itemStack, boolean fabulous) {
-            return PlatformDecoratedModel.this.getRenderTypes(itemStack, fabulous);
+        public List<RenderType> getRenderTypes (ItemStack itemStack) {
+            return PlatformDecoratedModel.this.getRenderTypes(itemStack);
         }
     }
 }

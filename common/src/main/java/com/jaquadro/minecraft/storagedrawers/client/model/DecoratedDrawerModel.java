@@ -7,10 +7,9 @@ import com.jaquadro.minecraft.storagedrawers.api.storage.attribute.LockAttribute
 import com.jaquadro.minecraft.storagedrawers.block.BlockCompDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.BlockDrawers;
 import com.jaquadro.minecraft.storagedrawers.block.BlockStandardDrawers;
-import com.jaquadro.minecraft.storagedrawers.block.tile.BlockEntityDrawers;
 import com.jaquadro.minecraft.storagedrawers.client.model.context.DrawerModelContext;
+import net.minecraft.client.renderer.block.model.BakedOverrides;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
@@ -69,8 +68,8 @@ public abstract class DecoratedDrawerModel implements BakedModel
     }
 
     @Override
-    public ItemOverrides getOverrides () {
-        return mainModel.getOverrides();
+    public BakedOverrides overrides () {
+        return mainModel.overrides();
     }
 
     public void emitDecoratedQuads(DrawerModelContext context, Consumer<BakedModel> emitModel) {

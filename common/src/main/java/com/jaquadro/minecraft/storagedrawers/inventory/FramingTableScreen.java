@@ -3,6 +3,7 @@ package com.jaquadro.minecraft.storagedrawers.inventory;
 import com.jaquadro.minecraft.storagedrawers.ModConstants;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -40,6 +41,6 @@ public class FramingTableScreen extends AbstractContainerScreen<ContainerFraming
     protected void renderBg (GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
         int guiX = (width - imageWidth) / 2;
         int guiY = (height - imageHeight) / 2;
-        graphics.blit(background, guiX, guiY, 0, 0, imageWidth, imageHeight);
+        graphics.blit(RenderType::guiTextured, background, guiX, guiY, 0, 0, imageWidth, imageHeight, 256, 256);
     }
 }
