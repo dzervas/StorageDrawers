@@ -32,7 +32,10 @@ public class DrawerStackStorage extends SingleStackStorage
 
     @Override
     protected void setStack (ItemStack stack) {
-        storage.getDrawer(slot).setStoredItem(stack, stack.getCount());
+        if (stack.getCount() > 0)
+            storage.getDrawer(slot).setStoredItem(stack, stack.getCount());
+        else
+            storage.getDrawer(slot).setStoredItemCount(0);
     }
 
     @Override

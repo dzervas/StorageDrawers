@@ -1,1 +1,1 @@
-- Updated to Minecraft 1.21.2 / 1.21.3
+- FABRIC: Restore forge config api port support

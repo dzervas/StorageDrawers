@@ -1,9 +1,7 @@
 package com.texelsaurus.minecraft.chameleon.service;
 
-import com.jaquadro.minecraft.storagedrawers.config.ModClientConfig;
-import com.jaquadro.minecraft.storagedrawers.config.ModCommonConfig;
 import com.texelsaurus.minecraft.chameleon.config.ConfigSpec;
-//import com.texelsaurus.minecraft.chameleon.config.ForgeApiConfig;
+import com.texelsaurus.minecraft.chameleon.config.ForgeApiConfig;
 import com.texelsaurus.minecraft.chameleon.config.StaticConfig;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -16,9 +14,9 @@ public class FabricConfig implements ChameleonConfig
     }
 
     private FabricConfig (ConfigSpec spec) {
-        //if (FabricLoader.getInstance().isModLoaded("forgeconfigapiport"))
-        //    configImpl = new ForgeApiConfig(spec);
-        //else
+        if (FabricLoader.getInstance().isModLoaded("forgeconfigapiport"))
+            configImpl = new ForgeApiConfig(spec);
+        else
             configImpl = new StaticConfig(spec);
     }
 

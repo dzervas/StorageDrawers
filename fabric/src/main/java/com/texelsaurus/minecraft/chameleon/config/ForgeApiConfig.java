@@ -1,5 +1,5 @@
 package com.texelsaurus.minecraft.chameleon.config;
-/*
+
 import com.texelsaurus.minecraft.chameleon.service.ChameleonConfig;
 import fuzs.forgeconfigapiport.fabric.api.neoforge.v4.NeoForgeConfigRegistry;
 import net.neoforged.fml.config.ModConfig;
@@ -132,4 +132,3 @@ public class ForgeApiConfig implements ChameleonConfig
         }
     }
 }
-*/
