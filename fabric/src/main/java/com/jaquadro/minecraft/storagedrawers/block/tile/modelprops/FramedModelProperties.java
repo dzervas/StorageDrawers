@@ -5,8 +5,6 @@ import com.jaquadro.minecraft.storagedrawers.api.framing.IFramedMaterials;
 import com.jaquadro.minecraft.storagedrawers.block.tile.tiledata.MaterialData;
 import com.jaquadro.minecraft.storagedrawers.client.model.ModelContextSupplier;
 import com.jaquadro.minecraft.storagedrawers.client.model.context.FramedModelContext;
-import com.jaquadro.minecraft.storagedrawers.components.item.FrameData;
-import com.jaquadro.minecraft.storagedrawers.core.ModDataComponents;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
@@ -47,7 +45,8 @@ public class FramedModelProperties implements ModelContextSupplier<FramedModelCo
 
     @Override
     public FramedModelContext makeContext (ItemStack stack) {
-        MaterialData data = stack.getOrDefault(ModDataComponents.FRAME_DATA.get(), FrameData.EMPTY).asMaterialData();
+        MaterialData data = new MaterialData();
+        data.read(stack.getOrCreateTag());
 
         Block block = Blocks.AIR;
         if (stack.getItem() instanceof BlockItem blockItem)

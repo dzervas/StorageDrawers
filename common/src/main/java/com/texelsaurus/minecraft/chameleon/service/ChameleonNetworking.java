@@ -11,11 +11,11 @@ import net.minecraft.server.level.ServerPlayer;
 
 public interface ChameleonNetworking
 {
-    static <B extends FriendlyByteBuf, P extends ChameleonPacket<P>> void registerPacket(ResourceLocation id, ChameleonPacketHandler<P> payloadType) {
-        ChameleonServices.NETWORK.registerPacketInternal(id, payloadType);
+    static <B extends FriendlyByteBuf, P extends ChameleonPacket<P>> void registerPacket(ResourceLocation id, ChameleonPacketHandler<P> payloadType, boolean clientBound) {
+        ChameleonServices.NETWORK.registerPacketInternal(id, payloadType, clientBound);
     }
 
-    <P extends ChameleonPacket<P>> void registerPacketInternal(ResourceLocation id, ChameleonPacketHandler<P>  payloadType);
+    <P extends ChameleonPacket<P>> void registerPacketInternal(ResourceLocation id, ChameleonPacketHandler<P>  payloadType, boolean clientBound);
 
     <P extends ChameleonPacket<P>> void sendToPlayer(P packet, ServerPlayer player);
 

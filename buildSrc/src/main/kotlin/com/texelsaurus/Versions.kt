@@ -10,5 +10,5 @@ object Versions {
     const val forgeVersionRange = "[47,)"
     const val forgeLoaderRange = "[47,)"
     const val fabric = "0.92.2+1.20.1"
-    const val fabricLoader = "0.14.19"
+    const val fabricLoader = "0.15.6"
 }

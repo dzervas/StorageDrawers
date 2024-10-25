@@ -29,7 +29,7 @@ public class ForgeNetworking implements ChameleonNetworking
     }
 
     @Override
-    public <P extends ChameleonPacket<P>> void registerPacketInternal (ResourceLocation id, ChameleonPacketHandler<P> payloadType) {
+    public <P extends ChameleonPacket<P>> void registerPacketInternal (ResourceLocation id, ChameleonPacketHandler<P> payloadType, boolean clientBound) {
         String modId = id.getNamespace();
         if (!CHANNELS.containsKey(modId)) {
             CHANNELS.put(modId, NetworkRegistry.ChannelBuilder

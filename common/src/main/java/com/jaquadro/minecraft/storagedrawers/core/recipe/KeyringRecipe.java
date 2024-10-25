@@ -13,8 +13,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
-import javax.annotation.Nullable;
-
 public class KeyringRecipe extends ShapedRecipe
 {
     public KeyringRecipe(ResourceLocation name, CraftingBookCategory cat) {

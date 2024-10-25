@@ -4,8 +4,6 @@ import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerAttributesModifi
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemPersonalKey extends ItemKey
@@ -27,7 +25,6 @@ public class ItemPersonalKey extends ItemKey
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     @NotNull
     public Component getDescription() {
         if (securityProvider != null) {

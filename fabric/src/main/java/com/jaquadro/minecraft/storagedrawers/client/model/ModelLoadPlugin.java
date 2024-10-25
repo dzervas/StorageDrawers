@@ -13,6 +13,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.model.loading.v1.ModelLoadingPlugin;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
@@ -22,44 +23,48 @@ public class ModelLoadPlugin implements ModelLoadingPlugin
     public void onInitializeModelLoader (Context pluginContext) {
         DrawerModelGeometry.loadGeometryData();
         pluginContext.modifyModelAfterBake().register((original, context) -> {
-            if (context.topLevelId() == null)
+            if (context.id() == null)
                 return original;
 
-            ResourceLocation blockId = context.topLevelId().id();
+            ResourceLocation blockId = context.id();
             if (!blockId.getNamespace().equals(ModConstants.MOD_ID))
                 return original;
 
-            DrawerModelStore.tryAddModel(context.topLevelId(), original);
-            if (!DrawerModelStore.INSTANCE.isTargetedModel(context.topLevelId()))
+            if (context.id() instanceof ModelResourceLocation mid) {
+                DrawerModelStore.tryAddModel(mid, original);
+                if (!DrawerModelStore.INSTANCE.isTargetedModel(mid))
+                    return original;
+            } else
                 return original;
+            
+            ResourceLocation rootId = new ResourceLocation(blockId.getNamespace(), blockId.getPath());
+            if (rootId.equals(ModBlocks.FRAMED_FULL_DRAWERS_1.getId()))
+                return makeFramedStandardDrawerModel(original);
+            if (rootId.equals(ModBlocks.FRAMED_FULL_DRAWERS_2.getId()))
+                return makeFramedStandardDrawerModel(original);
+            if (rootId.equals(ModBlocks.FRAMED_FULL_DRAWERS_4.getId()))
+                return makeFramedStandardDrawerModel(original);
+            if (rootId.equals(ModBlocks.FRAMED_HALF_DRAWERS_1.getId()))
+                return makeFramedStandardDrawerModel(original);
+            if (rootId.equals(ModBlocks.FRAMED_HALF_DRAWERS_2.getId()))
+                return makeFramedStandardDrawerModel(original);
+            if (rootId.equals(ModBlocks.FRAMED_HALF_DRAWERS_4.getId()))
+                return makeFramedStandardDrawerModel(original);
 
-            if (blockId.equals(ModBlocks.FRAMED_FULL_DRAWERS_1.getId()))
-                return makeFramedStandardDrawerModel(original);
-            if (blockId.equals(ModBlocks.FRAMED_FULL_DRAWERS_2.getId()))
-                return makeFramedStandardDrawerModel(original);
-            if (blockId.equals(ModBlocks.FRAMED_FULL_DRAWERS_4.getId()))
-                return makeFramedStandardDrawerModel(original);
-            if (blockId.equals(ModBlocks.FRAMED_HALF_DRAWERS_1.getId()))
-                return makeFramedStandardDrawerModel(original);
-            if (blockId.equals(ModBlocks.FRAMED_HALF_DRAWERS_2.getId()))
-                return makeFramedStandardDrawerModel(original);
-            if (blockId.equals(ModBlocks.FRAMED_HALF_DRAWERS_4.getId()))
-                return makeFramedStandardDrawerModel(original);
-
-            if (blockId.equals(ModBlocks.FRAMED_COMPACTING_DRAWERS_2.getId()))
+            if (rootId.equals(ModBlocks.FRAMED_COMPACTING_DRAWERS_2.getId()))
                 return makeFramedComp2DrawerModel(original);
-            if (blockId.equals(ModBlocks.FRAMED_COMPACTING_HALF_DRAWERS_2.getId()))
+            if (rootId.equals(ModBlocks.FRAMED_COMPACTING_HALF_DRAWERS_2.getId()))
                 return makeFramedComp2DrawerModel(original);
-            if (blockId.equals(ModBlocks.FRAMED_COMPACTING_DRAWERS_3.getId()))
+            if (rootId.equals(ModBlocks.FRAMED_COMPACTING_DRAWERS_3.getId()))
                 return makeFramedComp3DrawerModel(original);
-            if (blockId.equals(ModBlocks.FRAMED_COMPACTING_HALF_DRAWERS_3.getId()))
+            if (rootId.equals(ModBlocks.FRAMED_COMPACTING_HALF_DRAWERS_3.getId()))
                 return makeFramedComp3DrawerModel(original);
 
-            if (blockId.equals(ModBlocks.FRAMED_TRIM.getId()))
+            if (rootId.equals(ModBlocks.FRAMED_TRIM.getId()))
                 return makeFramedTrimModel(original);
-            if (blockId.equals(ModBlocks.FRAMED_CONTROLLER.getId()))
+            if (rootId.equals(ModBlocks.FRAMED_CONTROLLER.getId()))
                 return makeFramedControllerModel(original);
-            if (blockId.equals(ModBlocks.FRAMED_CONTROLLER_IO.getId()))
+            if (rootId.equals(ModBlocks.FRAMED_CONTROLLER_IO.getId()))
                 return makeFramedControllerIOModel(original);
 
             return makeStandardDrawerModel(original);

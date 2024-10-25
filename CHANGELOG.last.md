@@ -1,3 +1,2 @@
-- Fixed framing table voiding framed input if materials already present
-- Updated ja_jp translation (contrib by sharpedmimishee)
-- Added nl_nl translation (contrib by Jack McKalling)
+- Refactored into multi-loaded project
+- First Fabric build for 1.20.1

@@ -1,3 +1,7 @@
+[12.10.0]
+- Refactored into multi-loaded project
+- First Fabric build for 1.20.1
+
 [12.9.9]
 - Fixed framing table voiding framed input if materials already present
 - Updated ja_jp translation (contrib by sharpedmimishee)

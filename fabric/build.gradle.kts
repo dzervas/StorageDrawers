@@ -17,6 +17,7 @@ dependencies {
 
     modImplementation("fuzs.forgeconfigapiport:forgeconfigapiport-fabric:8.0.0")
 
+    modRuntimeOnly("curse.maven:jei-238222:5417084")
     //modCompileOnlyApi("mezz.jei:jei-${Versions.minecraft}-fabric-api:19.8.2.99")
     //modRuntimeOnly("mezz.jei:jei-${Versions.minecraft}-fabric:19.8.2.99")
 }

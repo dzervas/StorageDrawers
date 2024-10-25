@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "///",
+        "/X/",
+        "RRR"
+    ],
+    "key": {
+        "/": { "item": "minecraft:stick" },
+        "R": { "item": "minecraft:redstone" },
+        "X": { "item": "storagedrawers:upgrade_template" }
+    },
+    "result": { "item": "storagedrawers:min_redstone_upgrade" }
+}

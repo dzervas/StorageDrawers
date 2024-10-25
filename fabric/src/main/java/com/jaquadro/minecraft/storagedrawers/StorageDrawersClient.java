@@ -1,7 +1,6 @@
 package com.jaquadro.minecraft.storagedrawers;
 
 import com.jaquadro.minecraft.storagedrawers.client.gui.ClientDetachedDrawerTooltip;
-import com.jaquadro.minecraft.storagedrawers.client.gui.ClientKeyringTooltip;
 import com.jaquadro.minecraft.storagedrawers.client.model.ModelLoadPlugin;
 import com.jaquadro.minecraft.storagedrawers.client.renderer.BlockEntityDrawersRenderer;
 import com.jaquadro.minecraft.storagedrawers.client.renderer.BlockEntityFramingRenderer;
@@ -11,7 +10,6 @@ import com.jaquadro.minecraft.storagedrawers.core.ModContainers;
 import com.jaquadro.minecraft.storagedrawers.inventory.DrawerScreen;
 import com.jaquadro.minecraft.storagedrawers.inventory.FramingTableScreen;
 import com.jaquadro.minecraft.storagedrawers.inventory.tooltip.DetachedDrawerTooltip;
-import com.jaquadro.minecraft.storagedrawers.inventory.tooltip.KeyringTooltip;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -48,9 +46,9 @@ public class StorageDrawersClient implements ClientModInitializer
 
         TooltipComponentCallback.EVENT.register((TooltipComponent data) -> {
             if (data instanceof DetachedDrawerTooltip)
-                return new ClientDetachedDrawerTooltip(((DetachedDrawerTooltip) data).contents());
-            if (data instanceof KeyringTooltip)
-                return new ClientKeyringTooltip(((KeyringTooltip) data).contents());
+                return new ClientDetachedDrawerTooltip(((DetachedDrawerTooltip) data));
+            //if (data instanceof KeyringTooltip)
+            //    return new ClientKeyringTooltip(((KeyringTooltip) data).contents());
             return null;
         });
     }

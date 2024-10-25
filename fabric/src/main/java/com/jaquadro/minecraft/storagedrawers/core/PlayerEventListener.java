@@ -43,7 +43,7 @@ public class PlayerEventListener
     private static boolean checkItemDebuf (ItemStack stack, Player player) {
         Item item = stack.getItem();
         if (item instanceof IPortable ip) {
-            if (ip.isHeavy(player.level().registryAccess(), stack)) {
+            if (ip.isHeavy(stack)) {
                 applyDebuff(player);
                 return true;
             }

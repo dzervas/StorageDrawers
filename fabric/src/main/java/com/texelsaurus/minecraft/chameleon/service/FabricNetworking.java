@@ -2,10 +2,7 @@ package com.texelsaurus.minecraft.chameleon.service;
 
 import com.texelsaurus.minecraft.chameleon.ChameleonServices;
 import com.texelsaurus.minecraft.chameleon.client.FabricClient;
-import com.texelsaurus.minecraft.chameleon.network.ChameleonClientPacketType;
-import com.texelsaurus.minecraft.chameleon.network.ChameleonPacket;
-import com.texelsaurus.minecraft.chameleon.network.ChameleonPacketType;
-import com.texelsaurus.minecraft.chameleon.network.ChameleonServerPacketType;
+import com.texelsaurus.minecraft.chameleon.network.*;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
@@ -17,30 +14,25 @@ import net.minecraft.server.level.ServerPlayer;
 public class FabricNetworking implements ChameleonNetworking
 {
     @Override
-    public <P extends ChameleonPacket<P>> void registerPacketInternal (ChameleonPacketType<P> payloadType) {
-        if (payloadType instanceof ChameleonClientPacketType<P> type) {
+    public <P extends ChameleonPacket<P>> void registerPacketInternal (ResourceLocation id, ChameleonPacketHandler<P> payloadType, boolean clientBound) {
+        if (clientBound) {
             if (ChameleonServices.PLATFORM.isPhysicalClient())
-                FabricClient.registerPacket(type);
-        } else if (payloadType instanceof ChameleonServerPacketType<P> type) {
-            ResourceLocation id = type.id();
-            ResourceLocation loc = new ResourceLocation(payloadType.modId(), id.getNamespace() + "/" + id.getPath());
-
-            ServerPlayNetworking.registerGlobalReceiver(loc, (server, player, handler, buf, responseSender) -> {
-                P decode = type.decode(buf);
-                server.execute(() -> type.handle(decode).accept(player));
+                FabricClient.registerPacket(id, payloadType);
+        } else  {
+            ServerPlayNetworking.registerGlobalReceiver(id, (server, player, handler, buf, responseSender) -> {
+                P decode = payloadType.decode(buf);
+                payloadType.handle(decode, player, server::execute);
             });
         }
     }
 
     @Override
     public <P extends ChameleonPacket<P>>  void sendToPlayer (P packet, ServerPlayer player) {
-        ChameleonPacketType<P> type = packet.type();
+        ChameleonPacketHandler<P> type = packet.getHandler();
         FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
         type.encode(packet, buf);
 
-        ResourceLocation id = type.id();
-        ResourceLocation loc = new ResourceLocation(type.modId() + "/" + id.getNamespace() + "/" + id.getPath());
-        ServerPlayNetworking.send(player, loc, buf);
+        ServerPlayNetworking.send(player, packet.getId(), buf);
     }
 
     @Override

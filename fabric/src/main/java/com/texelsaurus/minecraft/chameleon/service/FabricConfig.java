@@ -21,8 +21,8 @@ public class FabricConfig implements ChameleonConfig
     }
 
     @Override
-    public void init() {
-        configImpl.init();
+    public void init(String modId, ChameleonConfig.Type type) {
+        configImpl.init(modId, type);
     }
 
     @Override

@@ -11,7 +11,7 @@ public class ModNetworking implements ChameleonInit
 
     @Override
     public void init (InitContext context) {
-        ChameleonNetworking.registerPacket(CountUpdateMessage.ID, CountUpdateMessage.HANDLER);
-        ChameleonNetworking.registerPacket(PlayerBoolConfigMessage.ID, PlayerBoolConfigMessage.HANDLER);
+        ChameleonNetworking.registerPacket(CountUpdateMessage.ID, CountUpdateMessage.HANDLER, true);
+        ChameleonNetworking.registerPacket(PlayerBoolConfigMessage.ID, PlayerBoolConfigMessage.HANDLER, false);
     }
 }

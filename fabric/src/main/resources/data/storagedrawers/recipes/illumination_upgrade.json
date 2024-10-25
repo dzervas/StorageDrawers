@@ -1,0 +1,14 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "R/R",
+        "/X/",
+        "R/R"
+    ],
+    "key": {
+        "/": { "item": "minecraft:stick" },
+        "R": { "item": "minecraft:glowstone_dust" },
+        "X": { "item": "storagedrawers:upgrade_template" }
+    },
+    "result": { "item": "storagedrawers:illumination_upgrade", "count": 8 }
+}

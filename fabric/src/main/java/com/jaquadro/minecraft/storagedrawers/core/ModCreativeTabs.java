@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class ModCreativeTabs
 {
-    private static final ResourceKey<CreativeModeTab> MAIN = ResourceKey.create(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(ModConstants.MOD_ID, "storagedrawers"));
+    private static final ResourceKey<CreativeModeTab> MAIN = ResourceKey.create(Registries.CREATIVE_MODE_TAB, new ResourceLocation(ModConstants.MOD_ID, "storagedrawers"));
     private static final CreativeModeTab MAIN_TAB = FabricItemGroup.builder()
         .icon(() -> new ItemStack(ModBlocks.OAK_FULL_DRAWERS_2.get()))
         .title(Component.translatable("itemGroup.storagedrawers"))
