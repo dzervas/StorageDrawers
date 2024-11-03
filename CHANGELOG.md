@@ -1,3 +1,7 @@
+[12.10.2]
+- Fix uncommon crash when remote upgrades invalidate (contrib by HugoSandell)
+- FABRIC: Fix drawers not honoring void upgrade when other inventories try to insert into them
+
 [12.10.1]
 - FABRIC: Fix keys not working on drawers
 

@@ -1,8 +1,11 @@
 package com.jaquadro.minecraft.storagedrawers.inventory;
 
 import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
+import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerAttributes;
+import com.jaquadro.minecraft.storagedrawers.capabilities.Capabilities;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.item.base.SingleStackStorage;
+import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -45,7 +48,14 @@ public class DrawerStackStorage extends SingleStackStorage
         if (!storage.getDrawer(slot).canItemBeStored(insertedVariant.toStack()))
             return 0;
 
-        return super.insert(insertedVariant, maxAmount, transaction);
+        long inserted = super.insert(insertedVariant, maxAmount, transaction);
+        if (inserted < maxAmount) {
+            IDrawerAttributes attr = storage.group.getCapability(Capabilities.DRAWER_ATTRIBUTES);
+            if (attr != null && attr.isVoid())
+                inserted = maxAmount;
+        }
+
+        return inserted;
     }
 
     @Override
