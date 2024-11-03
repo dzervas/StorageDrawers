@@ -47,7 +47,12 @@ public class ControllerHostData extends BlockEntityDataShim
     }
 
     public void validateRemoteNodes (IControlGroup host, Level level) {
-        for (BlockPos pos : nodeMap.keySet()) {
+        // Use iterator directly so that entries can be removed during iteration.
+        Iterator<Map.Entry<BlockPos, INetworked>> iterator = nodeMap.entrySet();
+
+        while (iterator.hasNext()) {
+            BlockPos pos = iterator.next().getKey();
+
             BlockEntity entity = level.getBlockEntity(pos);
             if (entity instanceof INetworked networked) {
                 if (networked.getBoundControlGroup() == host) {
@@ -56,7 +61,7 @@ public class ControllerHostData extends BlockEntityDataShim
                 }
             }
 
-            nodeMap.remove(pos);
+            iterator.remove();
         }
     }
 
