@@ -1,3 +1,7 @@
+[13.8.1]
+- Refactored internal Chameleon API to be fully self-contained
+- FABRIC: Fixed item interop clearing items from locked drawers
+
 [13.8.0]
 - Added back support for framed drawers
   - Includes support for standard drawers, compacting drawers, trim, controllers, and slaves

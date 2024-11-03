@@ -1,12 +1,2 @@
-- Added back support for framed drawers
-    - Includes support for standard drawers, compacting drawers, trim, controllers, and slaves
-- Added back framing table
-    - Place any normal supported block on the table to create a framed version
-    - Place framed version on table to get back materials and original block
-    - Works for drawers that already hold contents
-- Fix typo in remote upgrade description
-- Fix drawer puller not working when on keyring
-- Add several missing recipe advancement entries
-- Fixed controller, io, and trims not dropping when broken
-- Added ja_jp translation (contrib by sharpedmimishee)
-- Added ru_ru translation (contrib by gri3229)
+- Refactored internal Chameleon API to be fully self-contained
+- FABRIC: Fixed item interop clearing items from locked drawers
