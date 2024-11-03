@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class KeyringRecipe extends ShapedRecipe
@@ -37,11 +38,12 @@ public class KeyringRecipe extends ShapedRecipe
             return ItemStack.EMPTY;
 
         KeyringContents contents = result.get(ModDataComponents.KEYRING_CONTENTS.get());
-        if (contents != null) {
-            KeyringContents.Mutable mutable = new KeyringContents.Mutable(contents);
-            mutable.tryInsert(center);
-            result.set(ModDataComponents.KEYRING_CONTENTS.get(), mutable.toImmutable());
-        }
+        if (contents == null)
+            contents = new KeyringContents(new ArrayList<>());
+
+        KeyringContents.Mutable mutable = new KeyringContents.Mutable(contents);
+        mutable.tryInsert(center.copy());
+        result.set(ModDataComponents.KEYRING_CONTENTS.get(), mutable.toImmutable());
 
         return result;
     }

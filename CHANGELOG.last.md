@@ -1,2 +1,6 @@
 - Fix uncommon crash when remote upgrades invalidate (contrib by HugoSandell)
+- Fix keyring keeping current selection when it was removed
+- Fix keyring losing its name when modified or rotated
+- Fix keyring recipe not adding key from recipe
+- Fix key buttons not working when on floor or ceiling
 - FABRIC: Fix drawers not honoring void upgrade when other inventories try to insert into them

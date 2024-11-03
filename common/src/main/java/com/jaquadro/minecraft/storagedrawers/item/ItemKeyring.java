@@ -6,7 +6,6 @@ import com.jaquadro.minecraft.storagedrawers.core.ModItems;
 import com.jaquadro.minecraft.storagedrawers.inventory.tooltip.KeyringTooltip;
 import com.jaquadro.minecraft.storagedrawers.util.ComponentUtil;
 import com.texelsaurus.minecraft.chameleon.registry.RegistryEntry;
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -29,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ItemKeyring extends Item
 {
@@ -58,12 +58,22 @@ public class ItemKeyring extends Item
         KeyringContents.Mutable mutable = new KeyringContents.Mutable(contents);
         if (stack.isEmpty()) {
             ItemStack removed = mutable.removeOne();
-            if (removed != null)
+            if (removed != null) {
                 access.set(removed);
-
-            if (mutable.size() == 0) {
-                slot.set(new ItemStack(ModItems.KEYRING.get(), 1));
+                contents = mutable.toImmutable();
+                targetStack.set(ModDataComponents.KEYRING_CONTENTS.get(), contents);
             }
+
+            if (getContents(targetStack).findAny().isEmpty()) {
+                ItemStack newStack = new ItemStack(ModItems.KEYRING.get(), 1);
+                newStack.applyComponents(targetStack.getComponentsPatch());
+                slot.set(newStack);
+            } else {
+                ItemStack newStack = rotateKeyring(targetStack);
+                slot.set(newStack);
+            }
+
+            return true;
         } else
             mutable.tryInsert(stack);
 
@@ -87,25 +97,11 @@ public class ItemKeyring extends Item
         if (!player.isShiftKeyDown())
             return InteractionResultHolder.pass(stack);
 
-        KeyringContents contents = stack.get(ModDataComponents.KEYRING_CONTENTS.get());
-        if (contents == null || contents.size() == 0)
+        List<ItemStack> list = getContents(stack).toList();
+        if (list.isEmpty())
             return InteractionResultHolder.pass(stack);
 
-        int index = 0;
-        for (int i = 0; i < contents.size(); i++) {
-            if (contents.getItemUnsafe(i).getItem() == key.get()) {
-                index = i;
-                break;
-            }
-        }
-
-        index += 1;
-        if (index >= contents.size())
-            index = 0;
-
-        ItemStack nextItem = contents.getItemUnsafe(index);
-        ItemStack keyring = getKeyring(nextItem);
-        keyring.set(ModDataComponents.KEYRING_CONTENTS.get(), contents);
+        ItemStack keyring = rotateKeyring(stack);
 
         return InteractionResultHolder.success(keyring);
     }
@@ -147,11 +143,17 @@ public class ItemKeyring extends Item
 
     @Override
     public Component getName (ItemStack stack) {
-        if (key == null)
+        if (key == null || key.get() == null)
             return super.getName(stack);
 
+        Component subName;
+        ItemStack activeKey = getActiveKey(stack, key.get());
+        if (activeKey != null)
+            subName = activeKey.getHoverName();
+        else
+            subName = Component.translatable(key.get().getDescriptionId());
+
         MutableComponent name = Component.translatable(ModItems.KEYRING.get().getDescriptionId());
-        MutableComponent subName = Component.translatable(key.get().getDescriptionId());
         return name.append(" (").append(subName).append(")");
     }
 
@@ -167,5 +169,44 @@ public class ItemKeyring extends Item
             entity.getItem().set(ModDataComponents.KEYRING_CONTENTS.get(), KeyringContents.EMPTY);
             ItemUtils.onContainerDestroyed(entity, contents.itemsCopy());
         }
+    }
+
+    private static ItemStack getActiveKey (ItemStack stack, Item item) {
+        KeyringContents contents = stack.get(ModDataComponents.KEYRING_CONTENTS.get());
+        if (contents == null || contents.size() == 0)
+            return null;
+
+        return contents.itemCopyStream()
+            .filter(t -> ItemStack.isSameItem(t, new ItemStack(item))).findFirst().orElse(null);
+    }
+
+    private static Stream<ItemStack> getContents (ItemStack stack) {
+        KeyringContents contents = stack.get(ModDataComponents.KEYRING_CONTENTS.get());
+        if (contents == null || contents.size() == 0)
+            return Stream.empty();
+
+        return contents.itemCopyStream();
+    }
+
+    private ItemStack rotateKeyring(ItemStack stack) {
+        List<ItemStack> list = getContents(stack).toList();
+
+        int index = 0;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getItem() == key.get()) {
+                index = i;
+                break;
+            }
+        }
+
+        index += 1;
+        if (index >= list.size())
+            index = 0;
+
+        ItemStack nextItem = list.get(index);
+        ItemStack keyring = getKeyring(nextItem);
+        keyring.applyComponents(stack.getComponentsPatch());
+
+        return keyring;
     }
 }
