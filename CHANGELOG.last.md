@@ -1,2 +1,2 @@
-- Refactored internal Chameleon API to be fully self-contained
-- FABRIC: Fixed item interop clearing items from locked drawers
+- Fix uncommon crash when remote upgrades invalidate (contrib by HugoSandell)
+- FABRIC: Fix drawers not honoring void upgrade when other inventories try to insert into them
