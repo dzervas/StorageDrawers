@@ -1,1 +1,2 @@
-- FABRIC: Restore forge config api port support
+- Fix uncommon crash when remote upgrades invalidate (contrib by HugoSandell)
+- FABRIC: Fix drawers not honoring void upgrade when other inventories try to insert into them
