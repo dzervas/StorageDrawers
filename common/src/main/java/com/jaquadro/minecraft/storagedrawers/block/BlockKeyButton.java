@@ -104,6 +104,11 @@ public class BlockKeyButton  extends FaceAttachedHorizontalDirectionalBlock
             level.gameEvent(player, GameEvent.BLOCK_ACTIVATE, pos);
 
             BlockPos targetPos = pos.offset(state.getValue(FACING).getOpposite().getUnitVec3i());
+            if (state.getValue(FACE) == AttachFace.FLOOR)
+                targetPos = pos.offset(Direction.DOWN.getUnitVec3i());
+            else if (state.getValue(FACE) == AttachFace.CEILING)
+                targetPos = pos.offset(Direction.UP.getUnitVec3i());
+
             Block target = level.getBlockState(targetPos).getBlock();
             if (target instanceof BlockController controller)
                 controller.toggle(level, targetPos, player, keyType);
