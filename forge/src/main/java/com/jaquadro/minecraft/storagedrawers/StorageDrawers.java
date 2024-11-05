@@ -79,14 +79,6 @@ public class StorageDrawers
         CompTierRegistry.INSTANCE.initialize();
         PlatformCapabilities.initHandlers();
 
-        var map = BuiltInRegistries.DATA_COMPONENT_TYPE.asHolderIdMap();
-        for (int i = 0; i < map.size(); i++)
-            ModServices.log.info(i + "=" + map.byId(i).get());
-
-        var menumap = BuiltInRegistries.MENU.asHolderIdMap();
-        for (int i = 0; i < menumap.size(); i++)
-            ModServices.log.info(i + "=" + menumap.byId(i).getRegisteredName());
-
         //oreDictRegistry = new OreDictRegistry();
         //renderRegistry = new RenderRegistry();
         //wailaRegistry = new WailaRegistry();

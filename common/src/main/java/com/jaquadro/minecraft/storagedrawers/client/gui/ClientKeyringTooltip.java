@@ -11,7 +11,9 @@ import net.minecraft.world.item.ItemStack;
 
 public class ClientKeyringTooltip implements ClientTooltipComponent
 {
-    private static final ResourceLocation BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("container/bundle/background");
+    private static final ResourceLocation SLOT_HIGHLIGHT_BACK_SPRITE = ResourceLocation.withDefaultNamespace("container/bundle/slot_highlight_back");
+    private static final ResourceLocation SLOT_HIGHLIGHT_FRONT_SPRITE = ResourceLocation.withDefaultNamespace("container/bundle/slot_highlight_front");
+    private static final ResourceLocation SLOT_BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("container/bundle/slot_background");
     private static final int MARGIN_Y = 4;
     private static final int BORDER_WIDTH = 1;
     private static final int SLOT_SIZE_X = 18;
@@ -44,7 +46,7 @@ public class ClientKeyringTooltip implements ClientTooltipComponent
     public void renderImage(Font font, int pX, int pY, int pW, int pH, GuiGraphics graphics) {
         int i = gridSizeX();
         int j = gridSizeY();
-        graphics.blitSprite(RenderType::guiTextured, BACKGROUND_SPRITE,
+        graphics.blitSprite(RenderType::guiTextured, SLOT_BACKGROUND_SPRITE,
             pX, pY, this.backgroundWidth(), this.backgroundHeight());
         boolean isFull = contents.size() >= 64;
         int k = 0;
@@ -60,10 +62,10 @@ public class ClientKeyringTooltip implements ClientTooltipComponent
 
     private void renderSlot(int pX, int pY, int index, boolean isFull, GuiGraphics graphics, Font font) {
         if (index >= this.contents.size()) {
-            blit(graphics, pX, pY, isFull ? Texture.BLOCKED_SLOT : Texture.SLOT);
+            blit(graphics, pX, pY, isFull ? SLOT_HIGHLIGHT_BACK_SPRITE : SLOT_HIGHLIGHT_FRONT_SPRITE);
         } else {
             ItemStack itemstack = this.contents.getItemUnsafe(index);
-            blit(graphics, pX, pY, Texture.SLOT);
+            blit(graphics, pX, pY, SLOT_HIGHLIGHT_FRONT_SPRITE);
             graphics.renderItem(itemstack, pX + 1, pY + 1, index);
             graphics.renderItemDecorations(font, itemstack, pX + 1, pY + 1);
             //if (index == 0) {
@@ -72,8 +74,8 @@ public class ClientKeyringTooltip implements ClientTooltipComponent
         }
     }
 
-    private void blit(GuiGraphics graphics, int x, int y, Texture texture) {
-        graphics.blitSprite(RenderType::guiTextured, texture.sprite, x, y, 0, texture.w, texture.h);
+    private void blit(GuiGraphics graphics, int x, int y, ResourceLocation texture) {
+        graphics.blitSprite(RenderType::guiTextured, texture, x, y, 0, 24, 24);
     }
 
     private int gridSizeX() {
