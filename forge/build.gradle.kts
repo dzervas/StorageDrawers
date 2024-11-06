@@ -18,7 +18,6 @@ mixin {
 
 minecraft {
     mappings("official", Versions.minecraft)
-    reobf = false
     runs {
         create("client") {
             taskName("runClient")
@@ -66,11 +65,11 @@ dependencies {
     //implementation fg.deobf("mcjty.theoneprobe:theoneprobe:1.19.3-7.0.0-2")
     // compileOnly since not yet updated for 41.0.64
     compileOnly("curse.maven:jade-324717:5072729")
-    //implementation("curse.maven:emi-580555:5619582")
+    implementation(fg.deobf("curse.maven:emi-580555:5619582"))
 
     compileOnly("curse.maven:cofh-core-69162:5374122")
 
-    //implementation("curse.maven:fluid-drawers-legacy-597669:5340725")
+    implementation(fg.deobf("curse.maven:fluid-drawers-legacy-597669:5340725"))
 
     // JEI
     //runtimeOnly("mezz.jei:jei-1.21-forge:19.8.2.99")
