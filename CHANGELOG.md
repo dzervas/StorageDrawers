@@ -1,3 +1,6 @@
+[14.0.3]
+- Fixed framing table voiding framed input if materials already present
+
 [14.0.2]
 - Fix uncommon crash when remote upgrades invalidate (contrib by HugoSandell)
 - Fix keyring keeping current selection when it was removed
